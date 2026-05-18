@@ -5,7 +5,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
-import { formatDate } from '@unishare/shared';
+import { formatDate } from '@hiram/shared';
 
 // Load environment variables
 dotenv.config();
@@ -43,7 +43,7 @@ app.get('/api/v1/status', (req, res) => {
   res.json({
     status: 'healthy',
     timestamp: formatDate(new Date()),
-    service: 'UniShare Express API Server',
+    service: 'Hiram Express API Server',
   });
 });
 
@@ -68,5 +68,5 @@ io.on('connection', (socket) => {
 
 // Start Server
 server.listen(PORT, () => {
-  console.log(`🚀 UniShare API is running on http://localhost:${PORT}/api/v1`);
+  console.log(`🚀 Hiram API is running on http://localhost:${PORT}/api/v1`);
 });

@@ -1,4 +1,4 @@
-# <p align="center"><img src="https://img.shields.io/badge/UniShare-Student--to--Student%20Item%20Sharing-800000?style=for-the-badge" alt="UniShare Logo" /><br/><br/>🔄 UniShare — Monorepo</p>
+# <p align="center"><img src="https://img.shields.io/badge/Hiram-Student--to--Student%20Item%20Sharing-800000?style=for-the-badge" alt="Hiram Logo" /><br/><br/>🔄 Hiram — Monorepo</p>
 
 <p align="center">
   <a href="https://github.com/TombstonePUP/u_share_web">
@@ -13,7 +13,7 @@
 
 ## 📌 Project Overview
 
-**UniShare** is a student-powered item sharing and trading platform built specifically for the **Polytechnic University of the Philippines (PUP)**. Designed as a campus-based micro-economy, the platform empowers students (*Iskos* and *Iskas*) to lend, borrow, and trade academic, creative, and everyday tools (such as calculators, review books, tripods, draft boards, etc.) securely and efficiently.
+**Hiram** is a student-powered item sharing and trading platform built specifically for the **Polytechnic University of the Philippines (PUP)**. Designed as a campus-based micro-economy, the platform empowers students (*Iskos* and *Iskas*) to lend, borrow, and trade academic, creative, and everyday tools (such as calculators, review books, tripods, draft boards, etc.) securely and efficiently.
 
 ### 🎯 Key Objectives
 * **Verification:** Restricted strictly to verified PUP students via their official university email (`@iskolar.pup.edu.ph`).
@@ -24,10 +24,10 @@
 
 ## 🛠️ Monorepo Architecture
 
-UniShare uses a highly structured monorepo pattern that enables fast development, shared schema validation, and synchronized types.
+Hiram uses a highly structured monorepo pattern that enables fast development, shared schema validation, and synchronized types.
 
 ```
-/unishare
+/hiram
 ├── 📂 backend          # Node.js + Express + Prisma REST API + Socket.io
 ├── 📂 web              # React + Vite frontend web client
 ├── 📂 mobile           # React Native + Expo (Android / iOS)
@@ -119,7 +119,7 @@ Configure your environment keys before starting the server.
   ```env
   PORT=4000
   NODE_ENV=development
-  DATABASE_URL="mysql://user:password@localhost:3306/unishare"
+  DATABASE_URL="mysql://user:password@localhost:3306/hiram"
   JWT_SECRET=your_super_secret_key
   JWT_EXPIRES_IN=7d
   CLIENT_URL=http://localhost:5173
@@ -160,7 +160,7 @@ npm run dev --workspace=mobile
 ---
 
 ## 🛡️ Security Best Practices
-To keep the PUP micro-economy safe, UniShare implements the following measures:
+To keep the PUP micro-economy safe, Hiram implements the following measures:
 * **Helmet.js:** Enforced secure HTTP headers.
 * **CORS Limits:** Restricted strictly to trusted origins.
 * **Rate Limiting:** Enforced on login/register routes to prevent brute-force attacks.
@@ -182,5 +182,5 @@ We follow a clean, standardized development lifecycle:
 ---
 
 <p align="center">
-  <i>Developed for the UniShare Hackathon MVP — May 2026. Made with ❤️ by Iskos and Iskas.</i>
+  <i>Developed for the Hiram Hackathon MVP — May 2026. Made with ❤️ by Iskos and Iskas.</i>
 </p>

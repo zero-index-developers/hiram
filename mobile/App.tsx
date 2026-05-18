@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native';
-import { formatDate } from '@unishare/shared';
+import { formatDate } from '@hiram/shared';
 
 // Mock listings matching the web portal for visual elegance
 const mockMobileItems = [
@@ -36,7 +36,7 @@ export default function App() {
       <View className="flex-row justify-between items-center mb-6">
         <View>
           <Text className="text-2xl font-black text-white">
-            Uni<Text className="text-red-600">Share</Text>
+            Hi<Text className="text-red-600">ram</Text>
           </Text>
           <Text className="text-[10px] text-neutral-400 font-semibold tracking-wider uppercase">
             PUP Campus Micro-Economy

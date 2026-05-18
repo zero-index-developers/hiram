@@ -1,8 +1,9 @@
 {
-  "name": "unishare",
+  "name": "hiram",
   "version": "1.0.0",
   "private": true,
   "description": "Student-powered item sharing and trading platform for PUP",
+  "packageManager": "npm@11.6.2",
   "workspaces": [
     "backend",
     "web",

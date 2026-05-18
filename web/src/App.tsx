@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { formatDate } from '@unishare/shared';
+import { formatDate } from '@hiram/shared';
 import { 
   Package, 
   ArrowRightLeft, 
@@ -274,10 +274,10 @@ function App() {
       <footer className="border-t border-neutral-900 bg-neutral-950 px-6 py-12 text-center text-sm text-neutral-500 mt-20 w-full">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2.5">
-            <div className="bg-pup-maroon p-1.5 rounded-lg text-white font-bold text-xs">US</div>
-            <span className="font-semibold text-neutral-300">UniShare Monorepo</span>
+            <div className="bg-pup-maroon p-1.5 rounded-lg text-white font-bold text-xs">HR</div>
+            <span className="font-semibold text-neutral-300">Hiram Monorepo</span>
           </div>
-          <p>© {new Date().getFullYear()} UniShare. Polytechnic University of the Philippines. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Hiram. Polytechnic University of the Philippines. All rights reserved.</p>
           <div className="flex items-center gap-4 text-xs font-semibold">
             <span className="text-pup-gold flex items-center gap-1">
               <MapPin className="w-3.5 h-3.5" /> Sta. Mesa, Manila
