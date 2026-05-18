@@ -30,22 +30,10 @@ export function DiscoverSection() {
           <h3 className="text-3xl font-black tracking-tight text-white">Discover Shared Resources</h3>
           <p className="text-white/60 text-sm mt-1.5 font-medium">Filter items available right now across the campus network.</p>
         </div>
-
-        {/* Dynamic Search */}
-        <div className="relative max-w-md w-full md:w-80">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-          <input
-            type="text"
-            placeholder="Search tools, books, gears..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-transparent border border-white/20 rounded-full py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-white transition-colors duration-300 placeholder-white/40"
-          />
-        </div>
       </div>
 
       {/* Categories Tabbar */}
-      <CategoryFilters 
+      <CategoryFilters
         categories={categories}
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
