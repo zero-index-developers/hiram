@@ -11,6 +11,7 @@ build/
 .next/
 out/
 .expo/
+.turbo/
 web-build/
 
 # Debug and log files

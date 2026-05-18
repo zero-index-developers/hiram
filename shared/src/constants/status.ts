@@ -1,4 +1,4 @@
-import { TransactionStatus } from '../types/transaction';
+import type { TransactionStatus } from '../types/transaction';
 
 export const TRANSACTION_STATUSES: Record<TransactionStatus, { label: string; color: string }> = {
   PENDING: {

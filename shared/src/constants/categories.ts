@@ -1,4 +1,4 @@
-import { ItemCategory } from '../types/item';
+import type { ItemCategory } from '../types/item';
 
 export const ITEM_CATEGORIES: { value: ItemCategory; label: string; description: string }[] = [
   {
