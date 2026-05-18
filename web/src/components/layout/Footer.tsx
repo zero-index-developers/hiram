@@ -8,11 +8,11 @@ export function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2.5">
           <LogoSymbol size="sm" className="text-white" />
-          <span className="font-semibold text-white/60">Campus Share Hub</span>
+          <span className="font-semibold text-white/60">Sharing Hub</span>
         </div>
-        
+
         <p className="text-white/40">© {new Date().getFullYear()} Hiram. All rights reserved.</p>
-        
+
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-1.5 text-white/60">
             <MapPin className="w-4 h-4 text-white/60" />

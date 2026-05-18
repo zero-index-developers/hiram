@@ -9,7 +9,7 @@ export function Hero() {
 
         {/* Headline */}
         <h1 className="text-7xl sm:text-8xl font-black text-white text-center leading-none tracking-tight mt-4">
-          Borrow better gear, faster
+          Hiram? trade? <br /> <span className="sm:text-7xl text-6xl">this is your platform</span>
         </h1>
 
         {/* Subtext */}

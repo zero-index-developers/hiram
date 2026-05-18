@@ -27,7 +27,7 @@ export function CategoryFilters({
             key={cat.value}
             onClick={() => setSelectedCategory(cat.value)}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition shrink-0 duration-300 ${isSelected
-              ? 'bg-primary/80 border border-primary'
+              ? 'bg-primary/50 border border-primary'
               : 'bg-transparent border border-white/20 text-white/60 hover:text-white hover:border-white/50'
               }`}
           >

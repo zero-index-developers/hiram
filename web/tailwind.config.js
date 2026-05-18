@@ -16,8 +16,8 @@ export default {
         'blue-light': '#57b8f0',
         'white': '#ffffff',
         'gray': '#cccccc',
-        'primary': '#57b8f0',
-        
+        'primary': '#e71313ff',
+
         // Semantic Theme Tokens linked to index.css
         'canvas-bg': 'var(--color-canvas-bg)',
         'canvas-card': 'var(--color-canvas-card)',
@@ -36,6 +36,13 @@ export default {
         'btn-secondary-text': 'var(--color-btn-secondary-text)',
         'btn-secondary-border': 'var(--color-btn-secondary-border)',
         'btn-secondary-hover': 'var(--color-btn-secondary-hover)',
+
+        pup: {
+          maroon: '#800000',
+          gold: '#FFD700',
+          darkMaroon: '#4A0000',
+          lightGold: '#FFF2B2'
+        }
       }
     },
   },
