@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Search, Grid, BookOpen, Camera, Paintbrush, FolderClosed, Package } from 'lucide-react';
+import { Grid, BookOpen, Camera, Paintbrush, FolderClosed, Package } from 'lucide-react';
 import { CategoryFilters } from './CategoryFilters';
 import { ItemCard } from './ItemCard';
 import { mockItems } from '../../data/mockItems';
 
 export function DiscoverSection() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
   const categories = [
