@@ -84,7 +84,7 @@ function App() {
           </div>
           <div>
             <h1 className="font-extrabold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-neutral-400">
-              Uni<span className="text-red-500">Share</span>
+              Hi<span className="text-red-500">ram</span>
             </h1>
             <p className="text-[10px] text-neutral-400 uppercase tracking-widest font-semibold flex items-center gap-1">
               <Sparkles className="w-2.5 h-2.5 text-pup-gold fill-pup-gold" /> PUP Student Micro-Economy

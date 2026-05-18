@@ -1,7 +1,7 @@
 # <p align="center"><img src="https://img.shields.io/badge/Hiram-Student--to--Student%20Item%20Sharing-800000?style=for-the-badge" alt="Hiram Logo" /><br/><br/>🔄 Hiram — Monorepo</p>
 
 <p align="center">
-  <a href="https://github.com/TombstonePUP/u_share_web">
+  <a href="https://github.com/TombstonePUP/hiram">
     <img src="https://img.shields.io/badge/Platform-Web%20%7C%20Android-800000?style=flat-square&logo=react" alt="Platforms" />
   </a>
   <img src="https://img.shields.io/badge/PUP-Iskolar--Powered-FFD700?style=flat-square&labelColor=800000&logoColor=white" alt="PUP Powered" />
@@ -105,8 +105,8 @@ Ensure you have the following installed on your local machine:
 ### 2. Setup Repository
 ```bash
 # Clone the repository
-git clone https://github.com/TombstonePUP/u_share_web.git
-cd u_share_web
+git clone https://github.com/TombstonePUP/hiram.git
+cd hiram
 
 # Install workspaces dependencies
 npm install
