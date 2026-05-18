@@ -23,19 +23,28 @@ interface ItemCardProps {
 
 export function ItemCard({ item }: ItemCardProps) {
   const [imgError, setImgError] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
-    <div className="bg-transparent border border-white/10 rounded-xl overflow-hidden transition-colors duration-300 flex flex-col group hover:border-white/30">
+    <div className="bg-transparent border border-white/10 rounded-xl overflow-hidden transition-all duration-300 flex flex-col group hover:border-white/40">
       <div className="relative h-48 overflow-hidden bg-[#111] flex items-center justify-center border-b border-white/10">
         {item.image && !imgError ? (
-          <img
-            src={item.image}
-            alt={item.title}
-            onError={() => setImgError(true)}
-            className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
-          />
+          <>
+            {!imgLoaded && (
+              <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10">
+                <LogoSymbol size="lg" className="text-white/5" />
+              </div>
+            )}
+            <img
+              src={item.image}
+              alt={item.title}
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgError(true)}
+              className={`w-full h-full object-cover group-hover:scale-105 transition duration-500 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+            />
+          </>
         ) : (
-          <div className="flex flex-col items-center justify-center text-white/40 gap-2">
+          <div className="flex flex-col items-center justify-center text-white/40 gap-2 w-full h-full">
             <LogoSymbol size="lg" className="text-white/20" />
             <span className="text-[10px] font-bold tracking-wider uppercase opacity-60">No Image Available</span>
           </div>

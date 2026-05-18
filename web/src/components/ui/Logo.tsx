@@ -38,7 +38,7 @@ export function LogoSymbol({ size = 'md', className = '' }: LogoSymbolProps) {
         stroke="currentColor" 
         strokeWidth="2.2" 
         strokeDasharray="2 2"
-        className="text-white/40" 
+        className="text-primary" 
       />
     </svg>
   );

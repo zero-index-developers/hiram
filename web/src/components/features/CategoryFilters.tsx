@@ -26,11 +26,10 @@ export function CategoryFilters({
           <button
             key={cat.value}
             onClick={() => setSelectedCategory(cat.value)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition shrink-0 duration-300 ${
-              isSelected
-                ? 'bg-white text-black'
-                : 'bg-transparent border border-white/20 text-white/60 hover:text-white hover:border-white/50'
-            }`}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition shrink-0 duration-300 ${isSelected
+              ? 'bg-primary/80 border border-primary'
+              : 'bg-transparent border border-white/20 text-white/60 hover:text-white hover:border-white/50'
+              }`}
           >
             <Icon className="w-3.5 h-3.5" />
             {cat.label}

@@ -3,8 +3,8 @@ export function Hero() {
     <section className="w-full bg-black pt-20 pb-14 px-6 flex flex-col items-center">
       <div className="max-w-[700px] w-full mx-auto flex flex-col items-center">
         {/* Eyebrow */}
-        <p className="text-sm font-semibold text-white text-center cursor-pointer hover:underline">
-          State of Sharing '26 &nbsp;•&nbsp; Join the campus network
+        <p className="text-xs font-bold text-white/60 text-center tracking-widest uppercase cursor-pointer hover:text-white/80 transition duration-200">
+          <span className="text-primary">Join</span> the campus network
         </p>
 
         {/* Headline */}
