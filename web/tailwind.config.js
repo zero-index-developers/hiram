@@ -16,7 +16,7 @@ export default {
         'blue-light': '#57b8f0',
         'white': '#ffffff',
         'gray': '#cccccc',
-        'primary': '#e71313ff',
+        'primary': '#a30404ff',
 
         // Semantic Theme Tokens linked to index.css
         'canvas-bg': 'var(--color-canvas-bg)',
