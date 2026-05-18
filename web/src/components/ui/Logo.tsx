@@ -38,27 +38,8 @@ export function LogoSymbol({ size = 'md', className = '' }: LogoSymbolProps) {
         stroke="currentColor" 
         strokeWidth="2.2" 
         strokeDasharray="2 2"
-        className="text-blue-light" 
+        className="text-white/40" 
       />
     </svg>
-  );
-}
-
-interface LogoProps {
-  size?: 'sm' | 'md';
-  className?: string;
-}
-
-export function Logo({ size = 'md', className = '' }: LogoProps) {
-  const symbolSize = size === 'sm' ? 'sm' : 'md';
-  const textSize = size === 'sm' ? 'text-sm' : 'text-lg';
-
-  return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <LogoSymbol size={symbolSize} />
-      <span className={`font-black tracking-tight text-current ${textSize}`}>
-        Hiram
-      </span>
-    </div>
   );
 }

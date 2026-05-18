@@ -5,54 +5,13 @@
 :root {
   font-family: "Plus Jakarta Sans", sans-serif;
   scroll-behavior: smooth;
-
-  /* Semantic Color Tokens (Light Mode) */
-  --color-canvas-bg: #f8f8fa;
-  --color-canvas-card: #ffffff;
-  --color-canvas-footer: #f3f3f5;
-  --color-text-primary: #18181b;
-  --color-text-secondary: #52525b;
-  --color-text-muted: #71717a;
-  --color-border-subtle: rgba(24, 24, 27, 0.04);
-  --color-border-card: rgba(24, 24, 27, 0.05);
-
-  /* Button Tokens (Light Mode - Premium Dark Contrast) */
-  --color-btn-primary-bg: #18181b;
-  --color-btn-primary-text: #ffffff;
-  --color-btn-primary-hover: #27272a;
-  --color-btn-secondary-bg: #f4f4f5;
-  --color-btn-secondary-text: #18181b;
-  --color-btn-secondary-border: rgba(24, 24, 27, 0.06);
-  --color-btn-secondary-hover: #e4e4e7;
-}
-
-.dark {
-  /* Semantic Color Tokens (Dark Mode) */
-  --color-canvas-bg: #000000;
-  --color-canvas-card: #0a0a0a;
-  --color-canvas-footer: #0a0a0a;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.7);
-  --color-text-muted: rgba(255, 255, 255, 0.4);
-  --color-border-subtle: rgba(255, 255, 255, 0.03);
-  --color-border-card: rgba(255, 255, 255, 0.04);
-
-  /* Button Tokens (Dark Mode - Premium Light Contrast) */
-  --color-btn-primary-bg: #ffffff;
-  --color-btn-primary-text: #000000;
-  --color-btn-primary-hover: #f4f4f5;
-  --color-btn-secondary-bg: #0a0a0a;
-  --color-btn-secondary-text: #ffffff;
-  --color-btn-secondary-border: rgba(255, 255, 255, 0.08);
-  --color-btn-secondary-hover: #18181b;
 }
 
 body {
   margin: 0;
-  background-color: var(--color-canvas-bg);
-  color: var(--color-text-primary);
+  background-color: #000000;
+  color: #ffffff;
   overflow-x: hidden;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Custom Hide Scrollbar Utility */
@@ -62,27 +21,4 @@ body {
 .scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-/* 🌀 View Transitions Circular reveal transition */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-  z-index: 1;
-}
-
-::view-transition-new(root) {
-  z-index: 9999;
-}
-
-.dark::view-transition-old(root) {
-  z-index: 9999;
-}
-
-.dark::view-transition-new(root) {
-  z-index: 1;
 }

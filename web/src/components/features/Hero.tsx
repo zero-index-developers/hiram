@@ -1,6 +1,3 @@
-import { Package, ArrowRightLeft, MessageSquare, ShieldCheck } from 'lucide-react';
-import { Button } from '../ui/Button';
-
 export function Hero() {
   return (
     <section className="w-full bg-black pt-20 pb-14 px-6 flex flex-col items-center">
