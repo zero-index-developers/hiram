@@ -1,0 +1,23 @@
+{
+  "name": "unishare",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Student-powered item sharing and trading platform for PUP",
+  "workspaces": [
+    "backend",
+    "web",
+    "mobile",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:web": "npm run dev --workspace=web",
+    "dev:mobile": "npm run dev --workspace=mobile",
+    "build": "turbo run build",
+    "lint": "turbo run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  }
+}

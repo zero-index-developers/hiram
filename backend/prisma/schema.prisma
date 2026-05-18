@@ -1,0 +1,72 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String    @id @default(cuid())
+  studentId       String    @unique
+  email           String    @unique
+  passwordHash    String
+  name            String
+  course          String?
+  avatarUrl       String?
+  createdAt       DateTime  @default(now())
+  items           Item[]
+  sentRequests    Request[] @relation("requester")
+  receivedRequests Request[] @relation("owner")
+  ratingsGiven    Rating[]  @relation("rater")
+  ratingsReceived Rating[]  @relation("rated")
+}
+
+model Item {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  category    String
+  condition   String    // excellent | good | fair | poor
+  imageUrls   String[]
+  isAvailable Boolean   @default(true)
+  ownerId     String
+  owner       User      @relation(fields: [ownerId], references: [id])
+  requests    Request[]
+  createdAt   DateTime  @default(now())
+}
+
+model Request {
+  id          String    @id @default(cuid())
+  type        String    // borrow | trade
+  status      String    // pending | accepted | declined | completed
+  message     String?
+  returnDate  DateTime?
+  requesterId String
+  requester   User      @relation("requester", fields: [requesterId], references: [id])
+  ownerId     String
+  owner       User      @relation("owner", fields: [ownerId], references: [id])
+  itemId      String
+  item        Item      @relation(fields: [itemId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  senderId       String
+  content        String
+  createdAt      DateTime @default(now())
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  score     Int      // 1-5
+  comment   String?
+  raterId   String
+  rater     User     @relation("rater", fields: [raterId], references: [id])
+  ratedId   String
+  rated     User     @relation("rated", fields: [ratedId], references: [id])
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,40 @@
+# Documentation
+docs/
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Build and output directories
+dist/
+build/
+.next/
+out/
+.expo/
+web-build/
+
+# Debug and log files
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+pnpm-debug.log*
+
+# IDE / Editor configuration files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env

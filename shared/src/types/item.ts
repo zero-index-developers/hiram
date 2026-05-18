@@ -1,0 +1,24 @@
+export type ItemCategory = 
+  | 'ACADEMICS'      // Calculators, review books, drafting tools, lab gowns
+  | 'ELECTRONICS'    // Tripods, cameras, chargers, powerbanks
+  | 'CREATIVE'       // Art supplies, drawing boards, musical instruments
+  | 'ORGANIZATION'   // Organizers, folders, clipboards
+  | 'OTHERS';
+
+export type ItemCondition = 
+  | 'EXCELLENT'      // Brand new or like new
+  | 'GOOD'           // Light wear, fully functional
+  | 'FAIR'           // Visible wear, fully functional
+  | 'POOR';          // Heavily worn, but usable
+
+export interface Item {
+  id: string;
+  title: string;
+  description: string;
+  category: ItemCategory;
+  condition: ItemCondition;
+  imageUrls: string[];
+  isAvailable: boolean;
+  ownerId: string;
+  createdAt: Date;
+}
