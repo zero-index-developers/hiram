@@ -18,6 +18,7 @@ export * from './constants/mockItems';
 export * from './constants/locations';
 export * from './constants/conditions';
 export * from './constants/filters';
+export * from './constants/transactionTypes';
 
 // Export Utilities
 export * from './utils/formatDate';

@@ -1,26 +1,33 @@
-import { useState } from 'react';
-import { Grid, BookOpen, Camera, Paintbrush, FolderClosed, Package } from 'lucide-react';
-import { CategoryFilters } from './CategoryFilters';
-import { ItemCard } from './ItemCard';
 import { mockItems } from '@hiram/shared';
+import type { Tag } from '@hiram/shared';
+import { Package } from 'lucide-react';
+import { ItemCard } from './ItemCard';
 
-export function DiscoverSection() {
-  const [searchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+interface DiscoverSectionProps {
+  selectedTags: Tag[];
+  searchQuery: string;
+}
 
-  const categories = [
-    { value: 'ALL', label: 'All Resources', icon: Grid },
-    { value: 'ACADEMICS', label: 'Academics', icon: BookOpen },
-    { value: 'ELECTRONICS', label: 'Electronics', icon: Camera },
-    { value: 'CREATIVE', label: 'Creative & Art', icon: Paintbrush },
-    { value: 'ORGANIZATION', label: 'Organization', icon: FolderClosed }
-  ];
-
+export function DiscoverSection({ selectedTags, searchQuery }: DiscoverSectionProps) {
   const filteredItems = mockItems.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    // 1. Text Search Filter (title/description match)
+    const matchesSearch = !searchQuery || 
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (item.description || '').toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'ALL' || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
+
+    // 2. Category Filter from selectedTags
+    const categoryTag = selectedTags.find(t => t.type === 'CATEGORY');
+    const matchesCategory = !categoryTag || item.category === categoryTag.slug;
+
+    // 3. Condition Filter from selectedTags
+    const conditionTag = selectedTags.find(t => t.type === 'CONDITION');
+    const matchesCondition = !conditionTag || item.condition === conditionTag.slug;
+
+    // 4. Transaction Filter from selectedTags
+    const transactionTag = selectedTags.find(t => t.type === 'TRANSACTION');
+    const matchesTransaction = !transactionTag || item.preferredTransaction === transactionTag.slug;
+
+    return matchesSearch && matchesCategory && matchesCondition && matchesTransaction;
   });
 
   return (
@@ -31,13 +38,6 @@ export function DiscoverSection() {
           <p className="text-neutral-500 text-sm mt-1.5 font-medium">Filter items available right now across the campus network.</p>
         </div>
       </div>
-
-      {/* Categories Tabbar */}
-      <CategoryFilters
-        categories={categories}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-      />
 
       {/* Display Item Grid */}
       {filteredItems.length > 0 ? (

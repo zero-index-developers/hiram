@@ -1,0 +1,6 @@
+import { Tag } from '../types/tag';
+
+export const TRANSACTION_TYPES: Tag[] = [
+  { slug: 'HIRAM', name: 'Hiram (Borrow)', type: 'TRANSACTION', description: 'Borrowing resources temporarily' },
+  { slug: 'TRADE', name: 'Trade (Barter)', type: 'TRANSACTION', description: 'Trading or swapping resources' },
+];

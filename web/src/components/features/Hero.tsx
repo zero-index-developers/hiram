@@ -1,21 +1,22 @@
-import { useState } from 'react';
 import type { Tag } from '@hiram/shared';
-import { CAMPUS_LOCATIONS } from '@hiram/shared';
 import { HeroHotTags } from './HeroHotTags';
 import { HeroSearchBar } from './HeroSearchBar';
 
-export function Hero() {
-  const defaultLocation = CAMPUS_LOCATIONS.find(l => l.slug === 'pup-manila') || CAMPUS_LOCATIONS[0];
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([defaultLocation]);
-  const [searchQuery, setSearchQuery] = useState('');
+interface HeroProps {
+  selectedTags: Tag[];
+  onSelectTag: (tag: Tag) => void;
+  onToggleTag: (tag: Tag) => void;
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+}
 
-  const handleSelectTag = (tag: Tag) => {
-    setSelectedTags(prev => {
-      const filtered = prev.filter(t => t.type !== tag.type);
-      return [...filtered, tag];
-    });
-  };
-
+export function Hero({ 
+  selectedTags, 
+  onSelectTag, 
+  onToggleTag, 
+  searchQuery, 
+  setSearchQuery 
+}: HeroProps) {
   return (
     <>
       <section className="relative w-full bg-background pt-20 pb-10 px-6 flex flex-col items-center">
@@ -29,7 +30,7 @@ export function Hero() {
 
       <HeroSearchBar 
         selectedTags={selectedTags}
-        onSelectTag={handleSelectTag}
+        onSelectTag={onSelectTag}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />

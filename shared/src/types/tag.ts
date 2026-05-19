@@ -1,4 +1,4 @@
-export type TagType = 'LOCATION' | 'CONDITION' | 'CATEGORY' | 'GENERAL' | 'HOT';
+export type TagType = 'LOCATION' | 'CONDITION' | 'CATEGORY' | 'GENERAL' | 'HOT' | 'TRANSACTION';
 
 export type Tag = {
   name: string;

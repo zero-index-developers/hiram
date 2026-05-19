@@ -11,12 +11,15 @@ export type ItemCondition =
   | 'FAIR'           // Visible wear, fully functional
   | 'POOR';          // Heavily worn, but usable
 
+export type ItemTransactionType = 'HIRAM' | 'TRADE';
+
 export interface Item {
   id: string;
   title: string;
   description?: string;
   category: ItemCategory;
   condition: ItemCondition;
+  preferredTransaction?: ItemTransactionType;
   imageUrls?: string[];
   isAvailable?: boolean;
   ownerId?: string;
