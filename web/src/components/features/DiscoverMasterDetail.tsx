@@ -29,11 +29,10 @@ export function DiscoverMasterDetail({
             <div
               key={item.id}
               onClick={() => onSelectItem(item.id)}
-              className={`flex items-center gap-4 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
-                isSelected
+              className={`flex items-center gap-4 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${isSelected
                   ? 'border-primary bg-primary/5 shadow-sm'
                   : 'border-primary/10 hover:border-primary/30 hover:bg-neutral-50/50 bg-white'
-              }`}
+                }`}
             >
               {/* Compact Image */}
               <CompactItemImage src={item.image} title={item.title} />
@@ -42,11 +41,10 @@ export function DiscoverMasterDetail({
               <div className="min-w-0 flex-1 flex flex-col gap-1">
                 <div className="flex items-center gap-1.5">
                   <span
-                    className={`px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase tracking-wider border ${
-                      item.preferredTransaction === 'HIRAM'
+                    className={`px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase tracking-wider border ${item.preferredTransaction === 'HIRAM'
                         ? 'bg-blue-50 text-blue-600 border-blue-100'
                         : 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                    }`}
+                      }`}
                   >
                     {item.preferredTransaction === 'HIRAM' ? 'Hiram' : 'Trade'}
                   </span>
@@ -90,11 +88,10 @@ export function DiscoverMasterDetail({
               </Badge>
               {selectedItem.preferredTransaction && (
                 <span
-                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border shadow-sm ${
-                    selectedItem.preferredTransaction === 'HIRAM'
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border shadow-sm ${selectedItem.preferredTransaction === 'HIRAM'
                       ? 'bg-blue-50 text-blue-600 border-blue-100'
                       : 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                  }`}
+                    }`}
                 >
                   {selectedItem.preferredTransaction === 'HIRAM' ? 'Hiram' : 'Trade'}
                 </span>
@@ -147,7 +144,7 @@ export function DiscoverMasterDetail({
                 variant="primary"
                 className="px-6 py-3 text-sm flex items-center gap-2 font-black shadow-md shadow-primary/10 hover:translate-y-[-1px] active:translate-y-[1px] transition-all"
               >
-                Request to Borrow <ArrowRight className="w-4 h-4" />
+                Request <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
           </div>
