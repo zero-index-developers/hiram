@@ -53,14 +53,14 @@ export function CategoryFilters({
     <div className="relative mb-8 group">
       {/* Left Gradient & Arrow */}
       <div 
-        className={`absolute left-0 top-0 bottom-4 w-20 bg-gradient-to-r from-black via-black/80 to-transparent z-10 flex items-center justify-start transition-opacity duration-300 pointer-events-none ${
+        className={`absolute left-0 top-0 bottom-4 w-20 bg-gradient-to-r from-background via-background/80 to-transparent z-10 flex items-center justify-start transition-opacity duration-300 pointer-events-none ${
           canScrollLeft ? 'opacity-100 md:opacity-0 md:group-hover:opacity-100' : 'opacity-0'
         }`}
       >
         <button 
           onClick={() => scroll('left')}
           disabled={!canScrollLeft}
-          className={`bg-black/80 border border-white/20 text-white rounded-full p-1.5 hover:bg-white/10 hover:text-primary transition-colors shadow-lg ml-1 ${
+          className={`bg-white border border-primary/10 text-neutral-600 rounded-full p-1.5 hover:bg-primary/5 hover:text-primary transition-all duration-200 shadow-sm ml-1 ${
             canScrollLeft ? 'pointer-events-auto' : 'pointer-events-none'
           }`}
         >
@@ -82,8 +82,8 @@ export function CategoryFilters({
               key={cat.value}
               onClick={() => setSelectedCategory(cat.value)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold transition shrink-0 duration-300 ${isSelected
-                ? 'bg-primary/50 border border-primary text-white'
-                : 'bg-transparent border border-white/20 text-white/60 hover:text-white hover:border-white/50'
+                ? 'bg-primary border border-primary text-white shadow-sm'
+                : 'bg-white border border-primary/10 text-neutral-600 hover:text-primary hover:border-primary/20 shadow-sm'
                 }`}
             >
               <Icon className="w-3.5 h-3.5" />
@@ -95,14 +95,14 @@ export function CategoryFilters({
 
       {/* Right Gradient & Arrow */}
       <div 
-        className={`absolute right-0 top-0 bottom-4 w-20 bg-gradient-to-l from-black via-black/80 to-transparent z-10 flex items-center justify-end transition-opacity duration-300 pointer-events-none ${
+        className={`absolute right-0 top-0 bottom-4 w-20 bg-gradient-to-l from-background via-background/80 to-transparent z-10 flex items-center justify-end transition-opacity duration-300 pointer-events-none ${
           canScrollRight ? 'opacity-100 md:opacity-0 md:group-hover:opacity-100' : 'opacity-0'
         }`}
       >
         <button 
           onClick={() => scroll('right')}
           disabled={!canScrollRight}
-          className={`bg-black/80 border border-white/20 text-white rounded-full p-1.5 hover:bg-white/10 hover:text-primary transition-colors shadow-lg mr-1 ${
+          className={`bg-white border border-primary/10 text-neutral-600 rounded-full p-1.5 hover:bg-primary/5 hover:text-primary transition-all duration-200 shadow-sm mr-1 ${
             canScrollRight ? 'pointer-events-auto' : 'pointer-events-none'
           }`}
         >

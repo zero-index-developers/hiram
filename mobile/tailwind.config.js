@@ -9,12 +9,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        pup: {
-          maroon: '#800000',
-          gold: '#FFD700',
-          darkMaroon: '#4A0000',
-          lightGold: '#FFF2B2'
-        }
+        primary: '#7e1e39',
+        background: '#FCF8F8',
+        accent: '#F2B50B',
       }
     },
   },

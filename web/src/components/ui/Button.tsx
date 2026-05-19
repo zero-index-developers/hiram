@@ -15,8 +15,8 @@ export function Button({
   const baseStyle = 'inline-flex items-center justify-center font-bold text-sm rounded-full transition-all duration-300 focus:outline-none';
   
   const variants = {
-    primary: 'bg-white text-black px-6 py-2.5 hover:bg-white/90',
-    secondary: 'bg-transparent text-white border border-white/20 px-6 py-2.5 hover:border-white/50 hover:bg-white/5',
+    primary: 'bg-primary text-white px-6 py-2.5 hover:bg-primary/95 shadow-sm hover:shadow transition-all duration-300',
+    secondary: 'bg-white text-neutral-700 border border-primary/10 px-6 py-2.5 hover:bg-primary/5 hover:text-primary transition-all duration-300 shadow-sm',
   };
 
   return (

@@ -1,21 +1,11 @@
-import { useState } from 'react';
-import { Clock, ArrowRight } from 'lucide-react';
 import { formatDate } from '@hiram/shared';
-import { Button } from '../ui/Button';
+import { ArrowRight, Clock } from 'lucide-react';
+import { useState } from 'react';
 import { Badge } from '../ui/Badge';
+import { Button } from '../ui/Button';
 import { LogoSymbol } from '../ui/Logo';
 
-interface Item {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  condition: string;
-  isAvailable: boolean;
-  owner: string;
-  createdAt: Date;
-  image?: string;
-}
+import type { Item } from '@hiram/shared';
 
 interface ItemCardProps {
   item: Item;
@@ -25,14 +15,16 @@ export function ItemCard({ item }: ItemCardProps) {
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
+  const ownerName = typeof item.owner === 'string' ? item.owner : item.owner?.name || 'Unknown';
+
   return (
-    <div className="bg-transparent border border-white/10 rounded-xl overflow-hidden transition-all duration-300 flex flex-col group hover:border-white/40">
-      <div className="relative h-48 overflow-hidden bg-[#111] flex items-center justify-center border-b border-white/10">
+    <div className="bg-white border border-primary/5 rounded-xl overflow-hidden transition-all duration-300 flex flex-col group border-primary/20 hover:shadow-md">
+      <div className="relative h-48 overflow-hidden bg-neutral-50 flex items-center justify-center border-b border-primary/5">
         {item.image && !imgError ? (
           <>
             {!imgLoaded && (
-              <div className="absolute inset-0 bg-white/5 animate-pulse flex items-center justify-center z-10">
-                <LogoSymbol size="lg" className="text-white/5" />
+              <div className="absolute inset-0 bg-neutral-100 animate-pulse flex items-center justify-center z-10">
+                <LogoSymbol size="lg" className="text-primary/10" />
               </div>
             )}
             <img
@@ -44,8 +36,8 @@ export function ItemCard({ item }: ItemCardProps) {
             />
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center text-white/40 gap-2 w-full h-full">
-            <LogoSymbol size="lg" className="text-white/20" />
+          <div className="flex flex-col items-center justify-center text-neutral-400 gap-2 w-full h-full">
+            <LogoSymbol size="lg" className="text-neutral-200" />
             <span className="text-[10px] font-bold tracking-wider uppercase opacity-60">No Image Available</span>
           </div>
         )}
@@ -60,26 +52,26 @@ export function ItemCard({ item }: ItemCardProps) {
           <Badge variant="outline">
             {item.category}
           </Badge>
-          <span className="text-[10px] text-white/40 font-bold flex items-center gap-1">
-            <Clock className="w-3 h-3" /> {formatDate(item.createdAt)}
+          <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
+            <Clock className="w-3 h-3 text-neutral-400" /> {formatDate(item.createdAt)}
           </span>
         </div>
 
-        <h4 className="font-extrabold text-lg text-white group-hover:text-white/80 transition-colors duration-200">
+        <h4 className="font-extrabold text-lg text-neutral-800 group-hover:text-primary transition-colors duration-200">
           {item.title}
         </h4>
 
-        <p className="text-white/60 text-xs mt-2 leading-relaxed flex-grow font-medium">
+        <p className="text-neutral-600 text-xs mt-2 leading-relaxed flex-grow font-medium">
           {item.description}
         </p>
 
         <div className="pt-0 mt-5 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-white/10 text-white/60 flex items-center justify-center font-bold text-xs uppercase">
-              {item.owner.charAt(0)}
+            <div className="w-7 h-7 rounded-full bg-primary/5 text-primary flex items-center justify-center font-bold text-xs uppercase border border-primary/10">
+              {ownerName.charAt(0)}
             </div>
-            <span className="text-xs font-bold text-white/60">
-              By {item.owner}
+            <span className="text-xs font-bold text-neutral-500">
+              By {ownerName}
             </span>
           </div>
 

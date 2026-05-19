@@ -1,29 +1,34 @@
-import type { ItemCategory } from '../types/item';
+import { Tag } from '../types/tag';
 
-export const ITEM_CATEGORIES: { value: ItemCategory; label: string; description: string }[] = [
+export const ITEM_CATEGORIES: Tag[] = [
   {
-    value: 'ACADEMICS',
-    label: 'Academics & Study',
-    description: 'Calculators, review books, reference materials, drawing boards, lab gowns.'
+    slug: 'ACADEMICS',
+    name: 'Academics & Study',
+    description: 'Calculators, review books, reference materials, drawing boards, lab gowns.',
+    type: 'CATEGORY'
   },
   {
-    value: 'ELECTRONICS',
-    label: 'Electronics & Gadgets',
-    description: 'Cameras, tripods, ring lights, chargers, adapters, powerbanks.'
+    slug: 'ELECTRONICS',
+    name: 'Electronics & Gadgets',
+    description: 'Cameras, tripods, ring lights, chargers, adapters, powerbanks.',
+    type: 'CATEGORY'
   },
   {
-    value: 'CREATIVE',
-    label: 'Art & Creative Tools',
-    description: 'Sketchbooks, paint sets, specialized drafting tools, musical instruments.'
+    slug: 'CREATIVE',
+    name: 'Art & Creative Tools',
+    description: 'Sketchbooks, paint sets, specialized drafting tools, musical instruments.',
+    type: 'CATEGORY'
   },
   {
-    value: 'ORGANIZATION',
-    label: 'Office & Organization',
-    description: 'Folders, clipboards, organizers, binders.'
+    slug: 'ORGANIZATION',
+    name: 'Office & Organization',
+    description: 'Folders, clipboards, organizers, binders.',
+    type: 'CATEGORY'
   },
   {
-    value: 'OTHERS',
-    label: 'Other Items',
-    description: 'Any school-appropriate item not fitting other categories.'
+    slug: 'OTHERS',
+    name: 'Other Items',
+    description: 'Any school-appropriate item not fitting other categories.',
+    type: 'CATEGORY'
   }
 ];

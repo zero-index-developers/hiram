@@ -1,14 +1,4 @@
-export interface Item {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  condition: string;
-  isAvailable: boolean;
-  owner: string;
-  createdAt: Date;
-  image?: string;
-}
+import { Item } from '../types/item';
 
 export const mockItems: Item[] = [
   {

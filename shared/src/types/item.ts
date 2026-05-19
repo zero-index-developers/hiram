@@ -14,11 +14,20 @@ export type ItemCondition =
 export interface Item {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   category: ItemCategory;
   condition: ItemCondition;
-  imageUrls: string[];
-  isAvailable: boolean;
-  ownerId: string;
-  createdAt: Date;
+  imageUrls?: string[];
+  isAvailable?: boolean;
+  ownerId?: string;
+  createdAt?: Date;
+
+  // Client-side helpers
+  image?: string;
+  date?: Date;
+  owner?: string | {
+    id?: string;
+    name: string;
+    avatarUrl?: string;
+  };
 }

@@ -12,8 +12,8 @@ export function Badge({
   const baseStyle = 'inline-flex items-center justify-center rounded-full transition-all duration-300';
   
   const variants = {
-    glass: 'bg-black/80 border border-white/20 text-white px-3.5 py-1 text-[10px] font-extrabold uppercase tracking-wider',
-    outline: 'font-extrabold text-white/60 border border-white/10 bg-transparent px-2.5 py-0.5 text-[10px] uppercase tracking-widest',
+    glass: 'bg-white/85 backdrop-blur-md border border-primary/10 text-neutral-800 px-3.5 py-1 text-[10px] font-extrabold uppercase tracking-wider shadow-sm',
+    outline: 'font-extrabold text-neutral-500 border border-primary/10 bg-white px-2.5 py-0.5 text-[10px] uppercase tracking-widest shadow-sm',
   };
 
   return (
