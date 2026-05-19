@@ -7,11 +7,12 @@ import { FilterSelectGroup } from './FilterSelectGroup';
 interface HeroSearchBarProps {
   selectedTags: Tag[];
   onSelectTag: (tag: Tag) => void;
+  onApplyTags?: (tags: Tag[]) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
 
-export function HeroSearchBar({ selectedTags, onSelectTag, searchQuery, setSearchQuery }: HeroSearchBarProps) {
+export function HeroSearchBar({ selectedTags, onSelectTag, onApplyTags, searchQuery, setSearchQuery }: HeroSearchBarProps) {
   const [isSticky, setIsSticky] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -87,6 +88,7 @@ export function HeroSearchBar({ selectedTags, onSelectTag, searchQuery, setSearc
             <FilterSelectGroup
               selectedTags={selectedTags}
               onSelectTag={onSelectTag}
+              onApplyTags={onApplyTags}
             />
           </div>
         </div>

@@ -15,9 +15,16 @@ export function DiscoverSection({ selectedTags, searchQuery }: DiscoverSectionPr
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (item.description || '').toLowerCase().includes(searchQuery.toLowerCase());
 
-    // 2. Category Filter from selectedTags
-    const categoryTag = selectedTags.find(t => t.type === 'CATEGORY');
-    const matchesCategory = !categoryTag || item.category === categoryTag.slug;
+    // 2. Category / Subcategory Filter from selectedTags
+    const categoryTags = selectedTags.filter(t => t.type === 'CATEGORY' || t.type === 'SUBCATEGORY');
+    
+    // If no category/subcategory tags are selected, it matches.
+    // Otherwise, it must match at least one selected category OR subcategory.
+    const matchesCategory = categoryTags.length === 0 || categoryTags.some(tag => {
+      if (tag.type === 'CATEGORY') return item.category === tag.slug;
+      if (tag.type === 'SUBCATEGORY') return item.subcategory === tag.slug;
+      return false;
+    });
 
     // 3. Condition Filter from selectedTags
     const conditionTag = selectedTags.find(t => t.type === 'CONDITION');
@@ -27,7 +34,21 @@ export function DiscoverSection({ selectedTags, searchQuery }: DiscoverSectionPr
     const transactionTag = selectedTags.find(t => t.type === 'TRANSACTION');
     const matchesTransaction = !transactionTag || item.preferredTransaction === transactionTag.slug;
 
-    return matchesSearch && matchesCategory && matchesCondition && matchesTransaction;
+    // 5. Location Cascading Filter
+    const regionTag = selectedTags.find(t => t.type === 'REGION');
+    const cityTag = selectedTags.find(t => t.type === 'CITY');
+    const barangayTag = selectedTags.find(t => t.type === 'BARANGAY');
+
+    let matchesLocation = true;
+    if (barangayTag) {
+      matchesLocation = item.barangayCode === barangayTag.slug;
+    } else if (cityTag) {
+      matchesLocation = item.cityCode === cityTag.slug;
+    } else if (regionTag) {
+      matchesLocation = item.regionCode === regionTag.slug;
+    }
+
+    return matchesSearch && matchesCategory && matchesCondition && matchesTransaction && matchesLocation;
   });
 
   return (

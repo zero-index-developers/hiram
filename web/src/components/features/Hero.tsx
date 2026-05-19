@@ -5,7 +5,7 @@ import { HeroSearchBar } from './HeroSearchBar';
 interface HeroProps {
   selectedTags: Tag[];
   onSelectTag: (tag: Tag) => void;
-  onToggleTag: (tag: Tag) => void;
+  onApplyTags?: (tags: Tag[]) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
@@ -13,7 +13,7 @@ interface HeroProps {
 export function Hero({ 
   selectedTags, 
   onSelectTag, 
-  onToggleTag, 
+  onApplyTags,
   searchQuery, 
   setSearchQuery 
 }: HeroProps) {
@@ -31,6 +31,7 @@ export function Hero({
       <HeroSearchBar 
         selectedTags={selectedTags}
         onSelectTag={onSelectTag}
+        onApplyTags={onApplyTags}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />

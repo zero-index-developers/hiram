@@ -1,4 +1,4 @@
-import { Tag } from '../types/tag';
+import type { Tag } from '../types/tag';
 
 export const HOT_TAGS: Tag[] = [
   { name: 'Graphing Calculator', slug: 'graphing-calculator', type: 'HOT', hotScore: 95 },

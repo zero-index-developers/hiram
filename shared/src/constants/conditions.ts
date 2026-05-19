@@ -1,4 +1,4 @@
-import { Tag } from '../types/tag';
+import type { Tag } from '../types/tag';
 
 export const ITEM_CONDITIONS: Tag[] = [
   { slug: 'EXCELLENT', name: 'Excellent', description: 'Brand new or like new', type: 'CONDITION' },

@@ -18,12 +18,16 @@ export interface Item {
   title: string;
   description?: string;
   category: ItemCategory;
+  subcategory?: string;
   condition: ItemCondition;
   preferredTransaction?: ItemTransactionType;
   imageUrls?: string[];
   isAvailable?: boolean;
   ownerId?: string;
   createdAt?: Date;
+  regionCode?: string;
+  cityCode?: string;
+  barangayCode?: string;
 
   // Client-side helpers
   image?: string;

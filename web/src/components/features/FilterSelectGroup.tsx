@@ -1,17 +1,18 @@
 import { FILTERS_CONFIG } from '@hiram/shared';
 import type { Tag, TagType } from '@hiram/shared';
 import { Select } from '../ui/Select';
+import { LocationCascadeFilter } from './LocationCascadeFilter';
+import { CategoryNestedFilter } from './CategoryNestedFilter';
 
 interface FilterSelectGroupProps {
   selectedTags: Tag[];
   onSelectTag: (tag: Tag) => void;
+  onApplyTags?: (tags: Tag[]) => void;
   className?: string;
 }
 
 // Web-specific styling for the different filter dropdowns
 const FILTER_CLASSES: Partial<Record<TagType, string>> = {
-  LOCATION: 'min-w-[130px]',
-  CATEGORY: 'min-w-[140px]',
   CONDITION: 'min-w-[120px]',
   TRANSACTION: 'min-w-[170px]',
 };
@@ -19,6 +20,7 @@ const FILTER_CLASSES: Partial<Record<TagType, string>> = {
 export function FilterSelectGroup({
   selectedTags,
   onSelectTag,
+  onApplyTags,
   className = ''
 }: FilterSelectGroupProps) {
 
@@ -33,6 +35,21 @@ export function FilterSelectGroup({
 
   return (
     <div className={`flex flex-wrap justify-center items-center gap-3 ${className}`}>
+      {/* Cascading Location Filter */}
+      <LocationCascadeFilter
+        selectedTags={selectedTags}
+        onSelectTag={onSelectTag}
+      />
+
+      {/* Nested Category Filter */}
+      <CategoryNestedFilter
+        selectedTags={selectedTags}
+        onApplyTags={(tags) => {
+          if (onApplyTags) onApplyTags(tags);
+        }}
+      />
+
+      {/* Other Config-Driven Filters */}
       {FILTERS_CONFIG.map((filter) => {
         // Find the currently active tag for this specific filter type
         const selectedValue = selectedTags.find(t => t.type === filter.type)?.slug || 'ALL';

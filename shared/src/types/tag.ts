@@ -1,4 +1,4 @@
-export type TagType = 'LOCATION' | 'CONDITION' | 'CATEGORY' | 'GENERAL' | 'HOT' | 'TRANSACTION';
+export type TagType = 'LOCATION' | 'REGION' | 'CITY' | 'BARANGAY' | 'CONDITION' | 'CATEGORY' | 'SUBCATEGORY' | 'GENERAL' | 'HOT' | 'TRANSACTION';
 
 export type Tag = {
   name: string;
@@ -6,4 +6,5 @@ export type Tag = {
   type?: TagType;
   description?: string;
   hotScore?: number;
+  subcategories?: Tag[];
 };
