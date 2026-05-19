@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { FilterX } from 'lucide-react';
 import type { Tag, TagType } from '@hiram/shared';
 import { FILTERS_CONFIG, psgcService } from '@hiram/shared';
 import { FilterSelect } from '../ui/FilterSelect';
@@ -74,6 +75,9 @@ export function FilterSelectGroup({
     subcategories: citiesMap[r.slug] || []
   }));
   const activeLocationValues = selectedTags.filter(t => t.type === 'REGION' || t.type === 'CITY');
+  const hasActiveFilters = selectedTags.some(t =>
+    ['REGION', 'CITY', 'CATEGORY', 'SUBCATEGORY', 'CONDITION', 'TRANSACTION'].includes(t.type || '')
+  );
 
   return (
     <div className={`flex flex-wrap justify-center items-center gap-3 ${className}`}>
@@ -130,6 +134,16 @@ export function FilterSelectGroup({
           />
         );
       })}
+
+      {hasActiveFilters && (
+        <button
+          onClick={() => onApplyTags?.([], ['REGION', 'CITY', 'CATEGORY', 'SUBCATEGORY', 'CONDITION', 'TRANSACTION'])}
+          className="flex items-center justify-center w-8 h-8 rounded-full border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/40 transition-all duration-200 shadow-sm shrink-0"
+          title="Clear all filters"
+        >
+          <FilterX className="w-4.5 h-4.5" />
+        </button>
+      )}
     </div>
   );
 }

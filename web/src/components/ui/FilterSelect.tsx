@@ -56,7 +56,7 @@ export function FilterSelect(props: FilterSelectProps) {
     if (isOpen && variant === 'checkbox') {
       setLocalTags((props as CheckboxProps).values || []);
     }
-  }, [isOpen, variant, props]);
+  }, [isOpen]);
 
   // Click outside
   useEffect(() => {
