@@ -1,21 +1,14 @@
-import { FILTERS_CONFIG } from '@hiram/shared';
+import { useEffect, useState } from 'react';
 import type { Tag, TagType } from '@hiram/shared';
-import { Select } from '../ui/Select';
-import { LocationCascadeFilter } from './LocationCascadeFilter';
-import { CategoryNestedFilter } from './CategoryNestedFilter';
+import { FILTERS_CONFIG, psgcService } from '@hiram/shared';
+import { FilterSelect } from '../ui/FilterSelect';
 
 interface FilterSelectGroupProps {
   selectedTags: Tag[];
   onSelectTag: (tag: Tag) => void;
-  onApplyTags?: (tags: Tag[]) => void;
+  onApplyTags?: (tags: Tag[], typesToReplace: TagType[]) => void;
   className?: string;
 }
-
-// Web-specific styling for the different filter dropdowns
-const FILTER_CLASSES: Partial<Record<TagType, string>> = {
-  CONDITION: 'min-w-[120px]',
-  TRANSACTION: 'min-w-[170px]',
-};
 
 export function FilterSelectGroup({
   selectedTags,
@@ -23,50 +16,96 @@ export function FilterSelectGroup({
   onApplyTags,
   className = ''
 }: FilterSelectGroupProps) {
+  // Location States
+  const [regions, setRegions] = useState<Tag[]>([]);
+  const [citiesMap, setCitiesMap] = useState<Record<string, Tag[]>>({});
 
-  const handleSelect = (slug: string, filterType: TagType, sourceList: Tag[]) => {
-    if (slug === 'ALL') {
-      onSelectTag({ slug: '', name: '', type: filterType });
-    } else {
-      const tag = sourceList.find(t => t.slug === slug);
-      if (tag) onSelectTag(tag);
+  useEffect(() => {
+    psgcService.getRegions().then(data => {
+      const sorted = data.sort((a, b) => a.name.localeCompare(b.name));
+      const regionTags: Tag[] = sorted.map(r => ({
+        slug: r.code,
+        name: r.name,
+        type: 'REGION'
+      }));
+      setRegions(regionTags);
+    });
+  }, []);
+
+  const handleLocationHover = (slug: string) => {
+    const region = regions.find(r => r.slug === slug);
+    if (region && !citiesMap[slug]) {
+      psgcService.getCitiesAndMunicipalities(slug).then(data => {
+        const sorted = data.sort((a, b) => a.name.localeCompare(b.name));
+        const cityTags: Tag[] = sorted.map(c => ({
+          slug: c.code,
+          name: c.name,
+          type: 'CITY'
+        }));
+        setCitiesMap(prev => ({ ...prev, [slug]: cityTags }));
+      });
     }
   };
 
+  const locationOptions = regions.map(r => ({
+    ...r,
+    subcategories: citiesMap[r.slug] || []
+  }));
+  const activeLocationValues = selectedTags.filter(t => t.type === 'REGION' || t.type === 'CITY');
+
   return (
     <div className={`flex flex-wrap justify-center items-center gap-3 ${className}`}>
-      {/* Cascading Location Filter */}
-      <LocationCascadeFilter
-        selectedTags={selectedTags}
-        onSelectTag={onSelectTag}
+      {/* Location Filter */}
+      <FilterSelect
+        variant="checkbox"
+        options={locationOptions}
+        placeholder="Location"
+        values={activeLocationValues}
+        onApply={(tags) => onApplyTags?.(tags, ['REGION', 'CITY'])}
+        onHover={handleLocationHover}
+        forceNested={true}
       />
 
-      {/* Nested Category Filter */}
-      <CategoryNestedFilter
-        selectedTags={selectedTags}
-        onApplyTags={(tags) => {
-          if (onApplyTags) onApplyTags(tags);
-        }}
-      />
-
-      {/* Other Config-Driven Filters */}
+      {/* Config-Driven Filters */}
       {FILTERS_CONFIG.map((filter) => {
-        // Find the currently active tag for this specific filter type
-        const selectedValue = selectedTags.find(t => t.type === filter.type)?.slug || 'ALL';
-        const webClassName = FILTER_CLASSES[filter.type] || 'min-w-[120px]';
+        // Collect all tag types in this filter's option tree
+        const allTypes: TagType[] = [];
+        const typeSet = new Set<string>();
+        filter.options.forEach(o => {
+          if (o.type && !typeSet.has(o.type)) { typeSet.add(o.type); allTypes.push(o.type); }
+          o.subcategories?.forEach(s => { if (s.type && !typeSet.has(s.type)) { typeSet.add(s.type); allTypes.push(s.type); } });
+        });
+        const activeValues = selectedTags.filter(t => t.type && typeSet.has(t.type));
 
+        if (filter.variant === 'checkbox') {
+          return (
+            <FilterSelect
+              key={filter.type}
+              variant="checkbox"
+              options={filter.options}
+              placeholder={filter.placeholder}
+              values={activeValues}
+              onApply={(tags) => onApplyTags?.(tags, allTypes)}
+            />
+          );
+        }
+
+        const selectedValue = selectedTags.find(t => t.type === filter.type)?.slug || '';
         return (
-          <Select
+          <FilterSelect
             key={filter.type}
+            variant="radio"
+            options={filter.options}
+            placeholder={filter.placeholder}
             value={selectedValue}
-            onChange={(e) => handleSelect(e.target.value, filter.type, filter.options)}
-            className={webClassName}
-          >
-            {filter.options.map(opt => (
-              <option key={opt.slug} value={opt.slug}>{opt.name}</option>
-            ))}
-            <option value="ALL">All {filter.placeholder}s</option>
-          </Select>
+            onChange={(tag) => {
+              if (tag) {
+                onSelectTag(tag);
+              } else {
+                onSelectTag({ slug: '', name: '', type: filter.type });
+              }
+            }}
+          />
         );
       })}
     </div>

@@ -1,4 +1,4 @@
-import type { Tag } from '@hiram/shared';
+import type { Tag, TagType } from '@hiram/shared';
 import { Search, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { LogoSymbol } from '../ui/Logo';
@@ -7,7 +7,7 @@ import { FilterSelectGroup } from './FilterSelectGroup';
 interface HeroSearchBarProps {
   selectedTags: Tag[];
   onSelectTag: (tag: Tag) => void;
-  onApplyTags?: (tags: Tag[]) => void;
+  onApplyTags?: (tags: Tag[], typesToReplace: TagType[]) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }

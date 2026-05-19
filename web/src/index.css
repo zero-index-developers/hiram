@@ -22,3 +22,23 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Minimalist Scrollbar on theme with system */
+.scrollbar-minimal::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-minimal::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-minimal::-webkit-scrollbar-thumb {
+  background-color: rgba(163, 163, 163, 0.4);
+  border-radius: 10px;
+}
+.scrollbar-minimal::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(163, 163, 163, 0.8);
+}
+.scrollbar-minimal {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(163, 163, 163, 0.4) transparent;
+}

@@ -1,11 +1,11 @@
-import type { Tag } from '@hiram/shared';
+import type { Tag, TagType } from '@hiram/shared';
 import { HeroHotTags } from './HeroHotTags';
 import { HeroSearchBar } from './HeroSearchBar';
 
 interface HeroProps {
   selectedTags: Tag[];
   onSelectTag: (tag: Tag) => void;
-  onApplyTags?: (tags: Tag[]) => void;
+  onApplyTags?: (tags: Tag[], typesToReplace: TagType[]) => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }

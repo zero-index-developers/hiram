@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { Tag } from '@hiram/shared';
+import type { Tag, TagType } from '@hiram/shared';
 import { DiscoverSection } from './components/features/DiscoverSection';
 import { Hero } from './components/features/Hero';
 import { Footer } from './components/layout/Footer';
@@ -27,13 +27,12 @@ function App() {
     });
   };
 
-  const handleApplyTags = (tagsToApply: Tag[]) => {
-    // When "Apply" is clicked, we completely replace all existing CATEGORY or SUBCATEGORY tags
-    // with the newly applied array of tags from the CategoryNestedFilter component.
-    setSelectedTags(prev => {
-      const nonCategoryTags = prev.filter(t => t.type !== 'CATEGORY' && t.type !== 'SUBCATEGORY');
-      return [...nonCategoryTags, ...tagsToApply];
-    });
+  const handleApplyTags = (tagsToApply: Tag[], typesToReplace: TagType[]) => {
+    const replaceSet = new Set<string>(typesToReplace);
+    setSelectedTags(prev => [
+      ...prev.filter(t => !replaceSet.has(t.type as string)),
+      ...tagsToApply,
+    ]);
   };
 
   return (
