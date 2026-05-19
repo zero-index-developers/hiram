@@ -53,11 +53,10 @@ export function ItemCard({ item }: ItemCardProps) {
             {item.category}
           </Badge>
           {item.preferredTransaction && (
-            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border shadow-sm ${
-              item.preferredTransaction === 'HIRAM'
+            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border shadow-sm ${item.preferredTransaction === 'HIRAM'
                 ? 'bg-blue-50 text-blue-600 border-blue-100'
                 : 'bg-emerald-50 text-emerald-600 border-emerald-100'
-            }`}>
+              }`}>
               {item.preferredTransaction === 'HIRAM' ? 'Hiram' : 'Trade'}
             </span>
           )}
