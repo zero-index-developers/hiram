@@ -18,7 +18,7 @@ export function ItemCard({ item }: ItemCardProps) {
   const ownerName = typeof item.owner === 'string' ? item.owner : item.owner?.name || 'Unknown';
 
   return (
-    <div className="bg-white border border-primary/5 rounded-xl overflow-hidden transition-all duration-300 flex flex-col group border-primary/20 hover:shadow-md">
+    <div className="bg-white border border-primary/20 rounded-xl overflow-hidden transition-all duration-300 flex flex-col group hover:shadow-md">
       <div className="relative h-48 overflow-hidden bg-neutral-50 flex items-center justify-center border-b border-primary/5">
         {item.image && !imgError ? (
           <>
