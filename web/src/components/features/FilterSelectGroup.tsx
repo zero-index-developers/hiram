@@ -23,12 +23,34 @@ export function FilterSelectGroup({
   useEffect(() => {
     psgcService.getRegions().then(data => {
       const sorted = data.sort((a, b) => a.name.localeCompare(b.name));
-      const regionTags: Tag[] = sorted.map(r => ({
+      // Prioritize NCR (National Capital Region) to be first
+      const ncrIndex = sorted.findIndex(r => r.name.toUpperCase().includes('NCR') || r.name.toUpperCase().includes('NATIONAL CAPITAL REGION'));
+      let ordered = [...sorted];
+      if (ncrIndex > -1) {
+        const [ncr] = ordered.splice(ncrIndex, 1);
+        ordered = [ncr, ...ordered];
+      }
+
+      const regionTags: Tag[] = ordered.map(r => ({
         slug: r.code,
         name: r.name,
         type: 'REGION'
       }));
       setRegions(regionTags);
+
+      // Pre-fetch NCR cities immediately so they are loaded as default
+      if (regionTags.length > 0) {
+        const ncrCode = regionTags[0].slug;
+        psgcService.getCitiesAndMunicipalities(ncrCode).then(citiesData => {
+          const sortedCities = citiesData.sort((a, b) => a.name.localeCompare(b.name));
+          const cityTags: Tag[] = sortedCities.map(c => ({
+            slug: c.code,
+            name: c.name,
+            type: 'CITY'
+          }));
+          setCitiesMap(prev => ({ ...prev, [ncrCode]: cityTags }));
+        });
+      }
     });
   }, []);
 
