@@ -9,7 +9,6 @@ interface FilterSelectGroupProps {
   onSelectTag: (tag: Tag) => void;
   onApplyTags?: (tags: Tag[], typesToReplace: TagType[]) => void;
   onClearAll?: () => void;
-  searchQuery?: string;
   className?: string;
 }
 
@@ -18,7 +17,6 @@ export function FilterSelectGroup({
   onSelectTag,
   onApplyTags,
   onClearAll,
-  searchQuery = '',
   className = ''
 }: FilterSelectGroupProps) {
   // Location States
@@ -81,7 +79,7 @@ export function FilterSelectGroup({
   const activeLocationValues = selectedTags.filter(t => t.type === 'REGION' || t.type === 'CITY');
   const hasActiveFilters = selectedTags.some(t =>
     ['REGION', 'CITY', 'CATEGORY', 'SUBCATEGORY', 'CONDITION', 'TRANSACTION'].includes(t.type || '')
-  ) || !!searchQuery;
+  );
 
   return (
     <div className={`flex flex-wrap justify-center items-center gap-3 ${className}`}>

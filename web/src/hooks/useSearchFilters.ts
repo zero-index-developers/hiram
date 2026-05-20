@@ -33,7 +33,6 @@ export function useSearchFilters() {
 
   const clearAllFilters = () => {
     setSelectedTags([]);
-    setSearchQuery('');
   };
 
   return {

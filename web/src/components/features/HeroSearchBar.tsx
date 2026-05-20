@@ -1,5 +1,5 @@
 import type { Tag, TagType } from '@hiram/shared';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { LogoSymbol } from '../ui/Logo';
 import { FilterSelectGroup } from './FilterSelectGroup';
@@ -95,6 +95,15 @@ export function HeroSearchBar({
                     value={searchQuery}
                     onChange={(e) => handleInputChange(e.target.value)}
                   />
+                  {searchQuery && (
+                    <button
+                      onClick={() => handleInputChange('')}
+                      className="p-1 hover:bg-neutral-100 rounded-full transition text-neutral-400 hover:text-neutral-600 shrink-0 mr-1 cursor-pointer"
+                      aria-label="Clear search"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
 
                 <button
@@ -144,7 +153,6 @@ export function HeroSearchBar({
               onSelectTag={handleSelectTagWrapper}
               onApplyTags={handleApplyTagsWrapper}
               onClearAll={handleClearAllWrapper}
-              searchQuery={searchQuery}
             />
           </div>
         </div>
