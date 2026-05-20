@@ -24,7 +24,9 @@ export function ItemCard({ item }: ItemCardProps) {
     if (!isAuthenticated) {
       setAuthModalOpen(true, 'login');
     } else {
-      alert(`Requesting "${item.title}" from ${ownerName}. This feature is coming soon!`);
+      const slug = item.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + item.id;
+      window.history.pushState(null, '', `/items/${slug}`);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   };
 

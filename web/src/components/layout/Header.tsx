@@ -17,7 +17,7 @@ export function Header() {
   };
 
   return (
-    <header className="w-full bg-background px-8 py-4 border-b border-primary/5 sticky top-0 z-40 backdrop-blur-md bg-background/80">
+    <header className="w-full bg-background px-8 py-4 border-b border-primary/5 backdrop-blur-md bg-background/80">
       <div className="max-w-5xl mx-auto flex justify-between items-center w-full">
         {/* Logo mark: Small primary color geometric icon */}
         <div className="flex-shrink-0 flex items-center mr-18">
@@ -49,8 +49,8 @@ export function Header() {
               {dropdownOpen && (
                 <>
                   {/* Backdrop overlay for closing dropdown */}
-                  <div 
-                    className="fixed inset-0 z-30" 
+                  <div
+                    className="fixed inset-0 z-30"
                     onClick={() => setDropdownOpen(false)}
                   />
                   <div className="absolute right-0 mt-2.5 w-60 bg-white border border-primary/10 rounded-2xl shadow-xl py-3 z-40 animate-in fade-in slide-in-from-top-2 duration-200">
@@ -63,7 +63,7 @@ export function Header() {
                         </div>
                       )}
                     </div>
-                    
+
                     <button
                       onClick={handleLogout}
                       className="w-full px-4 py-2 text-left text-sm text-neutral-600 hover:text-primary hover:bg-primary/5 transition-colors duration-200 flex items-center gap-2 font-bold"
@@ -77,7 +77,7 @@ export function Header() {
             </div>
           ) : (
             /* Sign up: pill shape */
-            <button 
+            <button
               onClick={() => setAuthModalOpen(true, 'login')}
               className="border border-primary/30 rounded-full px-4 py-1.5 text-sm font-semibold text-primary hover:bg-primary/5 hover:border-primary transition-colors duration-200 bg-transparent"
             >

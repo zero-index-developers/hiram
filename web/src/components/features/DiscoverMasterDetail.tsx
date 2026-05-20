@@ -20,16 +20,15 @@ export function DiscoverMasterDetail({
   onSelectItem
 }: DiscoverMasterDetailProps) {
   const { isAuthenticated, setAuthModalOpen } = useAuthStore();
-  const ownerName = selectedItem 
-    ? (typeof selectedItem.owner === 'string' ? selectedItem.owner : selectedItem.owner?.name || 'Unknown') 
-    : 'Unknown';
 
   const handleRequestClick = () => {
     if (!selectedItem) return;
     if (!isAuthenticated) {
       setAuthModalOpen(true, 'login');
     } else {
-      alert(`Requesting "${selectedItem.title}" from ${ownerName}. This feature is coming soon!`);
+      const slug = selectedItem.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + selectedItem.id;
+      window.history.pushState(null, '', `/items/${slug}`);
+      window.dispatchEvent(new PopStateEvent('popstate'));
     }
   };
 

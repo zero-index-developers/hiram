@@ -11,23 +11,61 @@ interface HeroSearchBarProps {
   onClearAll?: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  forceSticky?: boolean;
 }
 
-export function HeroSearchBar({ selectedTags, onSelectTag, onApplyTags, onClearAll, searchQuery, setSearchQuery }: HeroSearchBarProps) {
-  const [isSticky, setIsSticky] = useState(false);
+export function HeroSearchBar({ 
+  selectedTags, 
+  onSelectTag, 
+  onApplyTags, 
+  onClearAll, 
+  searchQuery, 
+  setSearchQuery,
+  forceSticky = false
+}: HeroSearchBarProps) {
+  const [isSticky, setIsSticky] = useState(forceSticky);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   useEffect(() => {
+    if (forceSticky) {
+      setIsSticky(true);
+      return;
+    }
     const handleScroll = () => {
       setIsSticky(window.scrollY > 215);
     };
 
-    // Run once on mount to set initial state
     handleScroll();
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [forceSticky]);
+
+  const redirectToDiscover = () => {
+    if (window.location.pathname !== '/') {
+      window.history.pushState(null, '', '/');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    }
+  };
+
+  const handleInputChange = (val: string) => {
+    setSearchQuery(val);
+    redirectToDiscover();
+  };
+
+  const handleSelectTagWrapper = (tag: Tag) => {
+    onSelectTag(tag);
+    redirectToDiscover();
+  };
+
+  const handleClearAllWrapper = () => {
+    if (onClearAll) onClearAll();
+    redirectToDiscover();
+  };
+
+  const handleApplyTagsWrapper = (tags: Tag[], typesToReplace: TagType[]) => {
+    if (onApplyTags) onApplyTags(tags, typesToReplace);
+    redirectToDiscover();
+  };
 
   return (
     <>
@@ -35,7 +73,8 @@ export function HeroSearchBar({ selectedTags, onSelectTag, onApplyTags, onClearA
         <div className='max-w-3xl w-full'>
           <div className='flex gap-2'>
             <div
-              className={`flex items-center shrink-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isSticky
+              onClick={redirectToDiscover}
+              className={`flex items-center shrink-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] cursor-pointer pointer-events-auto ${isSticky
                 ? 'w-8 opacity-100 ml-3 mr-1 translate-x-0 scale-100'
                 : 'w-0 opacity-0 ml-0 mr-0 translate-x-8 scale-50'
                 }`}
@@ -53,11 +92,14 @@ export function HeroSearchBar({ selectedTags, onSelectTag, onApplyTags, onClearA
                     className="w-full bg-transparent text-sm text-neutral-800 outline-none placeholder:text-neutral-400 font-medium h-full"
                     placeholder="Item name, category, or lender..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => handleInputChange(e.target.value)}
                   />
                 </div>
 
-                <button className="bg-primary text-white rounded-full px-8 py-3 sm:py-2.5 text-sm font-black hover:bg-primary/90 transition w-full sm:w-auto shrink-0 shadow-sm">
+                <button 
+                  onClick={redirectToDiscover}
+                  className="bg-primary text-white rounded-full px-8 py-3 sm:py-2.5 text-sm font-black hover:bg-primary/90 transition w-full sm:w-auto shrink-0 shadow-sm"
+                >
                   Search
                 </button>
 
@@ -88,9 +130,9 @@ export function HeroSearchBar({ selectedTags, onSelectTag, onApplyTags, onClearA
             }`}>
             <FilterSelectGroup
               selectedTags={selectedTags}
-              onSelectTag={onSelectTag}
-              onApplyTags={onApplyTags}
-              onClearAll={onClearAll}
+              onSelectTag={handleSelectTagWrapper}
+              onApplyTags={handleApplyTagsWrapper}
+              onClearAll={handleClearAllWrapper}
               searchQuery={searchQuery}
             />
           </div>
