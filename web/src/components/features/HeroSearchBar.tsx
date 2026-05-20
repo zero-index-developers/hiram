@@ -25,7 +25,7 @@ export function HeroSearchBar({
   forceSticky = false
 }: HeroSearchBarProps) {
   const [isSticky, setIsSticky] = useState(forceSticky);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   useEffect(() => {
     if (forceSticky) {
