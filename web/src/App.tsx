@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSearchFilters } from './hooks/useSearchFilters';
 import { DiscoverSection } from './components/features/DiscoverSection';
 import { Hero } from './components/features/Hero';
@@ -9,6 +9,8 @@ import { AuthModal } from './components/features/AuthModal';
 import { ItemDetailsPage } from './components/features/ItemDetailsPage';
 import { InboxPage } from './components/features/InboxPage';
 import { useAuthStore } from './store/useAuthStore';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { ProtectedRoute } from './components/features/ProtectedRoute';
 
 function App() {
   const {
@@ -20,36 +22,37 @@ function App() {
     clearAllFilters
   } = useSearchFilters();
 
-  const initAuth = useAuthStore((state) => state.initAuth);
-  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  const { initAuth, isAuthenticated } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const prevAuthRef = useRef(isAuthenticated);
 
   useEffect(() => {
     initAuth();
   }, [initAuth]);
 
+  // Logout redirection guard: returns users to home screen on active session ending
   useEffect(() => {
-    const handleLocationChange = () => {
-      setCurrentPath(window.location.pathname);
-    };
-    window.addEventListener('popstate', handleLocationChange);
-    return () => {
-      window.removeEventListener('popstate', handleLocationChange);
-    };
-  }, []);
+    if (prevAuthRef.current && !isAuthenticated) {
+      if (location.pathname !== '/') {
+        navigate('/', { replace: true });
+      }
+    }
+    prevAuthRef.current = isAuthenticated;
+  }, [isAuthenticated, location.pathname, navigate]);
 
   const navigateBack = () => {
-    window.history.pushState(null, '', '/');
-    setCurrentPath('/');
+    navigate('/');
   };
 
-  const isItemDetails = currentPath.startsWith('/items/');
-  const itemSlug = isItemDetails ? currentPath.replace('/items/', '') : '';
-  const isInbox = currentPath === '/inbox';
+  const isItemDetails = location.pathname.startsWith('/items/');
+  const itemSlug = isItemDetails ? location.pathname.replace('/items/', '') : '';
+  const isInbox = location.pathname === '/inbox';
 
   return (
     <div className="min-h-screen bg-background text-neutral-800 flex flex-col font-sans w-full transition-colors duration-300">
       {/* Structural layout: Header / Search Bar */}
-      {currentPath === '/' ? (
+      {location.pathname === '/' ? (
         <Header />
       ) : (
         <HeroSearchBar
@@ -66,7 +69,9 @@ function App() {
       {isItemDetails ? (
         <ItemDetailsPage slug={itemSlug} onBack={navigateBack} />
       ) : isInbox ? (
-        <InboxPage onBack={navigateBack} />
+        <ProtectedRoute>
+          <InboxPage onBack={navigateBack} />
+        </ProtectedRoute>
       ) : (
         <>
           {/* Hero Intro */}
@@ -97,4 +102,5 @@ function App() {
 }
 
 export default App;
+
 
