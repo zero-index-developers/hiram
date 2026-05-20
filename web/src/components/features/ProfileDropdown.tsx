@@ -38,6 +38,20 @@ export function ProfileDropdown({ variant = 'header' }: ProfileDropdownProps) {
     };
   }, [dropdownOpen]);
 
+  // Close dropdown on scroll (e.g. when transition to sticky mode happens)
+  useEffect(() => {
+    if (!dropdownOpen) return;
+
+    const handleScroll = () => {
+      setDropdownOpen(false);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [dropdownOpen]);
+
   if (!isAuthenticated || !user) {
     if (variant === 'searchbar') {
       return (
