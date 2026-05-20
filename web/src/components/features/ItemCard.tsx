@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { LogoSymbol } from '../ui/Logo';
+import { useAuthStore } from '../../store/useAuthStore';
 
 import type { Item } from '@hiram/shared';
 
@@ -14,8 +15,18 @@ interface ItemCardProps {
 export function ItemCard({ item }: ItemCardProps) {
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const { isAuthenticated, setAuthModalOpen } = useAuthStore();
 
   const ownerName = typeof item.owner === 'string' ? item.owner : item.owner?.name || 'Unknown';
+
+  const handleRequestClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!isAuthenticated) {
+      setAuthModalOpen(true, 'login');
+    } else {
+      alert(`Requesting "${item.title}" from ${ownerName}. This feature is coming soon!`);
+    }
+  };
 
   return (
     <div className="bg-white border border-primary/20 rounded-xl overflow-hidden transition-all duration-300 flex flex-col group hover:shadow-md">
@@ -85,7 +96,11 @@ export function ItemCard({ item }: ItemCardProps) {
             </span>
           </div>
 
-          <Button variant="secondary" className="px-3.5 py-1.5 text-xs flex items-center gap-1 font-bold">
+          <Button 
+            onClick={handleRequestClick}
+            variant="secondary" 
+            className="px-3.5 py-1.5 text-xs flex items-center gap-1 font-bold"
+          >
             Request <ArrowRight className="w-3 h-3" />
           </Button>
         </div>

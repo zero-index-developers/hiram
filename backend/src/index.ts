@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { formatDate } from '@hiram/shared';
+import authRouter from './routes/auth';
 
 // Load environment variables
 dotenv.config();
@@ -37,6 +38,7 @@ const authLimiter = rateLimit({
 
 app.use('/api/v1/auth/login', authLimiter);
 app.use('/api/v1/auth/register', authLimiter);
+app.use('/api/v1/auth', authRouter);
 
 // Sample Route
 app.get('/api/v1/status', (req, res) => {

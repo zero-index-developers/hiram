@@ -21,25 +21,21 @@ export function DiscoverHeader({ viewMode, onViewModeChange, hasItems }: Discove
         <div className="flex items-center gap-1.5 bg-primary/5 p-1 rounded-xl border border-primary/10 shrink-0 self-start md:self-auto">
           <button
             onClick={() => onViewModeChange('master-detail')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              viewMode === 'master-detail'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'master-detail'
                 ? 'bg-white text-primary shadow-sm border border-primary/10'
                 : 'text-neutral-500 hover:text-primary'
-            }`}
+              }`}
           >
             <Columns2 className="w-4 h-4" />
-            Master-Detail
           </button>
           <button
             onClick={() => onViewModeChange('grid')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-              viewMode === 'grid'
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${viewMode === 'grid'
                 ? 'bg-white text-primary shadow-sm border border-primary/10'
                 : 'text-neutral-500 hover:text-primary'
-            }`}
+              }`}
           >
             <LayoutGrid className="w-4 h-4" />
-            3-Grid Row
           </button>
         </div>
       )}

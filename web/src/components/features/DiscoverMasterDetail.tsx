@@ -4,6 +4,7 @@ import { ArrowRight, Clock, User } from 'lucide-react';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { CompactItemImage, DetailItemImage } from './ItemImage';
+import { useAuthStore } from '../../store/useAuthStore';
 
 interface DiscoverMasterDetailProps {
   filteredItems: Item[];
@@ -18,6 +19,20 @@ export function DiscoverMasterDetail({
   selectedItemId,
   onSelectItem
 }: DiscoverMasterDetailProps) {
+  const { isAuthenticated, setAuthModalOpen } = useAuthStore();
+  const ownerName = selectedItem 
+    ? (typeof selectedItem.owner === 'string' ? selectedItem.owner : selectedItem.owner?.name || 'Unknown') 
+    : 'Unknown';
+
+  const handleRequestClick = () => {
+    if (!selectedItem) return;
+    if (!isAuthenticated) {
+      setAuthModalOpen(true, 'login');
+    } else {
+      alert(`Requesting "${selectedItem.title}" from ${ownerName}. This feature is coming soon!`);
+    }
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-start w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
       {/* Left Master List */}
@@ -145,6 +160,7 @@ export function DiscoverMasterDetail({
             {/* CTA Request Button */}
             <div className="pt-2 flex justify-end">
               <Button
+                onClick={handleRequestClick}
                 variant="primary"
                 className="px-6 py-3 text-sm flex items-center gap-2 font-black shadow-md shadow-primary/10 hover:translate-y-[-1px] active:translate-y-[1px] transition-all"
               >
