@@ -16,6 +16,8 @@ interface HeroSearchBarProps {
   forceSticky?: boolean;
 }
 
+import { useNavigate } from 'react-router-dom';
+
 export function HeroSearchBar({
   selectedTags,
   onSelectTag,
@@ -28,6 +30,7 @@ export function HeroSearchBar({
   const [isSticky, setIsSticky] = useState(forceSticky);
   const [isFilterOpen, setIsFilterOpen] = useState(true);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (forceSticky) {
@@ -50,10 +53,26 @@ export function HeroSearchBar({
     }
   };
 
-  const handleSearchAction = (currentQuery?: string) => {
+  const handleSearchAction = () => {
     if (window.location.pathname !== '/') {
-      const activeQuery = currentQuery !== undefined ? currentQuery : searchQuery;
-      if (activeQuery.trim() !== '' || selectedTags.length > 0) {
+      if (searchQuery.trim() !== '' || selectedTags.length > 0) {
+        setIsPopoverOpen(false);
+        if (window.location.pathname !== '/search') {
+          navigate('/search');
+        }
+      } else {
+        setIsPopoverOpen(false);
+        if (window.location.pathname === '/search') {
+          navigate('/');
+        }
+      }
+    }
+  };
+
+  const handleInputChange = (val: string) => {
+    setSearchQuery(val);
+    if (window.location.pathname !== '/') {
+      if (val.trim() !== '' || selectedTags.length > 0) {
         setIsPopoverOpen(true);
       } else {
         setIsPopoverOpen(false);
@@ -61,24 +80,26 @@ export function HeroSearchBar({
     }
   };
 
-  const handleInputChange = (val: string) => {
-    setSearchQuery(val);
-    handleSearchAction(val);
-  };
-
   const handleSelectTagWrapper = (tag: Tag) => {
     onSelectTag(tag);
-    handleSearchAction();
+    if (window.location.pathname !== '/') {
+      setIsPopoverOpen(true);
+    }
   };
 
   const handleClearAllWrapper = () => {
     if (onClearAll) onClearAll();
-    handleSearchAction();
+    setIsPopoverOpen(false);
+    if (window.location.pathname === '/search') {
+      navigate('/');
+    }
   };
 
   const handleApplyTagsWrapper = (tags: Tag[], typesToReplace: TagType[]) => {
     if (onApplyTags) onApplyTags(tags, typesToReplace);
-    handleSearchAction();
+    if (window.location.pathname !== '/') {
+      setIsPopoverOpen(true);
+    }
   };
 
   return (
@@ -107,6 +128,11 @@ export function HeroSearchBar({
                     placeholder="Item name, category, or lender..."
                     value={searchQuery}
                     onChange={(e) => handleInputChange(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearchAction();
+                      }
+                    }}
                   />
                   {searchQuery && (
                     <button

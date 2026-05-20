@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { ArrowLeft, Bell, CheckCircle, BookOpen, Clock, AlertTriangle } from 'lucide-react';
-
+import { ArrowLeft, Bell, CheckCircle, BookOpen, Clock, AlertTriangle, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface AlertsPageProps {
   onBack: () => void;
@@ -14,12 +14,12 @@ interface AlertItem {
   timestamp: string;
   read: boolean;
   actionUrl?: string;
+  actionLabel?: string;
 }
 
-// Generate some mock alerts for pagination
 const mockAlerts: AlertItem[] = Array.from({ length: 24 }).map((_, i) => {
   const isRead = i > 3;
-  
+
   if (i === 0) {
     return {
       id: `alert-${i}`,
@@ -28,10 +28,11 @@ const mockAlerts: AlertItem[] = Array.from({ length: 24 }).map((_, i) => {
       description: 'Your request for "T-Square 36" has been approved by the lender.',
       timestamp: '10 minutes ago',
       read: false,
-      actionUrl: '/inbox?proposal=prop-2'
+      actionUrl: '/inbox?proposal=prop-2',
+      actionLabel: 'View in Inbox'
     };
   }
-  
+
   if (i === 1) {
     return {
       id: `alert-${i}`,
@@ -42,7 +43,31 @@ const mockAlerts: AlertItem[] = Array.from({ length: 24 }).map((_, i) => {
       read: false
     };
   }
-  
+
+  if (i === 2) {
+    return {
+      id: `alert-${i}`,
+      type: 'warning',
+      title: 'New Proposal Received',
+      description: 'Someone wants to borrow your "HP Prime Graphing Calculator".',
+      timestamp: '3 hours ago',
+      read: false,
+      actionUrl: '/inbox',
+      actionLabel: 'View Proposal'
+    };
+  }
+
+  if (i === 3) {
+    return {
+      id: `alert-${i}`,
+      type: 'info',
+      title: 'Profile Incomplete',
+      description: 'Add a profile photo to build trust with other lenders.',
+      timestamp: '1 day ago',
+      read: false
+    };
+  }
+
   if (i % 5 === 0) {
     return {
       id: `alert-${i}`,
@@ -50,10 +75,12 @@ const mockAlerts: AlertItem[] = Array.from({ length: 24 }).map((_, i) => {
       title: 'Return Reminder',
       description: 'Your borrowed "Scientific Calculator" is due tomorrow.',
       timestamp: `${i} days ago`,
-      read: isRead
+      read: isRead,
+      actionUrl: '/inbox',
+      actionLabel: 'View Loan'
     };
   }
-  
+
   return {
     id: `alert-${i}`,
     type: 'success',
@@ -64,155 +91,129 @@ const mockAlerts: AlertItem[] = Array.from({ length: 24 }).map((_, i) => {
   };
 });
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 10;
 
 export function AlertsPage({ onBack }: AlertsPageProps) {
   const [currentPage, setCurrentPage] = useState(1);
+  const navigate = useNavigate();
   const totalPages = Math.ceil(mockAlerts.length / ITEMS_PER_PAGE);
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentAlerts = mockAlerts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const unreadCount = mockAlerts.filter((a) => !a.read).length;
 
   const getIconForType = (type: string) => {
     switch (type) {
-      case 'success':
-        return <CheckCircle size={18} />;
-      case 'info':
-        return <BookOpen size={18} />;
-      case 'warning':
-        return <Clock size={18} />;
-      case 'error':
-        return <AlertTriangle size={18} />;
-      default:
-        return <Bell size={18} />;
+      case 'success': return <CheckCircle size={18} />;
+      case 'info': return <BookOpen size={18} />;
+      case 'warning': return <Clock size={18} />;
+      case 'error': return <AlertTriangle size={18} />;
+      default: return <Bell size={18} />;
     }
   };
 
   const getColorClassForType = (type: string) => {
     switch (type) {
-      case 'success':
-        return 'bg-emerald-50 text-emerald-500 border-emerald-100';
-      case 'warning':
-        return 'bg-amber-50 text-amber-500 border-amber-100';
-      case 'error':
-        return 'bg-red-50 text-red-500 border-red-100';
-      default:
-        return 'bg-primary/5 text-primary border-primary/10';
+      case 'success': return 'bg-emerald-50 text-emerald-500 border-emerald-100';
+      case 'warning': return 'bg-amber-50 text-amber-500 border-amber-100';
+      case 'error': return 'bg-red-50 text-red-500 border-red-100';
+      default: return 'bg-primary/5 text-primary border-primary/10';
     }
   };
 
   const handleAlertClick = (alert: AlertItem) => {
     if (alert.actionUrl) {
-      window.history.pushState(null, '', alert.actionUrl);
-      window.dispatchEvent(new PopStateEvent('popstate'));
+      navigate(alert.actionUrl);
     }
   };
 
   return (
-    <div className="relative max-w-4xl mx-auto px-4 pt-6 pb-20 w-full flex-grow flex flex-col min-h-[650px] animate-in fade-in duration-300">
-      {/* Floating Back Button */}
-      <div className="mb-6 shrink-0 flex items-center gap-4">
-        <button 
+    <div className="relative max-w-5xl mx-auto px-4 pt-6 pb-4 w-full flex-grow flex flex-col h-[calc(100vh-120px)] min-h-[650px] max-h-[820px] animate-in fade-in duration-300">
+      {/* Floating Back Button Outside the main white container */}
+      <div className="mb-4 shrink-0 lg:absolute lg:-left-16 lg:top-6 lg:mb-0">
+        <button
           onClick={onBack}
           className="w-10 h-10 rounded-full bg-white border border-primary/10 shadow-sm hover:shadow flex items-center justify-center transition-colors text-neutral-600 hover:text-primary hover:border-primary/30 cursor-pointer"
         >
           <ArrowLeft size={20} />
         </button>
-        <div>
-          <h1 className="text-2xl font-black text-neutral-800">Notifications</h1>
-          <p className="text-xs text-neutral-400 font-medium tracking-wide uppercase">All campus updates</p>
-        </div>
       </div>
 
-      <div className="flex-1 bg-white rounded-3xl border border-primary/10 shadow-xl overflow-hidden flex flex-col">
-        <div className="flex-1 overflow-y-auto divide-y divide-neutral-100">
+      <div className="flex-1 min-h-0 bg-white rounded-3xl border border-primary/10 overflow-hidden shadow-xl flex flex-col">
+        {/* Header */}
+        <div className="px-6 py-4 border-b border-neutral-100 bg-white shrink-0 flex items-center gap-3">
+          <h2 className="text-base font-black text-neutral-900">Notifications</h2>
+          {unreadCount > 0 && (
+            <span className="text-xs font-black bg-primary text-white rounded-full px-2.5 py-0.5">
+              {unreadCount} new
+            </span>
+          )}
+        </div>
+
+        {/* Alert List */}
+        <div className="flex-1 overflow-y-auto divide-y divide-neutral-100/70 bg-neutral-50/30">
           {currentAlerts.map((alert) => (
-            <div 
+            <div
               key={alert.id}
               onClick={() => handleAlertClick(alert)}
-              className={`p-5 flex gap-4 transition-colors ${alert.actionUrl ? 'cursor-pointer hover:bg-neutral-50' : ''} ${!alert.read ? 'bg-primary/5 hover:bg-primary/10' : ''}`}
+              className={`flex items-start gap-4 p-5 transition-all duration-200 relative ${
+                alert.actionUrl ? 'cursor-pointer hover:bg-neutral-50' : 'cursor-default'
+              } ${!alert.read ? 'bg-primary/[0.02]' : 'bg-white'}`}
             >
-              <div className={`w-12 h-12 rounded-full border flex items-center justify-center shrink-0 shadow-sm ${getColorClassForType(alert.type)}`}>
+              {/* Unread dot */}
+              {!alert.read && (
+                <span className="absolute top-6 left-2 w-1.5 h-1.5 bg-primary rounded-full" />
+              )}
+
+              {/* Icon */}
+              <div className={`w-10 h-10 rounded-full border flex items-center justify-center shrink-0 shadow-sm ${getColorClassForType(alert.type)}`}>
                 {getIconForType(alert.type)}
               </div>
-              <div className="min-w-0 flex-1 pt-0.5">
-                <div className="flex justify-between items-start gap-2 mb-1">
-                  <h3 className={`text-sm leading-snug ${!alert.read ? 'font-bold text-neutral-900' : 'font-semibold text-neutral-700'}`}>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className={`text-sm ${!alert.read ? 'font-black text-neutral-900' : 'font-bold text-neutral-700'}`}>
                     {alert.title}
-                  </h3>
-                  <span className="text-[11px] font-medium text-neutral-400 shrink-0 whitespace-nowrap mt-0.5">
-                    {alert.timestamp}
                   </span>
+                  <span className="text-[11px] text-neutral-400 font-semibold shrink-0">{alert.timestamp}</span>
                 </div>
-                <p className={`text-sm leading-relaxed ${!alert.read ? 'text-neutral-700' : 'text-neutral-500'}`}>
+                <p className={`text-xs mt-0.5 leading-relaxed ${!alert.read ? 'text-neutral-600 font-medium' : 'text-neutral-400'}`}>
                   {alert.description}
                 </p>
+                {/* Redirect indicator */}
+                {alert.actionUrl && (
+                  <span className="inline-flex items-center gap-1 mt-2 text-[11px] font-bold text-primary">
+                    <ExternalLink size={11} />
+                    {alert.actionLabel ?? 'View Details'}
+                  </span>
+                )}
               </div>
-              {!alert.read && (
-                <div className="shrink-0 flex items-center justify-center w-6">
-                  <span className="w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_8px_rgba(var(--color-primary),0.5)]"></span>
-                </div>
-              )}
             </div>
           ))}
         </div>
 
-        {/* Pagination Controls */}
-        <div className="p-4 border-t border-primary/10 bg-neutral-50/50 flex items-center justify-between px-6">
-          <p className="text-xs text-neutral-500 font-medium">
-            Showing <span className="font-bold text-neutral-800">{startIndex + 1}-{Math.min(startIndex + ITEMS_PER_PAGE, mockAlerts.length)}</span> of <span className="font-bold text-neutral-800">{mockAlerts.length}</span> updates
-          </p>
-          
-          <div className="flex items-center gap-2">
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-5 py-3 border-t border-primary/10 bg-neutral-50/50 shrink-0">
             <button
               disabled={currentPage === 1}
-              onClick={() => handlePageChange(currentPage - 1)}
-              className="px-4 py-2 text-xs font-bold rounded-full border border-primary/10 bg-white text-neutral-600 hover:text-primary hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+              onClick={() => setCurrentPage((p) => p - 1)}
+              className="px-3 py-1.5 text-[10px] font-bold rounded-full border border-primary/10 bg-white text-neutral-600 hover:text-primary hover:bg-primary/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
             >
-              Previous
+              Prev
             </button>
-            
-            <div className="flex items-center gap-1">
-              {Array.from({ length: totalPages }).map((_, idx) => {
-                const pageNum = idx + 1;
-                // Simple pagination logic for demo (show max 5 pages)
-                if (totalPages > 5 && pageNum !== 1 && pageNum !== totalPages && Math.abs(pageNum - currentPage) > 1) {
-                  if (pageNum === 2 || pageNum === totalPages - 1) {
-                    return <span key={pageNum} className="text-neutral-400 px-1">...</span>;
-                  }
-                  return null;
-                }
-                
-                return (
-                  <button
-                    key={pageNum}
-                    onClick={() => handlePageChange(pageNum)}
-                    className={`w-8 h-8 rounded-full text-xs font-bold flex items-center justify-center transition-all ${
-                      currentPage === pageNum
-                        ? 'bg-primary text-white shadow-sm'
-                        : 'bg-transparent text-neutral-500 hover:bg-neutral-100'
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
-            </div>
-            
+            <span className="text-[10px] font-bold text-neutral-500">Page {currentPage} of {totalPages}</span>
             <button
               disabled={currentPage === totalPages}
-              onClick={() => handlePageChange(currentPage + 1)}
-              className="px-4 py-2 text-xs font-bold rounded-full border border-primary/10 bg-white text-neutral-600 hover:text-primary hover:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+              onClick={() => setCurrentPage((p) => p + 1)}
+              className="px-3 py-1.5 text-[10px] font-bold rounded-full border border-primary/10 bg-white text-neutral-600 hover:text-primary hover:bg-primary/5 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-sm"
             >
               Next
             </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

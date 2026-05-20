@@ -50,6 +50,7 @@ function App() {
   const itemSlug = isItemDetails ? location.pathname.replace('/items/', '') : '';
   const isInbox = location.pathname === '/inbox';
   const isAlerts = location.pathname === '/alerts';
+  const isSearchPage = location.pathname === '/search';
 
   return (
     <div className="min-h-screen bg-background text-neutral-800 flex flex-col font-sans w-full transition-colors duration-300">
@@ -78,6 +79,12 @@ function App() {
         <ProtectedRoute>
           <AlertsPage onBack={navigateBack} />
         </ProtectedRoute>
+      ) : isSearchPage ? (
+        <DiscoverSection 
+          selectedTags={selectedTags}
+          searchQuery={searchQuery}
+          isSearchPage={true}
+        />
       ) : (
         <>
           {/* Hero Intro */}

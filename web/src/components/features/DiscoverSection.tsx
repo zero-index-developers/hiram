@@ -9,11 +9,12 @@ import { DiscoverEmptyState } from './DiscoverEmptyState';
 interface DiscoverSectionProps {
   selectedTags: Tag[];
   searchQuery: string;
+  isSearchPage?: boolean;
 }
 
 type ViewMode = 'grid' | 'master-detail';
 
-export function DiscoverSection({ selectedTags, searchQuery }: DiscoverSectionProps) {
+export function DiscoverSection({ selectedTags, searchQuery, isSearchPage = false }: DiscoverSectionProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('master-detail');
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
@@ -84,6 +85,8 @@ export function DiscoverSection({ selectedTags, searchQuery }: DiscoverSectionPr
         viewMode={viewMode}
         onViewModeChange={setViewMode}
         hasItems={filteredItems.length > 0}
+        searchQuery={searchQuery}
+        isSearchPage={isSearchPage}
       />
 
       {/* Main Content Area */}

@@ -67,8 +67,10 @@ export function SearchResultsModal({
 
   const handleItemClick = (itemId: string, itemTitle: string) => {
     const slug = itemTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') + '-' + itemId;
-    onClose();
     navigate(`/items/${slug}`);
+    setTimeout(() => {
+      onClose();
+    }, 10);
   };
 
   if (!isOpen) return null;
