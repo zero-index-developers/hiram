@@ -3,6 +3,7 @@ import { Search, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { LogoSymbol } from '../ui/Logo';
 import { FilterSelectGroup } from './FilterSelectGroup';
+import { ProfileDropdown } from './ProfileDropdown';
 
 interface HeroSearchBarProps {
   selectedTags: Tag[];
@@ -69,7 +70,7 @@ export function HeroSearchBar({
 
   return (
     <>
-      <div className={`sticky top-0 pt-4 z-50 bg-background w-full px-6 flex flex-col items-center justify-center pointer-events-none transition-shadow duration-300 ${isSticky ? 'shadow-sm border-b border-primary/5 pb-4' : ''}`}>
+      <div className={`sticky top-0 pt-4 z-40 bg-background w-full px-6 flex flex-col items-center justify-center pointer-events-none transition-shadow duration-300 ${isSticky ? 'shadow-sm border-b border-primary/5 pb-4' : ''}`}>
         <div className='max-w-3xl w-full'>
           <div className='flex gap-2'>
             <div
@@ -122,6 +123,16 @@ export function HeroSearchBar({
               >
                 <SlidersHorizontal className="w-4 h-4" />
               </button>
+            </div>
+
+            {/* Profile Popover / Sign In Trigger in Header */}
+            <div
+              className={`flex items-center shrink-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isSticky
+                ? 'w-10 opacity-100 ml-1 mr-1 translate-x-0 scale-100 pointer-events-auto'
+                : 'w-0 opacity-0 ml-0 mr-0 -translate-x-8 scale-50 pointer-events-none'
+                }`}
+            >
+              <ProfileDropdown variant="searchbar" />
             </div>
           </div>
 
