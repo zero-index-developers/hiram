@@ -25,15 +25,19 @@ export function Header() {
         <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center justify-center gap-8 text-sm text-neutral-600 font-medium">
           {isAuthenticated ? (
             <>
-              <a href="#discover" className="hover:text-primary transition-colors duration-200">Trending</a>
+              <a href="#discover" className="hover:text-primary transition-colors duration-200 flex items-center gap-1.5 relative">
+                <span>Trending</span>
+                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
+              </a>
               <button
                 onClick={() => {
                   window.history.pushState(null, '', '/inbox');
                   window.dispatchEvent(new PopStateEvent('popstate'));
                 }}
-                className="hover:text-primary transition-colors duration-200 cursor-pointer text-sm text-neutral-600 font-medium bg-transparent border-none p-0 outline-none"
+                className="hover:text-primary transition-colors duration-200 cursor-pointer text-sm text-neutral-600 font-medium bg-transparent border-none p-0 outline-none flex items-center gap-1.5 relative"
               >
-                Inbox
+                <span>Inbox</span>
+                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
               </button>
               <a href="#how-it-works" className="hover:text-primary transition-colors duration-200">How it Works</a>
             </>

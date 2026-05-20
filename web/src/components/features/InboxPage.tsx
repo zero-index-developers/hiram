@@ -9,8 +9,7 @@ import {
   Clock, 
   CheckCircle2, 
   XCircle, 
-  AlertCircle,
-  Inbox
+  AlertCircle
 } from 'lucide-react';
 
 import { mockProposalsData } from '@hiram/shared';
@@ -100,26 +99,18 @@ export function InboxPage({ onBack }: InboxPageProps) {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 w-full flex-grow flex flex-col min-h-[calc(100vh-140px)] animate-in fade-in duration-300">
-      {/* Header Bar */}
-      <div className="flex items-center gap-4 mb-6">
+    <div className="relative max-w-5xl mx-auto px-4 pt-6 pb-4 w-full flex-grow flex flex-col h-[calc(100vh-120px)] min-h-[650px] max-h-[820px] animate-in fade-in duration-300">
+      {/* Floating Back Button Outside the main white container */}
+      <div className="mb-4 shrink-0 lg:absolute lg:-left-16 lg:top-6 lg:mb-0">
         <button 
           onClick={onBack}
-          className="w-10 h-10 rounded-full hover:bg-neutral-100 flex items-center justify-center transition-colors text-neutral-600 cursor-pointer"
+          className="w-10 h-10 rounded-full bg-white border border-primary/10 shadow-sm hover:shadow flex items-center justify-center transition-colors text-neutral-600 hover:text-primary hover:border-primary/30 cursor-pointer"
         >
           <ArrowLeft size={20} />
         </button>
-        <div>
-          <h1 className="text-2xl font-black text-neutral-800 tracking-tight flex items-center gap-2">
-            <Inbox className="text-primary w-6 h-6" /> Proposal Inbox
-          </h1>
-          <p className="text-xs text-neutral-400 font-semibold uppercase mt-0.5 tracking-wider">
-            Manage your peer-to-peer campus rentals and trade exchanges
-          </p>
-        </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-12 bg-white rounded-3xl border border-primary/10 overflow-hidden shadow-xl min-h-[600px]">
+      <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-12 bg-white rounded-3xl border border-primary/10 overflow-hidden shadow-xl">
         {/* Left Side: Proposals List */}
         <div className="md:col-span-4 border-r border-neutral-100 flex flex-col h-full bg-neutral-50/30">
           <div className="p-4 border-b border-neutral-100 bg-white">
@@ -183,7 +174,7 @@ export function InboxPage({ onBack }: InboxPageProps) {
           {activeProposal ? (
             <>
               {/* Top Bar of Active Conversation */}
-              <div className="p-4 border-b border-neutral-100 flex flex-col sm:flex-row justify-between sm:items-center gap-3 text-left">
+              <div className="p-4 border-b border-neutral-100 flex flex-col sm:flex-row justify-between sm:items-center gap-3 text-left shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-primary/5 text-primary border border-primary/10 flex items-center justify-center font-bold text-sm">
                     {activeProposal.lenderName.trim().charAt(0).toUpperCase()}
@@ -200,7 +191,7 @@ export function InboxPage({ onBack }: InboxPageProps) {
               </div>
 
               {/* Proposal Specific Details Block */}
-              <div className="p-4 bg-primary/[0.01] border-b border-neutral-100 text-left">
+              <div className="p-4 bg-primary/[0.01] border-b border-neutral-100 text-left shrink-0">
                 <h3 className="text-xs font-black text-primary uppercase tracking-widest mb-2 flex items-center gap-1.5">
                   <BookOpen size={13} /> Proposal Details
                 </h3>
@@ -302,7 +293,7 @@ export function InboxPage({ onBack }: InboxPageProps) {
               </div>
 
               {/* Message Input Bar */}
-              <form onSubmit={handleSendMessage} className="p-3 border-t border-neutral-100 flex gap-2 items-center bg-white">
+              <form onSubmit={handleSendMessage} className="p-3 border-t border-neutral-100 flex gap-2 items-center bg-white shrink-0">
                 <input
                   type="text"
                   placeholder="Type a message to discuss coordinate details..."

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Clock, ShieldCheck, CheckCircle2, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Clock, ShieldCheck, CheckCircle2, ChevronRight, MapPin } from 'lucide-react';
 import { mockItems, formatDate } from '@hiram/shared';
 import type { Item } from '@hiram/shared';
 import { Badge } from '../ui/Badge';
@@ -177,6 +177,9 @@ export function ItemDetailsPage({ slug, onBack }: ItemDetailsPageProps) {
                 )}
                 <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
                   <Clock size={12} /> Listed {formatDate(item.createdAt)}
+                </span>
+                <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
+                  <MapPin size={12} /> {item.cityCode === '137607000' ? 'Taguig' : 'Manila'}
                 </span>
               </div>
               <h1 className="text-3xl font-black text-neutral-900 tracking-tight leading-tight">{item.title}</h1>

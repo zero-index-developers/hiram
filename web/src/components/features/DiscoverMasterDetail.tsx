@@ -1,6 +1,6 @@
 import type { Item } from '@hiram/shared';
 import { formatDate } from '@hiram/shared';
-import { ArrowRight, Clock, User } from 'lucide-react';
+import { ArrowRight, Clock, User, MapPin } from 'lucide-react';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { CompactItemImage, DetailItemImage } from './ItemImage';
@@ -116,6 +116,9 @@ export function DiscoverMasterDetail({
               )}
               <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
                 <Clock className="w-3 h-3 text-neutral-400" /> Listed {formatDate(selectedItem.createdAt)}
+              </span>
+              <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
+                <MapPin className="w-3 h-3 text-neutral-400" /> {selectedItem.cityCode === '137607000' ? 'Taguig' : 'Manila'}
               </span>
             </div>
 

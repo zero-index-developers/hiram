@@ -1,5 +1,5 @@
 import { formatDate } from '@hiram/shared';
-import { ArrowRight, Clock } from 'lucide-react';
+import { ArrowRight, Clock, MapPin } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
@@ -77,6 +77,9 @@ export function ItemCard({ item }: ItemCardProps) {
           )}
           <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
             <Clock className="w-3 h-3 text-neutral-400" /> {formatDate(item.createdAt)}
+          </span>
+          <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
+            <MapPin className="w-3 h-3 text-neutral-400" /> {item.cityCode === '137607000' ? 'Taguig' : 'Manila'}
           </span>
         </div>
 

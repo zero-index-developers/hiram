@@ -88,7 +88,7 @@ function App() {
       )}
 
       {/* Footer */}
-      <Footer />
+      {!isInbox && <Footer />}
 
       {/* Authentication Dialog */}
       <AuthModal />
