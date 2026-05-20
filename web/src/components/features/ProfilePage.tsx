@@ -9,7 +9,7 @@ export function ProfilePage() {
   const { user, updateAvatar } = useAuthStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'listings' | 'saved'>('listings');
-  
+
   // Manage saved items in localStorage, fallback to items '1' and '3' if empty initially
   const [savedIds, setSavedIds] = useState<string[]>([]);
 
@@ -76,7 +76,7 @@ export function ProfilePage() {
         <BackButton fallbackPath="/" />
       </div>
 
-      <div className="flex-1 min-h-0 bg-white rounded-3xl border border-primary/10 overflow-hidden shadow-xl flex flex-col">
+      <div className="flex-1 min-h-0 bg-white rounded-3xl overflow-hidden">
         {/* Profile Banner Background */}
         <div className="h-32 bg-gradient-to-r from-primary/15 via-primary/5 to-primary/20 shrink-0 relative" />
 
@@ -84,14 +84,14 @@ export function ProfilePage() {
         <div className="px-8 pb-6 border-b border-neutral-100 bg-white shrink-0 relative flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="flex flex-col md:flex-row items-center md:items-end gap-5 -mt-16 relative z-10">
             {/* Profile Avatar with Edit capability */}
-            <div 
+            <div
               onClick={handleAvatarClick}
               className="relative w-28 h-28 rounded-full border-4 border-white bg-neutral-100 shadow-md group cursor-pointer overflow-hidden flex items-center justify-center shrink-0"
             >
               {user.avatarUrl ? (
-                <img 
-                  src={user.avatarUrl} 
-                  alt={user.name} 
+                <img
+                  src={user.avatarUrl}
+                  alt={user.name}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -102,7 +102,7 @@ export function ProfilePage() {
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <Camera className="text-white w-6 h-6" />
               </div>
-              <input 
+              <input
                 type="file"
                 ref={fileInputRef}
                 onChange={handleFileChange}
@@ -147,22 +147,20 @@ export function ProfilePage() {
         <div className="flex border-b border-neutral-100 bg-white shrink-0">
           <button
             onClick={() => setActiveTab('listings')}
-            className={`flex items-center gap-2 px-8 py-4 text-xs font-black uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
-              activeTab === 'listings'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-neutral-400 hover:text-neutral-600'
-            }`}
+            className={`flex items-center gap-2 px-8 py-4 text-xs font-black uppercase tracking-wider transition-all border-b-2 cursor-pointer ${activeTab === 'listings'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-neutral-400 hover:text-neutral-600'
+              }`}
           >
             <PlusCircle className="w-4 h-4" />
             My Listings ({userListings.length})
           </button>
           <button
             onClick={() => setActiveTab('saved')}
-            className={`flex items-center gap-2 px-8 py-4 text-xs font-black uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
-              activeTab === 'saved'
-                ? 'border-primary text-primary'
-                : 'border-transparent text-neutral-400 hover:text-neutral-600'
-            }`}
+            className={`flex items-center gap-2 px-8 py-4 text-xs font-black uppercase tracking-wider transition-all border-b-2 cursor-pointer ${activeTab === 'saved'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-neutral-400 hover:text-neutral-600'
+              }`}
           >
             <Bookmark className="w-4 h-4" />
             Saved Items ({savedListings.length})
