@@ -3,7 +3,7 @@ import { Search, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { LogoSymbol } from '../ui/Logo';
 import { FilterSelectGroup } from './FilterSelectGroup';
-import { ProfileDropdown } from './ProfileDropdown';
+import { UserActionsBar } from './UserActionsBar';
 
 interface HeroSearchBarProps {
   selectedTags: Tag[];
@@ -15,12 +15,12 @@ interface HeroSearchBarProps {
   forceSticky?: boolean;
 }
 
-export function HeroSearchBar({ 
-  selectedTags, 
-  onSelectTag, 
-  onApplyTags, 
-  onClearAll, 
-  searchQuery, 
+export function HeroSearchBar({
+  selectedTags,
+  onSelectTag,
+  onApplyTags,
+  onClearAll,
+  searchQuery,
   setSearchQuery,
   forceSticky = false
 }: HeroSearchBarProps) {
@@ -70,7 +70,7 @@ export function HeroSearchBar({
 
   return (
     <>
-      <div className={`sticky top-0 pt-4 z-40 bg-background w-full px-6 flex flex-col items-center justify-center pointer-events-none transition-shadow duration-300 ${isSticky ? 'shadow-sm border-b border-primary/5 pb-4' : ''}`}>
+      <div className={`sticky top-0 pt-4 z-40 bg-background w-full px-6 flex flex-col items-center justify-center pointer-events-none transition-shadow duration-300 snap-start ${isSticky ? 'shadow-xs border-b border-primary/5 pb-4' : ''}`}>
         <div className='max-w-3xl w-full'>
           <div className='flex gap-2'>
             <div
@@ -97,7 +97,7 @@ export function HeroSearchBar({
                   />
                 </div>
 
-                <button 
+                <button
                   onClick={redirectToDiscover}
                   className="bg-primary text-white rounded-full px-8 py-3 sm:py-2.5 text-sm font-black hover:bg-primary/90 transition w-full sm:w-auto shrink-0 shadow-sm"
                 >
@@ -125,14 +125,14 @@ export function HeroSearchBar({
               </button>
             </div>
 
-            {/* Profile Popover / Sign In Trigger in Header */}
+            {/* Reusable User Actions Container (Profile, Notifications, Inbox) */}
             <div
-              className={`flex items-center shrink-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isSticky
-                ? 'w-10 opacity-100 ml-1 mr-1 translate-x-0 scale-100 pointer-events-auto'
+              className={`absolute right-4 top-6 flex items-center shrink-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isSticky
+                ? 'w-auto opacity-100 ml-1 mr-1 translate-x-0 scale-100 pointer-events-auto'
                 : 'w-0 opacity-0 ml-0 mr-0 -translate-x-8 scale-50 pointer-events-none'
                 }`}
             >
-              <ProfileDropdown variant="searchbar" />
+              <UserActionsBar variant="searchbar" />
             </div>
           </div>
 

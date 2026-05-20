@@ -5,6 +5,7 @@
 :root {
   font-family: "Plus Jakarta Sans", sans-serif;
   scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
 }
 
 body {

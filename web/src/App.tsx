@@ -7,6 +7,7 @@ import { Footer } from './components/layout/Footer';
 import { Header } from './components/layout/Header';
 import { AuthModal } from './components/features/AuthModal';
 import { ItemDetailsPage } from './components/features/ItemDetailsPage';
+import { InboxPage } from './components/features/InboxPage';
 import { useAuthStore } from './store/useAuthStore';
 
 function App() {
@@ -43,11 +44,12 @@ function App() {
 
   const isItemDetails = currentPath.startsWith('/items/');
   const itemSlug = isItemDetails ? currentPath.replace('/items/', '') : '';
+  const isInbox = currentPath === '/inbox';
 
   return (
     <div className="min-h-screen bg-background text-neutral-800 flex flex-col font-sans w-full transition-colors duration-300">
       {/* Structural layout: Header / Search Bar */}
-      {!isItemDetails ? (
+      {currentPath === '/' ? (
         <Header />
       ) : (
         <HeroSearchBar
@@ -63,6 +65,8 @@ function App() {
 
       {isItemDetails ? (
         <ItemDetailsPage slug={itemSlug} onBack={navigateBack} />
+      ) : isInbox ? (
+        <InboxPage onBack={navigateBack} />
       ) : (
         <>
           {/* Hero Intro */}

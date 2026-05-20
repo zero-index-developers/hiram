@@ -11,13 +11,13 @@ interface HeroProps {
   setSearchQuery: (query: string) => void;
 }
 
-export function Hero({ 
-  selectedTags, 
-  onSelectTag, 
+export function Hero({
+  selectedTags,
+  onSelectTag,
   onApplyTags,
   onClearAll,
-  searchQuery, 
-  setSearchQuery 
+  searchQuery,
+  setSearchQuery
 }: HeroProps) {
   return (
     <>
@@ -30,7 +30,7 @@ export function Hero({
         </div>
       </section>
 
-      <HeroSearchBar 
+      <HeroSearchBar
         selectedTags={selectedTags}
         onSelectTag={onSelectTag}
         onApplyTags={onApplyTags}
@@ -39,7 +39,7 @@ export function Hero({
         setSearchQuery={setSearchQuery}
       />
 
-      <HeroHotTags 
+      <HeroHotTags
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
