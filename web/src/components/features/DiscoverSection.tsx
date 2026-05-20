@@ -36,26 +36,28 @@ export function DiscoverSection({ selectedTags, searchQuery }: DiscoverSectionPr
       });
 
     // 3. Condition Filter from selectedTags
-    const conditionTag = selectedTags.find((t) => t.type === 'CONDITION');
-    const matchesCondition = !conditionTag || item.condition === conditionTag.slug;
+    const conditionTags = selectedTags.filter((t) => t.type === 'CONDITION');
+    const matchesCondition =
+      conditionTags.length === 0 ||
+      conditionTags.some((tag) => item.condition === tag.slug);
 
     // 4. Transaction Filter from selectedTags
-    const transactionTag = selectedTags.find((t) => t.type === 'TRANSACTION');
-    const matchesTransaction = !transactionTag || item.preferredTransaction === transactionTag.slug;
+    const transactionTags = selectedTags.filter((t) => t.type === 'TRANSACTION');
+    const matchesTransaction =
+      transactionTags.length === 0 ||
+      transactionTags.some((tag) => item.preferredTransaction === tag.slug);
 
     // 5. Location Cascading Filter
-    const regionTag = selectedTags.find((t) => t.type === 'REGION');
-    const cityTag = selectedTags.find((t) => t.type === 'CITY');
-    const barangayTag = selectedTags.find((t) => t.type === 'BARANGAY');
+    const regionTags = selectedTags.filter((t) => t.type === 'REGION');
+    const cityTags = selectedTags.filter((t) => t.type === 'CITY');
+    const barangayTags = selectedTags.filter((t) => t.type === 'BARANGAY');
 
-    let matchesLocation = true;
-    if (barangayTag) {
-      matchesLocation = item.barangayCode === barangayTag.slug;
-    } else if (cityTag) {
-      matchesLocation = item.cityCode === cityTag.slug;
-    } else if (regionTag) {
-      matchesLocation = item.regionCode === regionTag.slug;
-    }
+    const hasLocationFilters = regionTags.length > 0 || cityTags.length > 0 || barangayTags.length > 0;
+    const matchesLocation =
+      !hasLocationFilters ||
+      (barangayTags.some((tag) => item.barangayCode === tag.slug) ||
+       cityTags.some((tag) => item.cityCode === tag.slug) ||
+       regionTags.some((tag) => item.regionCode === tag.slug));
 
     return matchesSearch && matchesCategory && matchesCondition && matchesTransaction && matchesLocation;
   });
