@@ -8,6 +8,7 @@ import { Header } from './components/layout/Header';
 import { AuthModal } from './components/features/AuthModal';
 import { ItemDetailsPage } from './components/features/ItemDetailsPage';
 import { InboxPage } from './components/features/InboxPage';
+import { AlertsPage } from './components/features/AlertsPage';
 import { useAuthStore } from './store/useAuthStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ProtectedRoute } from './components/features/ProtectedRoute';
@@ -48,6 +49,7 @@ function App() {
   const isItemDetails = location.pathname.startsWith('/items/');
   const itemSlug = isItemDetails ? location.pathname.replace('/items/', '') : '';
   const isInbox = location.pathname === '/inbox';
+  const isAlerts = location.pathname === '/alerts';
 
   return (
     <div className="min-h-screen bg-background text-neutral-800 flex flex-col font-sans w-full transition-colors duration-300">
@@ -72,6 +74,10 @@ function App() {
         <ProtectedRoute>
           <InboxPage onBack={navigateBack} />
         </ProtectedRoute>
+      ) : isAlerts ? (
+        <ProtectedRoute>
+          <AlertsPage onBack={navigateBack} />
+        </ProtectedRoute>
       ) : (
         <>
           {/* Hero Intro */}
@@ -93,7 +99,7 @@ function App() {
       )}
 
       {/* Footer */}
-      {!isInbox && <Footer />}
+      {(!isInbox && !isAlerts) && <Footer />}
 
       {/* Authentication Dialog */}
       <AuthModal />

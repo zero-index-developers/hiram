@@ -14,7 +14,7 @@ export function InboxProposalsList({
   return (
     <div className="md:col-span-4 border-r border-neutral-100 flex flex-col h-full bg-neutral-50/30">
       <div className="p-4 border-b border-neutral-100 bg-white">
-        <span className="text-xs font-black text-neutral-400 uppercase tracking-widest">Recent Chats</span>
+        <span className="text-xs font-black text-neutral-400 uppercase tracking-widest">Inbox</span>
       </div>
 
       <div className="flex-1 overflow-y-auto divide-y divide-neutral-100/50">
@@ -26,11 +26,10 @@ export function InboxProposalsList({
             <div
               key={prop.id}
               onClick={() => onSelectProposal(prop.id)}
-              className={`p-4 transition-all duration-200 cursor-pointer flex gap-3 text-left relative ${
-                isActive 
-                  ? 'bg-primary/[0.03] border-l-4 border-primary' 
+              className={`p-4 transition-all duration-200 cursor-pointer flex gap-3 text-left relative ${isActive
+                  ? 'bg-primary/[0.03] border-l-4 border-primary'
                   : 'hover:bg-neutral-50 bg-white'
-              }`}
+                }`}
             >
               <div className="w-10 h-10 rounded-full bg-primary/5 text-primary border border-primary/10 flex items-center justify-center font-bold text-sm shrink-0">
                 {initials}
@@ -50,10 +49,9 @@ export function InboxProposalsList({
                     {prop.offerType}
                   </span>
                   {prop.status !== 'pending' && (
-                    <span className={`text-[9px] font-bold uppercase ${
-                      prop.status === 'accepted' ? 'text-emerald-500' :
-                      prop.status === 'completed' ? 'text-blue-500' : 'text-rose-500'
-                    }`}>
+                    <span className={`text-[9px] font-bold uppercase ${prop.status === 'accepted' ? 'text-emerald-500' :
+                        prop.status === 'completed' ? 'text-blue-500' : 'text-rose-500'
+                      }`}>
                       {prop.status}
                     </span>
                   )}

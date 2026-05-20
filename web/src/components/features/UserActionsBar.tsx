@@ -171,7 +171,14 @@ export function UserActionsBar({ variant = 'header' }: UserActionsBarProps) {
             </div>
 
             <div className="max-h-64 overflow-y-auto divide-y divide-neutral-100">
-              <div className="p-3.5 hover:bg-neutral-50/50 transition-colors cursor-pointer flex gap-3">
+              <div 
+                onClick={() => {
+                  setActivePopover(null);
+                  window.history.pushState(null, '', '/inbox?proposal=prop-2');
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                }}
+                className="p-3.5 hover:bg-neutral-50/50 transition-colors cursor-pointer flex gap-3"
+              >
                 <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 border border-emerald-100 flex items-center justify-center shrink-0">
                   <CheckCircle size={14} />
                 </div>
@@ -194,6 +201,19 @@ export function UserActionsBar({ variant = 'header' }: UserActionsBarProps) {
                   <p className="text-[10px] text-neutral-400 mt-1">2 hours ago</p>
                 </div>
               </div>
+            </div>
+
+            <div className="border-t border-neutral-100 pt-2.5 px-4 flex justify-center">
+              <button
+                onClick={() => {
+                  setActivePopover(null);
+                  window.history.pushState(null, '', '/alerts');
+                  window.dispatchEvent(new PopStateEvent('popstate'));
+                }}
+                className="text-xs font-black text-primary hover:text-primary/80 transition-colors w-full text-center py-1 cursor-pointer"
+              >
+                See All
+              </button>
             </div>
           </div>
         )}

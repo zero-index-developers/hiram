@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ArrowLeft, MessageSquare } from 'lucide-react';
 import { mockProposalsData } from '@hiram/shared';
 import type { MockProposal, MockProposalMessage } from '@hiram/shared';
@@ -11,9 +12,20 @@ interface InboxPageProps {
 }
 
 export function InboxPage({ onBack }: InboxPageProps) {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const initialPropId = searchParams.get('proposal') || 'prop-1';
+
   const [proposals, setProposals] = useState<MockProposal[]>(mockProposalsData);
-  const [selectedProposalId, setSelectedProposalId] = useState<string>('prop-1');
+  const [selectedProposalId, setSelectedProposalId] = useState<string>(initialPropId);
   const [newMessageText, setNewMessageText] = useState<string>('');
+
+  useEffect(() => {
+    const propId = new URLSearchParams(location.search).get('proposal');
+    if (propId) {
+      setSelectedProposalId(propId);
+    }
+  }, [location.search]);
 
   const activeProposal = proposals.find(p => p.id === selectedProposalId) || proposals[0];
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { LogoSymbol } from '../ui/Logo';
 import { FilterSelectGroup } from './FilterSelectGroup';
 import { UserActionsBar } from './UserActionsBar';
+import { SearchResultsModal } from './SearchResultsModal';
 
 interface HeroSearchBarProps {
   selectedTags: Tag[];
@@ -26,6 +27,7 @@ export function HeroSearchBar({
 }: HeroSearchBarProps) {
   const [isSticky, setIsSticky] = useState(forceSticky);
   const [isFilterOpen, setIsFilterOpen] = useState(true);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   useEffect(() => {
     if (forceSticky) {
@@ -48,30 +50,36 @@ export function HeroSearchBar({
     }
   };
 
+  const handleSearchAction = () => {
+    if (window.location.pathname !== '/') {
+      setIsPopoverOpen(true);
+    }
+  };
+
   const handleInputChange = (val: string) => {
     setSearchQuery(val);
-    redirectToDiscover();
+    handleSearchAction();
   };
 
   const handleSelectTagWrapper = (tag: Tag) => {
     onSelectTag(tag);
-    redirectToDiscover();
+    handleSearchAction();
   };
 
   const handleClearAllWrapper = () => {
     if (onClearAll) onClearAll();
-    redirectToDiscover();
+    handleSearchAction();
   };
 
   const handleApplyTagsWrapper = (tags: Tag[], typesToReplace: TagType[]) => {
     if (onApplyTags) onApplyTags(tags, typesToReplace);
-    redirectToDiscover();
+    handleSearchAction();
   };
 
   return (
     <>
       <div className={`sticky top-0 pt-4 z-40 bg-background w-full px-6 flex flex-col items-center justify-center pointer-events-none transition-shadow duration-300 snap-start ${isSticky ? 'shadow-xs border-b border-primary/5 pb-4' : ''}`}>
-        <div className='max-w-3xl w-full'>
+        <div className='max-w-3xl w-full relative'>
           <div className='flex gap-2'>
             <div
               onClick={redirectToDiscover}
@@ -107,7 +115,7 @@ export function HeroSearchBar({
                 </div>
 
                 <button
-                  onClick={redirectToDiscover}
+                  onClick={handleSearchAction}
                   className="bg-primary text-white rounded-full px-8 py-3 sm:py-2.5 text-sm font-black hover:bg-primary/90 transition w-full sm:w-auto shrink-0 shadow-sm"
                 >
                   Search
@@ -134,15 +142,7 @@ export function HeroSearchBar({
               </button>
             </div>
 
-            {/* Reusable User Actions Container (Profile, Notifications, Inbox) */}
-            <div
-              className={`absolute right-4 top-6 flex items-center shrink-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isSticky
-                ? 'w-auto opacity-100 ml-1 mr-1 translate-x-0 scale-100 pointer-events-auto'
-                : 'w-0 opacity-0 ml-0 mr-0 -translate-x-8 scale-50 pointer-events-none'
-                }`}
-            >
-              <UserActionsBar variant="searchbar" />
-            </div>
+
           </div>
 
           {/* Expanded Filter Area */}
@@ -155,8 +155,32 @@ export function HeroSearchBar({
               onClearAll={handleClearAllWrapper}
             />
           </div>
+
+          <SearchResultsModal 
+            isOpen={isPopoverOpen} 
+            onClose={() => setIsPopoverOpen(false)}
+            selectedTags={selectedTags}
+            searchQuery={searchQuery}
+          />
+        </div>
+
+        {/* Reusable User Actions Container (Profile, Notifications, Inbox) */}
+        <div
+          className={`absolute right-4 top-6 flex items-center shrink-0 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${isSticky
+            ? 'w-auto opacity-100 ml-1 mr-1 translate-x-0 scale-100 pointer-events-auto'
+            : 'w-0 opacity-0 ml-0 mr-0 -translate-x-8 scale-50 pointer-events-none'
+            }`}
+        >
+          <UserActionsBar variant="searchbar" />
         </div>
       </div>
+      
+      {isPopoverOpen && (
+        <div 
+          className="fixed inset-0 z-30 pointer-events-auto" 
+          onClick={() => setIsPopoverOpen(false)} 
+        />
+      )}
     </>
   );
 }
