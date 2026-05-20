@@ -9,6 +9,7 @@ import { AuthModal } from './components/features/AuthModal';
 import { ItemDetailsPage } from './components/features/ItemDetailsPage';
 import { InboxPage } from './components/features/InboxPage';
 import { AlertsPage } from './components/features/AlertsPage';
+import { ProfilePage } from './components/features/ProfilePage';
 import { useAuthStore } from './store/useAuthStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ProtectedRoute } from './components/features/ProtectedRoute';
@@ -50,6 +51,7 @@ function App() {
   const itemSlug = isItemDetails ? location.pathname.replace('/items/', '') : '';
   const isInbox = location.pathname === '/inbox';
   const isAlerts = location.pathname === '/alerts';
+  const isProfile = location.pathname === '/profile';
   const isSearchPage = location.pathname === '/search';
 
   return (
@@ -73,11 +75,15 @@ function App() {
         <ItemDetailsPage slug={itemSlug} onBack={navigateBack} />
       ) : isInbox ? (
         <ProtectedRoute>
-          <InboxPage onBack={navigateBack} />
+          <InboxPage />
         </ProtectedRoute>
       ) : isAlerts ? (
         <ProtectedRoute>
-          <AlertsPage onBack={navigateBack} />
+          <AlertsPage />
+        </ProtectedRoute>
+      ) : isProfile ? (
+        <ProtectedRoute>
+          <ProfilePage />
         </ProtectedRoute>
       ) : isSearchPage ? (
         <DiscoverSection 

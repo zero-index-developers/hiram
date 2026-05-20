@@ -33,9 +33,19 @@ interface AuthState {
   initAuth: () => Promise<void>;
   clearError: () => void;
   checkEmail: (email: string) => Promise<boolean | null>;
+  updateAvatar: (avatarUrl: string) => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+const applyAvatarOverride = (user: any) => {
+  if (!user) return null;
+  const storedAvatar = localStorage.getItem(`hiram_avatar_${user.id}`);
+  if (storedAvatar) {
+    return { ...user, avatarUrl: storedAvatar };
+  }
+  return user;
+};
+
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   token: null,
   isAuthenticated: false,
@@ -43,6 +53,15 @@ export const useAuthStore = create<AuthState>((set) => ({
   error: null,
   showAuthModal: false,
   authModalTab: 'login',
+
+  updateAvatar: (avatarUrl: string) => {
+    const currentUser = get().user;
+    if (currentUser) {
+      const updatedUser = { ...currentUser, avatarUrl };
+      set({ user: updatedUser });
+      localStorage.setItem(`hiram_avatar_${currentUser.id}`, avatarUrl);
+    }
+  },
 
   setAuthModalOpen: (isOpen, tab = 'login') => {
     set({ showAuthModal: isOpen, authModalTab: tab, error: null });
@@ -59,7 +78,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.setItem('hiram_token', token);
       set({ 
         token, 
-        user, 
+        user: applyAvatarOverride(user), 
         isAuthenticated: true, 
         isLoading: false, 
         showAuthModal: false 
@@ -81,7 +100,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.setItem('hiram_token', token);
       set({ 
         token, 
-        user, 
+        user: applyAvatarOverride(user), 
         isAuthenticated: true, 
         isLoading: false, 
         showAuthModal: false 
@@ -93,8 +112,8 @@ export const useAuthStore = create<AuthState>((set) => ({
       let errMsg = err.response?.data?.error || 'Registration failed. Please try again.';
       
       if (details) {
-        const fields = Object.keys(details).map(k => `${k}: ${details[k].join(', ')}`);
-        errMsg = `${errMsg} (${fields.join('; ')})`;
+         const fields = Object.keys(details).map(k => `${k}: ${details[k].join(', ')}`);
+         errMsg = `${errMsg} (${fields.join('; ')})`;
       }
       
       set({ error: errMsg, isLoading: false });
@@ -111,7 +130,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       localStorage.setItem('hiram_token', token);
       set({
         token,
-        user,
+        user: applyAvatarOverride(user),
         isAuthenticated: true,
         isLoading: false,
         showAuthModal: false
@@ -150,7 +169,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       });
       set({ 
         token, 
-        user: response.data.user, 
+        user: applyAvatarOverride(response.data.user), 
         isAuthenticated: true, 
         isLoading: false 
       });

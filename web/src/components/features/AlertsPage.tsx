@@ -3,9 +3,6 @@ import { Bell, CheckCircle, BookOpen, Clock, AlertTriangle, ExternalLink } from 
 import { useNavigate } from 'react-router-dom';
 import { BackButton } from '../ui/BackButton';
 
-interface AlertsPageProps {
-  onBack?: () => void;
-}
 
 interface AlertItem {
   id: string;
@@ -94,7 +91,7 @@ const mockAlerts: AlertItem[] = Array.from({ length: 24 }).map((_, i) => {
 
 const ITEMS_PER_PAGE = 10;
 
-export function AlertsPage({ onBack }: AlertsPageProps) {
+export function AlertsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
   const totalPages = Math.ceil(mockAlerts.length / ITEMS_PER_PAGE);

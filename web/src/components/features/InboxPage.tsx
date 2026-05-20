@@ -8,11 +8,7 @@ import { InboxProposalDetails } from './InboxProposalDetails';
 import { InboxChatView } from './InboxChatView';
 import { BackButton } from '../ui/BackButton';
 
-interface InboxPageProps {
-  onBack?: () => void;
-}
-
-export function InboxPage({ onBack }: InboxPageProps) {
+export function InboxPage() {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const initialPropId = searchParams.get('proposal') || 'prop-1';

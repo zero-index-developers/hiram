@@ -1,5 +1,6 @@
 import { LogOut, User as UserIcon, Settings } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfileDropdownProps {
   variant?: 'header' | 'searchbar';
@@ -15,6 +16,7 @@ export function ProfileDropdown({
   onClose
 }: ProfileDropdownProps) {
   const { isAuthenticated, user, logout } = useAuthStore();
+  const navigate = useNavigate();
 
   const getInitials = (name: string) => {
     return name.trim().charAt(0).toUpperCase();
@@ -38,8 +40,12 @@ export function ProfileDropdown({
         onClick={onToggle}
         className="flex items-center focus:outline-none group pointer-events-auto"
       >
-        <div className={`${avatarSizeClass} rounded-full bg-primary/5 text-primary border border-primary/10 flex items-center justify-center font-bold text-sm transition-all group-hover:border-primary/30 group-hover:bg-primary/10 shadow-sm`}>
-          {getInitials(user.name)}
+        <div className={`${avatarSizeClass} rounded-full overflow-hidden bg-primary/5 text-primary border border-primary/10 flex items-center justify-center font-bold text-sm transition-all group-hover:border-primary/30 group-hover:bg-primary/10 shadow-sm`}>
+          {user.avatarUrl ? (
+            <img src={user.avatarUrl} alt={user.name} className="w-full h-full object-cover" />
+          ) : (
+            getInitials(user.name)
+          )}
         </div>
       </button>
 
@@ -64,7 +70,7 @@ export function ProfileDropdown({
 
             <button
               onClick={() => {
-                alert("Profile Clicked");
+                navigate('/profile');
                 onClose();
               }}
               className="w-full px-4 py-2 text-left text-sm text-neutral-600 hover:text-primary hover:bg-primary/5 transition-colors duration-200 flex items-center gap-2 font-bold"

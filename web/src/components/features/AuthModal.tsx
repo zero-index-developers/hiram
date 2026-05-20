@@ -88,7 +88,7 @@ export function AuthModal() {
     name: string;
     email: string;
     studentId: string;
-    avatarUrl: string;
+    avatarUrl?: string | null;
   }) => {
     await googleAuth(mockProfile);
     setGoogleSimOpen(false);
@@ -111,6 +111,10 @@ export function AuthModal() {
   };
 
   const currentEmail = step === 'login' ? loginForm.getValues('email') : registerForm.getValues('email');
+
+  const getInitials = (name: string) => {
+    return name.trim().charAt(0).toUpperCase();
+  };
 
   return (
     <Modal
@@ -150,11 +154,9 @@ export function AuthModal() {
                 onClick={() => handleSimulateGoogleLogin(mockUser)}
                 className="w-full flex items-center gap-3 p-3 rounded-xl border border-neutral-100 hover:border-primary/20 hover:bg-primary/5 transition-all text-left group"
               >
-                <img
-                  src={mockUser.avatarUrl}
-                  alt={mockUser.name}
-                  className="w-10 h-10 rounded-full border border-neutral-200 group-hover:border-primary/20"
-                />
+                <div className="w-10 h-10 rounded-full border border-neutral-200 group-hover:border-primary/20 bg-primary/5 text-primary font-bold flex items-center justify-center text-sm shrink-0">
+                  {getInitials(mockUser.name)}
+                </div>
                 <div>
                   <div className="font-semibold text-neutral-800 text-sm group-hover:text-primary transition-colors">
                     {mockUser.name}

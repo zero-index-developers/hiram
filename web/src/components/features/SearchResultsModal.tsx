@@ -3,7 +3,6 @@ import type { Tag } from '@hiram/shared';
 import { mockItems } from '@hiram/shared';
 import { SearchResultCard } from './SearchResultCard';
 import { LogoSymbol } from '../ui/Logo';
-import { Search } from 'lucide-react';
 
 interface SearchResultsModalProps {
   isOpen: boolean;
