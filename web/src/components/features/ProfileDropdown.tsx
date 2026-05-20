@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { LogOut, User as UserIcon, Settings } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 
@@ -9,6 +9,7 @@ interface ProfileDropdownProps {
 export function ProfileDropdown({ variant = 'header' }: ProfileDropdownProps) {
   const { isAuthenticated, user, setAuthModalOpen, logout } = useAuthStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const getInitials = (name: string) => {
     return name.trim().charAt(0).toUpperCase();
@@ -18,6 +19,24 @@ export function ProfileDropdown({ variant = 'header' }: ProfileDropdownProps) {
     logout();
     setDropdownOpen(false);
   };
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    if (!dropdownOpen) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [dropdownOpen]);
 
   if (!isAuthenticated || !user) {
     if (variant === 'searchbar') {
@@ -44,7 +63,7 @@ export function ProfileDropdown({ variant = 'header' }: ProfileDropdownProps) {
   const avatarSizeClass = variant === 'searchbar' ? 'w-10 h-10' : 'w-9 h-9';
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       {/* Profile Avatar trigger */}
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -58,9 +77,9 @@ export function ProfileDropdown({ variant = 'header' }: ProfileDropdownProps) {
       {/* Dropdown Menu */}
       {dropdownOpen && (
         <>
-          {/* Backdrop overlay for closing dropdown */}
+          {/* Backdrop overlay for closing dropdown (with pointer-events-auto to override container lock) */}
           <div
-            className="fixed inset-0 z-30"
+            className="fixed inset-0 z-30 pointer-events-auto"
             onClick={() => setDropdownOpen(false)}
           />
           <div className="absolute right-0 mt-2.5 w-60 bg-white border border-primary/10 rounded-2xl shadow-xl py-3 z-40 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto text-left">
