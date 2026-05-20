@@ -1,15 +1,31 @@
 import { useState } from 'react';
-import { Mail, Lock, User, Hash, BookOpen, X, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User, Hash, BookOpen, AlertCircle, ArrowLeft } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { loginSchema, registerSchema, mockGoogleUsers } from '@hiram/shared';
+import type { LoginInput, RegisterInput } from '@hiram/shared';
 import { useAuthStore } from '../../store/useAuthStore';
 import { LogoSymbol } from '../ui/Logo';
+import { Modal } from '../ui/Modal';
+
+const emailSchema = z.object({
+  email: z.string()
+    .email({ message: 'Invalid email address' })
+    .refine(
+      (email) => email.endsWith('@iskolar.pup.edu.ph') || email.endsWith('@pup.edu.ph'),
+      { message: 'Must be a valid PUP student or faculty email (@iskolar.pup.edu.ph or @pup.edu.ph)' }
+    ),
+});
+
+type EmailInput = z.infer<typeof emailSchema>;
 
 export function AuthModal() {
   const {
     showAuthModal,
     setAuthModalOpen,
     login,
-    register,
+    register: submitRegister,
     googleAuth,
     isLoading,
     error: storeError,
@@ -19,97 +35,53 @@ export function AuthModal() {
   const [googleSimOpen, setGoogleSimOpen] = useState(false);
   const [step, setStep] = useState<'email' | 'login' | 'register'>('email');
 
-  // Form states
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [studentId, setStudentId] = useState('');
-  const [course, setCourse] = useState('');
-
-  // Validation errors
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
   const checkEmail = useAuthStore((state) => state.checkEmail);
+
+  // Email form instance
+  const emailForm = useForm<EmailInput>({
+    resolver: zodResolver(emailSchema),
+    defaultValues: { email: '' }
+  });
+
+  // Login form instance
+  const loginForm = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' }
+  });
+
+  // Register form instance
+  const registerForm = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: { email: '', password: '', name: '', studentId: '', course: '' }
+  });
 
   if (!showAuthModal) return null;
 
-  const validateEmail = () => {
-    // Basic format validation
-    if (!email) {
-      setErrors({ email: 'Email address is required' });
-      return false;
-    }
-    if (!email.includes('@')) {
-      setErrors({ email: 'Invalid email address' });
-      return false;
-    }
-    const isPupEmail = email.endsWith('@iskolar.pup.edu.ph') || email.endsWith('@pup.edu.ph');
-    if (!isPupEmail) {
-      setErrors({ email: 'Must be a valid PUP email (@iskolar.pup.edu.ph or @pup.edu.ph)' });
-      return false;
-    }
-    setErrors({});
-    return true;
-  };
-
-  const handleEmailContinue = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateEmail()) return;
-
+  const handleEmailContinue = async (data: EmailInput) => {
     clearError();
-    const exists = await checkEmail(email);
+    const exists = await checkEmail(data.email);
 
     if (exists === true) {
+      loginForm.setValue('email', data.email);
       setStep('login');
     } else if (exists === false) {
+      registerForm.setValue('email', data.email);
       setStep('register');
     }
-    // if exists is null, storeError is populated
   };
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Validate schema
-    const result = loginSchema.safeParse({ email, password });
-    if (!result.success) {
-      const fieldErrors = result.error.flatten().fieldErrors;
-      const formattedErrors: Record<string, string> = {};
-      Object.keys(fieldErrors).forEach((key) => {
-        formattedErrors[key] = fieldErrors[key]?.[0] || '';
-      });
-      setErrors(formattedErrors);
-      return;
-    }
-
-    setErrors({});
-    await login(email, password);
+  const handleLoginSubmit = async (data: LoginInput) => {
+    await login(data.email, data.password);
   };
 
-  const handleRegisterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const payload = {
-      name,
-      email,
-      studentId,
-      password,
-      course: course || undefined
-    };
-
-    const result = registerSchema.safeParse(payload);
-    if (!result.success) {
-      const fieldErrors = result.error.flatten().fieldErrors;
-      const formattedErrors: Record<string, string> = {};
-      Object.keys(fieldErrors).forEach((key) => {
-        formattedErrors[key] = fieldErrors[key]?.[0] || '';
-      });
-      setErrors(formattedErrors);
-      return;
-    }
-
-    setErrors({});
-    await register(payload);
+  const handleRegisterSubmit = async (data: RegisterInput) => {
+    await submitRegister({
+      studentId: data.studentId,
+      email: data.email,
+      name: data.name,
+      password: data.password,
+      course: data.course
+    });
   };
 
   const handleSimulateGoogleLogin = async (mockProfile: {
@@ -124,39 +96,30 @@ export function AuthModal() {
 
   const handleBackToEmail = () => {
     setStep('email');
-    setPassword('');
-    setName('');
-    setStudentId('');
-    setCourse('');
-    setErrors({});
+    loginForm.reset();
+    registerForm.reset();
     clearError();
   };
 
   const handleCloseModal = () => {
     setAuthModalOpen(false);
     setStep('email');
-    setEmail('');
-    setPassword('');
-    setName('');
-    setStudentId('');
-    setCourse('');
-    setErrors({});
+    emailForm.reset();
+    loginForm.reset();
+    registerForm.reset();
     clearError();
   };
 
+  const currentEmail = step === 'login' ? loginForm.getValues('email') : registerForm.getValues('email');
+
   return (
-    <div className="fixed inset-0 bg-neutral-955/75 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-300">
-
-      {/* Simulation Google Consent Screen overlay */}
+    <Modal
+      isOpen={showAuthModal}
+      onClose={googleSimOpen ? () => setGoogleSimOpen(false) : handleCloseModal}
+      size={googleSimOpen ? 'sm' : 'md'}
+    >
       {googleSimOpen ? (
-        <div className="bg-white rounded-2xl border border-neutral-200 shadow-2xl w-full max-w-sm p-6 relative animate-in zoom-in-95 duration-200">
-          <button
-            onClick={() => setGoogleSimOpen(false)}
-            className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-600 transition-colors"
-          >
-            <X size={18} />
-          </button>
-
+        <div className="p-6">
           <div className="flex flex-col items-center text-center mb-6">
             <svg className="w-8 h-8 mb-2" viewBox="0 0 24 24">
               <path
@@ -207,23 +170,13 @@ export function AuthModal() {
           </div>
         </div>
       ) : (
-        /* Standard Auth Modal Content */
-        <div className="bg-white border border-primary/10 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 relative">
-
-          {/* Close trigger */}
-          <button
-            onClick={handleCloseModal}
-            className="absolute top-4 right-4 text-neutral-400 hover:text-neutral-700 transition-colors z-10 p-1.5 hover:bg-neutral-100 rounded-full"
-          >
-            <X size={18} />
-          </button>
-
+        <>
           {/* Modal Header */}
-          <div className="px-8 pt-8 pb-4 text-center">
+          <div className="px-8 pt-8 pb-4 text-center relative">
             {step !== 'email' && (
               <button
                 onClick={handleBackToEmail}
-                className="absolute top-4 left-4 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-full p-1.5 transition-all"
+                className="absolute top-4 left-4 text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 rounded-full p-1.5 transition-all cursor-pointer z-20"
                 title="Go back"
               >
                 <ArrowLeft size={18} />
@@ -234,21 +187,21 @@ export function AuthModal() {
                 <LogoSymbol size="xl" className="text-primary" />
               </div>
             </div>
-            <h2 className="text-2xl font-black text-neutral-900 tracking-tight">
+            <h2 className="text-2xl font-black text-neutral-900 tracking-tight animate-in fade-in duration-200">
               {step === 'login' ? 'Welcome Back' : step === 'register' ? 'Join Hiram' : 'Welcome to Hiram'}
             </h2>
-            <p className="text-neutral-500 text-sm mt-1">
+            <p className="text-neutral-500 text-sm mt-1 animate-in fade-in duration-200">
               {step === 'login' ? 'Enter password to sign in' : step === 'register' ? 'Complete student registration details' : 'PUP Student Item Sharing & Trading Hub'}
             </p>
           </div>
 
           {/* Errors display */}
-          {(storeError || errors.general) && (
-            <div className="mx-8 mt-2 p-3.5 bg-red-50 border border-red-100 rounded-xl flex items-start gap-2.5 text-xs text-red-700">
+          {storeError && (
+            <div className="mx-8 mt-2 p-3.5 bg-red-50 border border-red-100 rounded-xl flex items-start gap-2.5 text-xs text-red-700 animate-in fade-in duration-200">
               <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
               <div>
                 <span className="font-bold">Authentication Error</span>
-                <p className="mt-0.5">{storeError || errors.general}</p>
+                <p className="mt-0.5">{storeError}</p>
               </div>
             </div>
           )}
@@ -260,7 +213,7 @@ export function AuthModal() {
                 {/* Google OAuth Button */}
                 <button
                   onClick={() => setGoogleSimOpen(true)}
-                  className="w-full border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 font-bold py-2.5 px-4 rounded-full flex justify-center items-center gap-2.5 text-sm transition-all shadow-sm"
+                  className="w-full border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-700 font-bold py-2.5 px-4 rounded-full flex justify-center items-center gap-2.5 text-sm transition-all shadow-sm cursor-pointer"
                 >
                   <svg className="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
                     <path
@@ -293,7 +246,7 @@ export function AuthModal() {
                   </div>
                 </div>
 
-                <form onSubmit={handleEmailContinue} className="space-y-4">
+                <form onSubmit={emailForm.handleSubmit(handleEmailContinue)} className="space-y-4">
                   {/* Email Input */}
                   <div>
                     <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5">
@@ -305,15 +258,14 @@ export function AuthModal() {
                       </span>
                       <input
                         type="text"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        {...emailForm.register('email')}
                         placeholder="e.g. name@iskolar.pup.edu.ph"
                         className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
                       />
                     </div>
-                    {errors.email && (
+                    {emailForm.formState.errors.email && (
                       <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1 font-semibold">
-                        <AlertCircle size={12} /> {errors.email}
+                        <AlertCircle size={12} /> {emailForm.formState.errors.email.message}
                       </p>
                     )}
                   </div>
@@ -322,7 +274,7 @@ export function AuthModal() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full bg-primary text-white font-bold py-3 rounded-full shadow-sm hover:shadow-md transition-all hover:bg-primary/95 flex justify-center items-center gap-2 text-sm disabled:opacity-50"
+                    className="w-full bg-primary text-white font-bold py-3 rounded-full shadow-sm hover:shadow-md transition-all hover:bg-primary/95 flex justify-center items-center gap-2 text-sm disabled:opacity-50 cursor-pointer"
                   >
                     {isLoading ? 'Verifying...' : 'Continue'}
                   </button>
@@ -331,14 +283,14 @@ export function AuthModal() {
             )}
 
             {step === 'login' && (
-              <form onSubmit={handleLoginSubmit} className="space-y-4">
+              <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="space-y-4 animate-in fade-in duration-200">
                 {/* Read-only Email display */}
                 <div className="bg-neutral-50 border border-neutral-100 rounded-xl p-3 flex justify-between items-center">
-                  <div className="text-sm font-medium text-neutral-600 truncate mr-2">{email}</div>
+                  <div className="text-sm font-medium text-neutral-600 truncate mr-2">{currentEmail}</div>
                   <button
                     type="button"
                     onClick={handleBackToEmail}
-                    className="text-xs text-primary font-bold hover:underline"
+                    className="text-xs text-primary font-bold hover:underline cursor-pointer"
                   >
                     Change
                   </button>
@@ -355,16 +307,15 @@ export function AuthModal() {
                     </span>
                     <input
                       type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      {...loginForm.register('password')}
                       placeholder="••••••••"
-                      className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400 animate-in fade-in"
+                      className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
                       autoFocus
                     />
                   </div>
-                  {errors.password && (
+                  {loginForm.formState.errors.password && (
                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-semibold">
-                      <AlertCircle size={12} /> {errors.password}
+                      <AlertCircle size={12} /> {loginForm.formState.errors.password.message}
                     </p>
                   )}
                 </div>
@@ -373,7 +324,7 @@ export function AuthModal() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-primary text-white font-bold py-3 rounded-full shadow-sm hover:shadow-md transition-all hover:bg-primary/95 flex justify-center items-center gap-2 text-sm disabled:opacity-50"
+                  className="w-full bg-primary text-white font-bold py-3 rounded-full shadow-sm hover:shadow-md transition-all hover:bg-primary/95 flex justify-center items-center gap-2 text-sm disabled:opacity-50 cursor-pointer"
                 >
                   {isLoading ? 'Signing In...' : 'Sign In'}
                 </button>
@@ -381,14 +332,14 @@ export function AuthModal() {
             )}
 
             {step === 'register' && (
-              <form onSubmit={handleRegisterSubmit} className="space-y-4">
+              <form onSubmit={registerForm.handleSubmit(handleRegisterSubmit)} className="space-y-4 animate-in fade-in duration-200">
                 {/* Read-only Email display */}
                 <div className="bg-neutral-50 border border-neutral-100 rounded-xl p-3 flex justify-between items-center">
-                  <div className="text-sm font-medium text-neutral-600 truncate mr-2">{email}</div>
+                  <div className="text-sm font-medium text-neutral-600 truncate mr-2">{currentEmail}</div>
                   <button
                     type="button"
                     onClick={handleBackToEmail}
-                    className="text-xs text-primary font-bold hover:underline"
+                    className="text-xs text-primary font-bold hover:underline cursor-pointer"
                   >
                     Change
                   </button>
@@ -405,16 +356,15 @@ export function AuthModal() {
                     </span>
                     <input
                       type="text"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      {...registerForm.register('name')}
                       placeholder="Juan Dela Cruz"
                       className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
                       autoFocus
                     />
                   </div>
-                  {errors.name && (
+                  {registerForm.formState.errors.name && (
                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-semibold">
-                      <AlertCircle size={12} /> {errors.name}
+                      <AlertCircle size={12} /> {registerForm.formState.errors.name.message}
                     </p>
                   )}
                 </div>
@@ -430,15 +380,14 @@ export function AuthModal() {
                     </span>
                     <input
                       type="text"
-                      value={studentId}
-                      onChange={(e) => setStudentId(e.target.value)}
+                      {...registerForm.register('studentId')}
                       placeholder="2021-12345-MN-0"
                       className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
                     />
                   </div>
-                  {errors.studentId && (
+                  {registerForm.formState.errors.studentId && (
                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-semibold">
-                      <AlertCircle size={12} /> {errors.studentId}
+                      <AlertCircle size={12} /> {registerForm.formState.errors.studentId.message}
                     </p>
                   )}
                 </div>
@@ -454,15 +403,14 @@ export function AuthModal() {
                     </span>
                     <input
                       type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      {...registerForm.register('password')}
                       placeholder="••••••••"
                       className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
                     />
                   </div>
-                  {errors.password && (
+                  {registerForm.formState.errors.password && (
                     <p className="text-red-500 text-xs mt-1 flex items-center gap-1 font-semibold">
-                      <AlertCircle size={12} /> {errors.password}
+                      <AlertCircle size={12} /> {registerForm.formState.errors.password.message}
                     </p>
                   )}
                 </div>
@@ -477,9 +425,8 @@ export function AuthModal() {
                       <BookOpen size={16} />
                     </span>
                     <select
-                      value={course}
-                      onChange={(e) => setCourse(e.target.value)}
-                      className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all appearance-none"
+                      {...registerForm.register('course')}
+                      className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all appearance-none cursor-pointer"
                     >
                       <option value="">Select Course</option>
                       <option value="BSIT">BS Information Technology</option>
@@ -497,15 +444,15 @@ export function AuthModal() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full bg-primary text-white font-bold py-3 rounded-full shadow-sm hover:shadow-md transition-all hover:bg-primary/95 flex justify-center items-center gap-2 text-sm disabled:opacity-50"
+                  className="w-full bg-primary text-white font-bold py-3 rounded-full shadow-sm hover:shadow-md transition-all hover:bg-primary/95 flex justify-center items-center gap-2 text-sm disabled:opacity-50 cursor-pointer"
                 >
                   {isLoading ? 'Creating Account...' : 'Create Account'}
                 </button>
               </form>
             )}
           </div>
-        </div>
+        </>
       )}
-    </div>
+    </Modal>
   );
 }
