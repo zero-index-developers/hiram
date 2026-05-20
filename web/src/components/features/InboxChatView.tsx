@@ -17,7 +17,7 @@ export function InboxChatView({
   return (
     <>
       {/* Chat Messages Section */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-neutral-50/20">
+      <div className="flex-1 overflow-y-auto scrollbar-minimal p-4 space-y-3 bg-neutral-50/20">
         {proposal.messages.map((msg) => {
           const isMe = msg.sender === 'me';
           return (

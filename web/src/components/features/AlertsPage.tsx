@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { ArrowLeft, Bell, CheckCircle, BookOpen, Clock, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Bell, CheckCircle, BookOpen, Clock, AlertTriangle, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { BackButton } from '../ui/BackButton';
 
 interface AlertsPageProps {
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 interface AlertItem {
@@ -132,12 +133,7 @@ export function AlertsPage({ onBack }: AlertsPageProps) {
     <div className="relative max-w-5xl mx-auto px-4 pt-6 pb-4 w-full flex-grow flex flex-col h-[calc(100vh-120px)] min-h-[650px] max-h-[820px] animate-in fade-in duration-300">
       {/* Floating Back Button Outside the main white container */}
       <div className="mb-4 shrink-0 lg:absolute lg:-left-16 lg:top-6 lg:mb-0">
-        <button
-          onClick={onBack}
-          className="w-10 h-10 rounded-full bg-white border border-primary/10 shadow-sm hover:shadow flex items-center justify-center transition-colors text-neutral-600 hover:text-primary hover:border-primary/30 cursor-pointer"
-        >
-          <ArrowLeft size={20} />
-        </button>
+        <BackButton fallbackPath="/" />
       </div>
 
       <div className="flex-1 min-h-0 bg-white rounded-3xl border border-primary/10 overflow-hidden shadow-xl flex flex-col">
@@ -152,7 +148,7 @@ export function AlertsPage({ onBack }: AlertsPageProps) {
         </div>
 
         {/* Alert List */}
-        <div className="flex-1 overflow-y-auto divide-y divide-neutral-100/70 bg-neutral-50/30">
+        <div className="flex-1 overflow-y-auto scrollbar-minimal divide-y divide-neutral-100/70 bg-neutral-50/30">
           {currentAlerts.map((alert) => (
             <div
               key={alert.id}
@@ -161,14 +157,14 @@ export function AlertsPage({ onBack }: AlertsPageProps) {
                 alert.actionUrl ? 'cursor-pointer hover:bg-neutral-50' : 'cursor-default'
               } ${!alert.read ? 'bg-primary/[0.02]' : 'bg-white'}`}
             >
-              {/* Unread dot */}
-              {!alert.read && (
-                <span className="absolute top-6 left-2 w-1.5 h-1.5 bg-primary rounded-full" />
-              )}
-
-              {/* Icon */}
-              <div className={`w-10 h-10 rounded-full border flex items-center justify-center shrink-0 shadow-sm ${getColorClassForType(alert.type)}`}>
-                {getIconForType(alert.type)}
+              {/* Icon with Top-Left Unread dot */}
+              <div className="relative shrink-0">
+                <div className={`w-10 h-10 rounded-full border flex items-center justify-center shadow-sm ${getColorClassForType(alert.type)}`}>
+                  {getIconForType(alert.type)}
+                </div>
+                {!alert.read && (
+                  <span className="absolute -top-0.5 -left-0.5 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white" />
+                )}
               </div>
 
               {/* Content */}

@@ -99,7 +99,7 @@ export function UserActionsBar({ variant = 'header' }: UserActionsBarProps) {
                 <span className="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full">2 New</span>
               </div>
               
-              <div className="max-h-64 overflow-y-auto divide-y divide-neutral-100">
+              <div className="max-h-64 overflow-y-auto scrollbar-minimal divide-y divide-neutral-100">
                 <div 
                   onClick={() => {
                     setActivePopover(null);
@@ -170,7 +170,7 @@ export function UserActionsBar({ variant = 'header' }: UserActionsBarProps) {
               <span className="bg-amber-50 text-amber-600 text-[10px] font-bold px-2 py-0.5 rounded-full">New Updates</span>
             </div>
 
-            <div className="max-h-64 overflow-y-auto divide-y divide-neutral-100">
+            <div className="max-h-64 overflow-y-auto scrollbar-minimal divide-y divide-neutral-100">
               <div 
                 onClick={() => {
                   setActivePopover(null);

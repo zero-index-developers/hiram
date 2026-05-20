@@ -1,14 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { ArrowLeft, MessageSquare } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { mockProposalsData } from '@hiram/shared';
 import type { MockProposal, MockProposalMessage } from '@hiram/shared';
 import { InboxProposalsList } from './InboxProposalsList';
 import { InboxProposalDetails } from './InboxProposalDetails';
 import { InboxChatView } from './InboxChatView';
+import { BackButton } from '../ui/BackButton';
 
 interface InboxPageProps {
-  onBack: () => void;
+  onBack?: () => void;
 }
 
 export function InboxPage({ onBack }: InboxPageProps) {
@@ -76,12 +77,7 @@ export function InboxPage({ onBack }: InboxPageProps) {
     <div className="relative max-w-5xl mx-auto px-4 pt-6 pb-4 w-full flex-grow flex flex-col h-[calc(100vh-120px)] min-h-[650px] max-h-[820px] animate-in fade-in duration-300">
       {/* Floating Back Button Outside the main white container */}
       <div className="mb-4 shrink-0 lg:absolute lg:-left-16 lg:top-6 lg:mb-0">
-        <button 
-          onClick={onBack}
-          className="w-10 h-10 rounded-full bg-white border border-primary/10 shadow-sm hover:shadow flex items-center justify-center transition-colors text-neutral-600 hover:text-primary hover:border-primary/30 cursor-pointer"
-        >
-          <ArrowLeft size={20} />
-        </button>
+        <BackButton fallbackPath="/" />
       </div>
 
       <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-12 bg-white rounded-3xl border border-primary/10 overflow-hidden shadow-xl">

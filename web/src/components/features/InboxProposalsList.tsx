@@ -17,7 +17,7 @@ export function InboxProposalsList({
         <span className="text-xs font-black text-neutral-400 uppercase tracking-widest">Inbox</span>
       </div>
 
-      <div className="flex-1 overflow-y-auto divide-y divide-neutral-100/50">
+      <div className="flex-1 overflow-y-auto scrollbar-minimal divide-y divide-neutral-100/50">
         {proposals.map((prop) => {
           const isActive = prop.id === selectedProposalId;
           const initials = prop.lenderName.trim().charAt(0).toUpperCase();
@@ -31,8 +31,13 @@ export function InboxProposalsList({
                   : 'hover:bg-neutral-50 bg-white'
                 }`}
             >
-              <div className="w-10 h-10 rounded-full bg-primary/5 text-primary border border-primary/10 flex items-center justify-center font-bold text-sm shrink-0">
-                {initials}
+              <div className="relative shrink-0">
+                <div className="w-10 h-10 rounded-full bg-primary/5 text-primary border border-primary/10 flex items-center justify-center font-bold text-sm">
+                  {initials}
+                </div>
+                {prop.unread && !isActive && (
+                  <span className="absolute -top-0.5 -left-0.5 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white" />
+                )}
               </div>
 
               <div className="min-w-0 flex-1">
@@ -57,10 +62,6 @@ export function InboxProposalsList({
                   )}
                 </div>
               </div>
-
-              {prop.unread && !isActive && (
-                <span className="absolute top-4 right-4 w-2 h-2 bg-primary rounded-full" />
-              )}
             </div>
           );
         })}

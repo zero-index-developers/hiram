@@ -81,7 +81,7 @@ export function SearchResultsModal({
         Found <b className='text-primary'>{filteredItems.length}</b> matching items
       </p>
 
-      <div className="flex-1 overflow-y-auto p-6 bg-neutral-50/30 pb-20">
+      <div className="flex-1 overflow-y-auto scrollbar-minimal p-6 bg-neutral-50/30 pb-20">
         {filteredItems.length > 0 ? (
           <div className="flex flex-col gap-3">
             {filteredItems.map((item) => (
