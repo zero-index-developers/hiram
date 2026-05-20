@@ -50,15 +50,20 @@ export function HeroSearchBar({
     }
   };
 
-  const handleSearchAction = () => {
+  const handleSearchAction = (currentQuery?: string) => {
     if (window.location.pathname !== '/') {
-      setIsPopoverOpen(true);
+      const activeQuery = currentQuery !== undefined ? currentQuery : searchQuery;
+      if (activeQuery.trim() !== '' || selectedTags.length > 0) {
+        setIsPopoverOpen(true);
+      } else {
+        setIsPopoverOpen(false);
+      }
     }
   };
 
   const handleInputChange = (val: string) => {
     setSearchQuery(val);
-    handleSearchAction();
+    handleSearchAction(val);
   };
 
   const handleSelectTagWrapper = (tag: Tag) => {
@@ -115,7 +120,7 @@ export function HeroSearchBar({
                 </div>
 
                 <button
-                  onClick={handleSearchAction}
+                  onClick={() => handleSearchAction()}
                   className="bg-primary text-white rounded-full px-8 py-3 sm:py-2.5 text-sm font-black hover:bg-primary/90 transition w-full sm:w-auto shrink-0 shadow-sm"
                 >
                   Search

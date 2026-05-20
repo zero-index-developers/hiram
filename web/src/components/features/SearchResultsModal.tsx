@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import type { Tag } from '@hiram/shared';
 import { mockItems } from '@hiram/shared';
-import { ItemCard } from './ItemCard';
+import { SearchResultCard } from './SearchResultCard';
 import { LogoSymbol } from '../ui/Logo';
 import { Search } from 'lucide-react';
 
@@ -59,8 +59,8 @@ export function SearchResultsModal({
     const matchesLocation =
       !hasLocationFilters ||
       (barangayTags.some((tag) => item.barangayCode === tag.slug) ||
-       cityTags.some((tag) => item.cityCode === tag.slug) ||
-       regionTags.some((tag) => item.regionCode === tag.slug));
+        cityTags.some((tag) => item.cityCode === tag.slug) ||
+        regionTags.some((tag) => item.regionCode === tag.slug));
 
     return matchesSearch && matchesCategory && matchesCondition && matchesTransaction && matchesLocation;
   });
@@ -74,42 +74,32 @@ export function SearchResultsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-4 z-50 bg-white rounded-3xl shadow-2xl border border-primary/10 h-[500px] max-h-[60vh] flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-      <div className="p-4 sm:p-6 border-b border-primary/5 flex items-center gap-3 bg-neutral-50/50 shrink-0">
-          <div className="w-10 h-10 rounded-full bg-primary/5 border border-primary/10 flex items-center justify-center text-primary">
-            <Search size={18} />
+    <div className="absolute top-full left-0 right-0 mt-4 z-50 bg-white shadow-2xl border border-primary/10 h-[500px] max-h-[60vh] flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto">
+      <p className="text-xs text-right  p-4 w-full text-neutral-400 font-medium">
+        Found <b className='text-primary'>{filteredItems.length}</b> matching items
+      </p>
+
+      <div className="flex-1 overflow-y-auto p-6 bg-neutral-50/30 pb-20">
+        {filteredItems.length > 0 ? (
+          <div className="flex flex-col gap-3">
+            {filteredItems.map((item) => (
+              <SearchResultCard
+                key={item.id}
+                item={item}
+                onClick={() => handleItemClick(item.id, item.title)}
+              />
+            ))}
           </div>
-          <div className="text-left">
-            <h2 className="text-base font-black text-neutral-800">Search Results</h2>
-            <p className="text-xs text-neutral-400 font-medium">
-              Found {filteredItems.length} matching items on campus
+        ) : (
+          <div className="py-16 px-4 flex flex-col items-center justify-center text-center">
+            <LogoSymbol size="xl" className="text-neutral-200 mb-4 animate-bounce" />
+            <h3 className="font-extrabold text-neutral-700 text-sm">No items matched your search</h3>
+            <p className="text-xs text-neutral-400 mt-1 max-w-sm font-medium">
+              Try adjusting your query, categories, or location tags to see different listings.
             </p>
           </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-6 bg-neutral-50/30 pb-20">
-          {filteredItems.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filteredItems.map((item) => (
-                <div 
-                  key={item.id} 
-                  onClick={() => handleItemClick(item.id, item.title)}
-                  className="cursor-pointer group"
-                >
-                  <ItemCard item={item} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="py-16 px-4 flex flex-col items-center justify-center text-center">
-              <LogoSymbol size="xl" className="text-neutral-200 mb-4 animate-bounce" />
-              <h3 className="font-extrabold text-neutral-700 text-sm">No items matched your search</h3>
-              <p className="text-xs text-neutral-400 mt-1 max-w-sm font-medium">
-                Try adjusting your query, categories, or location tags to see different listings.
-              </p>
-            </div>
-          )}
-        </div>
+        )}
       </div>
+    </div>
   );
 }
