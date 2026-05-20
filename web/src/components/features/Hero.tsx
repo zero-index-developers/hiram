@@ -6,6 +6,7 @@ interface HeroProps {
   selectedTags: Tag[];
   onSelectTag: (tag: Tag) => void;
   onApplyTags?: (tags: Tag[], typesToReplace: TagType[]) => void;
+  onClearAll?: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
@@ -14,6 +15,7 @@ export function Hero({
   selectedTags, 
   onSelectTag, 
   onApplyTags,
+  onClearAll,
   searchQuery, 
   setSearchQuery 
 }: HeroProps) {
@@ -32,6 +34,7 @@ export function Hero({
         selectedTags={selectedTags}
         onSelectTag={onSelectTag}
         onApplyTags={onApplyTags}
+        onClearAll={onClearAll}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />

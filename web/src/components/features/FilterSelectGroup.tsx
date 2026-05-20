@@ -8,6 +8,8 @@ interface FilterSelectGroupProps {
   selectedTags: Tag[];
   onSelectTag: (tag: Tag) => void;
   onApplyTags?: (tags: Tag[], typesToReplace: TagType[]) => void;
+  onClearAll?: () => void;
+  searchQuery?: string;
   className?: string;
 }
 
@@ -15,6 +17,8 @@ export function FilterSelectGroup({
   selectedTags,
   onSelectTag,
   onApplyTags,
+  onClearAll,
+  searchQuery = '',
   className = ''
 }: FilterSelectGroupProps) {
   // Location States
@@ -77,7 +81,7 @@ export function FilterSelectGroup({
   const activeLocationValues = selectedTags.filter(t => t.type === 'REGION' || t.type === 'CITY');
   const hasActiveFilters = selectedTags.some(t =>
     ['REGION', 'CITY', 'CATEGORY', 'SUBCATEGORY', 'CONDITION', 'TRANSACTION'].includes(t.type || '')
-  );
+  ) || !!searchQuery;
 
   return (
     <div className={`flex flex-wrap justify-center items-center gap-3 ${className}`}>
@@ -137,7 +141,13 @@ export function FilterSelectGroup({
 
       {hasActiveFilters && (
         <button
-          onClick={() => onApplyTags?.([], ['REGION', 'CITY', 'CATEGORY', 'SUBCATEGORY', 'CONDITION', 'TRANSACTION'])}
+          onClick={() => {
+            if (onClearAll) {
+              onClearAll();
+            } else {
+              onApplyTags?.([], ['REGION', 'CITY', 'CATEGORY', 'SUBCATEGORY', 'CONDITION', 'TRANSACTION']);
+            }
+          }}
           className="flex items-center justify-center w-8 h-8 rounded-full border border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 hover:border-primary/40 transition-all duration-200 shadow-sm shrink-0"
           title="Clear all filters"
         >

@@ -55,9 +55,11 @@ export function ItemCard({ item }: ItemCardProps) {
           {item.preferredTransaction && (
             <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border shadow-sm ${item.preferredTransaction === 'HIRAM'
                 ? 'bg-blue-50 text-blue-600 border-blue-100'
-                : 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                : item.preferredTransaction === 'TRADE'
+                  ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
+                  : 'bg-amber-50 text-amber-600 border-amber-100'
               }`}>
-              {item.preferredTransaction === 'HIRAM' ? 'Hiram' : 'Trade'}
+              {item.preferredTransaction === 'HIRAM' ? 'Hiram' : item.preferredTransaction === 'TRADE' ? 'Trade' : 'Request'}
             </span>
           )}
           <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">

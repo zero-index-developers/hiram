@@ -8,11 +8,12 @@ interface HeroSearchBarProps {
   selectedTags: Tag[];
   onSelectTag: (tag: Tag) => void;
   onApplyTags?: (tags: Tag[], typesToReplace: TagType[]) => void;
+  onClearAll?: () => void;
   searchQuery: string;
   setSearchQuery: (query: string) => void;
 }
 
-export function HeroSearchBar({ selectedTags, onSelectTag, onApplyTags, searchQuery, setSearchQuery }: HeroSearchBarProps) {
+export function HeroSearchBar({ selectedTags, onSelectTag, onApplyTags, onClearAll, searchQuery, setSearchQuery }: HeroSearchBarProps) {
   const [isSticky, setIsSticky] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -89,6 +90,8 @@ export function HeroSearchBar({ selectedTags, onSelectTag, onApplyTags, searchQu
               selectedTags={selectedTags}
               onSelectTag={onSelectTag}
               onApplyTags={onApplyTags}
+              onClearAll={onClearAll}
+              searchQuery={searchQuery}
             />
           </div>
         </div>

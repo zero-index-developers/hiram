@@ -64,5 +64,21 @@ export const mockItems: Item[] = [
     regionCode: '130000000',
     cityCode: '137607000',
     barangayCode: '137607018'
+  },
+  {
+    id: '5',
+    title: 'Wanted: Drafting Table & T-Square',
+    description: 'Looking for a drafting table or T-square for the upcoming architectural design plates. Urgent request.',
+    category: 'CREATIVE',
+    subcategory: 'DRAWING_BOARDS',
+    condition: 'GOOD',
+    preferredTransaction: 'REQUEST',
+    isAvailable: true,
+    owner: 'Patricia Reyes',
+    createdAt: new Date('2026-05-19'),
+    image: undefined,
+    regionCode: '130000000',
+    cityCode: '133900000',
+    barangayCode: '133901001'
   }
 ];

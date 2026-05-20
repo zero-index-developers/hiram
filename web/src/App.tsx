@@ -10,7 +10,8 @@ function App() {
     searchQuery,
     setSearchQuery,
     handleSelectTag,
-    handleApplyTags
+    handleApplyTags,
+    clearAllFilters
   } = useSearchFilters();
 
   return (
@@ -23,6 +24,7 @@ function App() {
         selectedTags={selectedTags}
         onSelectTag={handleSelectTag}
         onApplyTags={handleApplyTags}
+        onClearAll={clearAllFilters}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
