@@ -6,10 +6,10 @@ import {
 } from "@hiram/shared";
 import { Image, Plus, X } from "lucide-react";
 import { useRef, useState } from "react";
-import { Modal } from "../ui/Modal";
-import { Select, type SelectOption } from "../ui/Select";
 import { AlertBanner } from "../ui/AlertBanner";
+import { Modal } from "../ui/Modal";
 import { ModalFooter } from "../ui/ModalFooter";
+import { Select, type SelectOption } from "../ui/Select";
 
 interface AddItemModalProps {
   isOpen: boolean;
@@ -106,7 +106,13 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
           errors.category ||
           errors.condition ||
           errors.transactionType ? (
-            <AlertBanner title="Please fill the required fields"><ul className="mt-1 list-disc list-inside">{Object.values(errors).map((err, i) => (<li key={i}>{err}</li>))}</ul></AlertBanner>
+            <AlertBanner title="Please fill the required fields">
+              <ul className="mt-1 list-disc list-inside">
+                {Object.values(errors).map((err, i) => (
+                  <li key={i}>{err}</li>
+                ))}
+              </ul>
+            </AlertBanner>
           ) : null}
 
           <div>
@@ -212,7 +218,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                       e.stopPropagation();
                       handleRemoveImage();
                     }}
-                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md hover:bg-red-600 transition-colors cursor-pointer border-2 border-white z-10"
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md hover:bg-red-600 transition-colors cursor-pointer border-2 border-white dark:border-neutral-900 z-10"
                     title="Remove image"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -235,7 +241,11 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
           </div>
         </div>
 
-        <ModalFooter onCancel={handleClose} onConfirm={handleSubmit} confirmLabel="List Item" />
+        <ModalFooter
+          onCancel={handleClose}
+          onConfirm={handleSubmit}
+          confirmLabel="List Item"
+        />
       </div>
     </Modal>
   );

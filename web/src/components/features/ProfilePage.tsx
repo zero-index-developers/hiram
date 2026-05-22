@@ -180,7 +180,7 @@ export function ProfilePage({ userId }: ProfilePageProps) {
             >
               <div
                 onClick={handleAvatarClick}
-                className={`w-28 h-28 rounded-full border-4 border-white bg-neutral-100 shadow-md overflow-hidden flex items-center justify-center ${isOwnProfile ? "group" : ""}`}
+                className={`w-28 h-28 rounded-full border-4 border-white dark:border-neutral-800 bg-neutral-100 shadow-md overflow-hidden flex items-center justify-center ${isOwnProfile ? "group" : ""}`}
               >
                 {profileUser.avatarUrl ? (
                   <img
