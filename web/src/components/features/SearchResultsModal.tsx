@@ -190,9 +190,7 @@ export function SearchResultsModal({
                       key={user.id}
                       id={user.id}
                       name={user.name}
-                      email={user.email}
                       avatarUrl={user.avatarUrl}
-                      studentId={user.studentId}
                     />
                   ))}
                 </div>

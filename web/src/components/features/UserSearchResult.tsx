@@ -4,17 +4,13 @@ import { Avatar } from "../ui/Avatar";
 interface UserSearchResultProps {
   id: string;
   name: string;
-  email: string;
   avatarUrl?: string | null;
-  studentId?: string | null;
 }
 
 export function UserSearchResult({
   id,
   name,
-  email,
   avatarUrl,
-  studentId,
 }: UserSearchResultProps) {
   const navigate = useNavigate();
 
@@ -28,9 +24,6 @@ export function UserSearchResult({
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-neutral-900 truncate group-hover:text-primary transition-colors">
             {name}
-          </p>
-          <p className="text-xs text-neutral-500 truncate">
-            {studentId ? `${studentId} • ${email}` : email}
           </p>
         </div>
       </div>
