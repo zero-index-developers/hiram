@@ -1,18 +1,27 @@
-import { useState, useCallback } from 'react';
-import Cropper, { type Area } from 'react-easy-crop';
-import 'react-easy-crop/react-easy-crop.css';
-import { X, ZoomIn, ZoomOut, RotateCw, Trash2 } from 'lucide-react';
+import { RotateCw, Trash2, X, ZoomIn, ZoomOut } from "lucide-react";
+import { useCallback, useState } from "react";
+import Cropper, { type Area } from "react-easy-crop";
+import "react-easy-crop/react-easy-crop.css";
 
 interface ImageCropModalProps {
   imageSrc: string;
   isOpen: boolean;
   hasExistingAvatar: boolean;
-  onCrop: (croppedDataUrl: string) => void;
+  isUploading?: boolean;
+  onCrop: (croppedDataUrl: string) => void | Promise<void>;
   onRemove: () => void;
   onClose: () => void;
 }
 
-export function ImageCropModal({ imageSrc, isOpen, hasExistingAvatar, onCrop, onRemove, onClose }: ImageCropModalProps) {
+export function ImageCropModal({
+  imageSrc,
+  isOpen,
+  hasExistingAvatar,
+  isUploading = false,
+  onCrop,
+  onRemove,
+  onClose,
+}: ImageCropModalProps) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
@@ -29,10 +38,12 @@ export function ImageCropModal({ imageSrc, isOpen, hasExistingAvatar, onCrop, on
     setIsProcessing(true);
     const image = new Image();
     image.src = imageSrc;
-    await new Promise((resolve) => { image.onload = resolve; });
+    await new Promise((resolve) => {
+      image.onload = resolve;
+    });
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     canvas.width = croppedAreaPixels.width;
@@ -50,7 +61,7 @@ export function ImageCropModal({ imageSrc, isOpen, hasExistingAvatar, onCrop, on
       croppedAreaPixels.height,
     );
 
-    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
     onCrop(dataUrl);
     setIsProcessing(false);
   }, [croppedAreaPixels, imageSrc, onCrop]);
@@ -120,11 +131,14 @@ export function ImageCropModal({ imageSrc, isOpen, hasExistingAvatar, onCrop, on
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-4">
           <button
-            onClick={() => { onRemove(); onClose(); }}
+            onClick={() => {
+              onRemove();
+              onClose();
+            }}
             className="flex items-center gap-1.5 px-4 py-2 text-sm font-bold text-red-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
           >
             <Trash2 size={14} />
-            {hasExistingAvatar ? 'Remove current' : 'Cancel'}
+            {hasExistingAvatar ? "Remove current" : "Cancel"}
           </button>
           <div className="flex items-center gap-2">
             <button
@@ -135,10 +149,14 @@ export function ImageCropModal({ imageSrc, isOpen, hasExistingAvatar, onCrop, on
             </button>
             <button
               onClick={createCroppedImage}
-              disabled={isProcessing}
+              disabled={isProcessing || isUploading}
               className="px-6 py-2 text-sm font-bold rounded-full bg-primary text-white hover:bg-primary/95 shadow-sm transition-all cursor-pointer disabled:opacity-50"
             >
-              {isProcessing ? 'Saving...' : 'Save'}
+              {isProcessing
+                ? "Saving..."
+                : isUploading
+                  ? "Uploading..."
+                  : "Save"}
             </button>
           </div>
         </div>

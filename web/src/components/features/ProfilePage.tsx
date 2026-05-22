@@ -13,8 +13,6 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useUserStore } from "../../store/useUserStore";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api/v1";
 import { PageLayout } from "../layout/PageLayout";
 import { EmptyState } from "../ui/EmptyState";
 import { TabBar } from "../ui/TabBar";
@@ -22,6 +20,8 @@ import { VerifiedBadge } from "../ui/VerifiedBadge";
 import { ImageCropModal } from "./ImageCropModal";
 import { ItemCard } from "./ItemCard";
 import { VerifyStudentId } from "./VerifyStudentId";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api/v1";
 
 interface ProfilePageProps {
   userId?: string;
@@ -43,22 +43,26 @@ export function ProfilePage({ userId }: ProfilePageProps) {
   const [showCropModal, setShowCropModal] = useState(false);
 
   const isOwnProfile = !userId || userId === currentUser?.id;
-  const storeUser = useUserStore((s) => userId ? s.users[userId] : undefined);
+  const storeUser = useUserStore((s) => (userId ? s.users[userId] : undefined));
   const profileUser = isOwnProfile
     ? currentUser
-    : storeUser ?? mockUserProfiles.find((u) => u.id === userId) ?? null;
+    : (storeUser ?? mockUserProfiles.find((u) => u.id === userId) ?? null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   // Fetch other user's profile from API to get updated avatar
   useEffect(() => {
     if (!userId || isOwnProfile) return;
     const token = useAuthStore.getState().token;
-    axios.get(`${API_URL}/users/${userId}`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-    }).then((res) => {
-      useUserStore.getState().setUser(res.data);
-    }).catch(() => {
-      // Ignore API error — rely on mock data
-    });
+    axios
+      .get(`${API_URL}/users/${userId}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      })
+      .then((res) => {
+        useUserStore.getState().setUser(res.data);
+      })
+      .catch(() => {
+        // Ignore API error — rely on mock data
+      });
   }, [userId, isOwnProfile]);
 
   const getItemSlug = (id: string, title: string) =>
@@ -127,10 +131,15 @@ export function ProfilePage({ userId }: ProfilePageProps) {
     e.target.value = "";
   };
 
-  const handleCropComplete = (croppedDataUrl: string) => {
-    updateAvatar(croppedDataUrl);
-    setShowCropModal(false);
-    setPendingImageSrc("");
+  const handleCropComplete = async (croppedDataUrl: string) => {
+    setIsUploadingAvatar(true);
+    try {
+      await updateAvatar(croppedDataUrl);
+      setShowCropModal(false);
+      setPendingImageSrc("");
+    } finally {
+      setIsUploadingAvatar(false);
+    }
   };
 
   const handleCropModalClose = () => {
@@ -316,6 +325,7 @@ export function ProfilePage({ userId }: ProfilePageProps) {
         onCrop={handleCropComplete}
         onRemove={removeAvatar}
         onClose={handleCropModalClose}
+        isUploading={isUploadingAvatar}
       />
     </PageLayout>
   );
