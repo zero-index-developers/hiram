@@ -140,7 +140,7 @@ export function ImageCropModal({
                 onClose();
               }}
               title={hasExistingAvatar ? "Remove current" : "Cancel"}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer"
             >
               <Trash2 size={16} />
             </button>
