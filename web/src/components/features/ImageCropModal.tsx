@@ -1,4 +1,4 @@
-import { RotateCw, Trash2, X, ZoomIn, ZoomOut } from "lucide-react";
+import { RotateCw, Trash2, Upload, X, ZoomIn, ZoomOut } from "lucide-react";
 import { useCallback, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
 import "react-easy-crop/react-easy-crop.css";
@@ -10,6 +10,7 @@ interface ImageCropModalProps {
   isUploading?: boolean;
   onCrop: (croppedDataUrl: string) => void | Promise<void>;
   onRemove: () => void;
+  onUploadNew: () => void;
   onClose: () => void;
 }
 
@@ -20,6 +21,7 @@ export function ImageCropModal({
   isUploading = false,
   onCrop,
   onRemove,
+  onUploadNew,
   onClose,
 }: ImageCropModalProps) {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -131,16 +133,30 @@ export function ImageCropModal({
 
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-4">
-          <button
-            onClick={() => {
-              onRemove();
-              onClose();
-            }}
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-bold text-red-500 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
-          >
-            <Trash2 size={14} />
-            {hasExistingAvatar ? "Remove current" : "Cancel"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                onRemove();
+                onClose();
+              }}
+              title={hasExistingAvatar ? "Remove current" : "Cancel"}
+              className="w-9 h-9 rounded-full flex items-center justify-center text-red-500 hover:text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+            >
+              <Trash2 size={16} />
+            </button>
+            {hasExistingAvatar && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onUploadNew();
+                }}
+                title="Upload new"
+                className="w-9 h-9 rounded-full flex items-center justify-center text-neutral-600 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer"
+              >
+                <Upload size={16} />
+              </button>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}

@@ -324,6 +324,7 @@ export function ProfilePage({ userId }: ProfilePageProps) {
         hasExistingAvatar={!!currentUser?.avatarUrl}
         onCrop={handleCropComplete}
         onRemove={removeAvatar}
+        onUploadNew={() => fileInputRef.current?.click()}
         onClose={handleCropModalClose}
         isUploading={isUploadingAvatar}
       />
