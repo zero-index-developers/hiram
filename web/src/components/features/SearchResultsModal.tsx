@@ -1,8 +1,10 @@
-import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { mockItems, ITEM_CATEGORIES, HOT_TAGS } from '@hiram/shared';
-import { Search, Sparkles, History, X } from 'lucide-react';
-import { EmptyState } from '../ui/EmptyState';
+import { HOT_TAGS, ITEM_CATEGORIES, mockItems } from "@hiram/shared";
+import { History, Search, Sparkles, Users, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { searchUsers } from "../../services/searchService";
+import { EmptyState } from "../ui/EmptyState";
+import { UserSearchResult } from "./UserSearchResult";
 
 interface SearchResultsModalProps {
   isOpen: boolean;
@@ -11,20 +13,30 @@ interface SearchResultsModalProps {
   setSearchQuery: (query: string) => void;
 }
 
+interface UserSearchData {
+  id: string;
+  name: string;
+  email: string;
+  studentId?: string | null;
+  avatarUrl?: string | null;
+}
+
 export function SearchResultsModal({
   isOpen,
   onClose,
   searchQuery,
-  setSearchQuery
+  setSearchQuery,
 }: SearchResultsModalProps) {
   const navigate = useNavigate();
   const [historyList, setHistoryList] = useState<string[]>([]);
+  const [userResults, setUserResults] = useState<UserSearchData[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
 
   // Load search history when modal opens
   useEffect(() => {
     if (isOpen) {
       try {
-        const history = localStorage.getItem('hiram_search_history');
+        const history = localStorage.getItem("hiram_search_history");
         setHistoryList(history ? JSON.parse(history) : []);
       } catch {
         setHistoryList([]);
@@ -32,18 +44,35 @@ export function SearchResultsModal({
     }
   }, [isOpen]);
 
+  // Fetch user search results when query changes
+  useEffect(() => {
+    if (searchQuery.trim() && isOpen) {
+      setIsLoadingUsers(true);
+      searchUsers(searchQuery)
+        .then(setUserResults)
+        .finally(() => setIsLoadingUsers(false));
+    } else {
+      setUserResults([]);
+    }
+  }, [searchQuery, isOpen]);
+
   // Save term to search history helper
   const saveSearchToHistory = (query: string) => {
     if (!query.trim()) return;
     try {
-      const history = localStorage.getItem('hiram_search_history');
+      const history = localStorage.getItem("hiram_search_history");
       let searchHistory: string[] = history ? JSON.parse(history) : [];
 
-      searchHistory = searchHistory.filter(q => q.toLowerCase() !== query.trim().toLowerCase());
+      searchHistory = searchHistory.filter(
+        (q) => q.toLowerCase() !== query.trim().toLowerCase(),
+      );
       searchHistory.unshift(query.trim());
       searchHistory = searchHistory.slice(0, 8); // Keep last 8 searches
 
-      localStorage.setItem('hiram_search_history', JSON.stringify(searchHistory));
+      localStorage.setItem(
+        "hiram_search_history",
+        JSON.stringify(searchHistory),
+      );
       setHistoryList(searchHistory);
     } catch (e) {
       console.error(e);
@@ -51,32 +80,35 @@ export function SearchResultsModal({
   };
 
   // Delete specific history item
-  const handleDeleteHistoryItem = (e: React.MouseEvent, itemToDelete: string) => {
+  const handleDeleteHistoryItem = (
+    e: React.MouseEvent,
+    itemToDelete: string,
+  ) => {
     e.stopPropagation();
-    const updated = historyList.filter(item => item !== itemToDelete);
+    const updated = historyList.filter((item) => item !== itemToDelete);
     setHistoryList(updated);
-    localStorage.setItem('hiram_search_history', JSON.stringify(updated));
+    localStorage.setItem("hiram_search_history", JSON.stringify(updated));
   };
 
   // Clear all search history
   const handleClearAllHistory = (e: React.MouseEvent) => {
     e.stopPropagation();
     setHistoryList([]);
-    localStorage.removeItem('hiram_search_history');
+    localStorage.removeItem("hiram_search_history");
   };
 
   // Define static suggestible academic keywords
   const staticKeywords = [
-    'Calculators',
-    'Drafting Tools',
-    'Reference Books',
-    'Study Guides',
-    'Academic Books',
-    'Lab Equipment',
-    'Tripods',
-    'Cameras',
-    'T-Square',
-    'Engineering Books'
+    "Calculators",
+    "Drafting Tools",
+    "Reference Books",
+    "Study Guides",
+    "Academic Books",
+    "Lab Equipment",
+    "Tripods",
+    "Cameras",
+    "T-Square",
+    "Engineering Books",
   ];
 
   // Collect all unique keywords from categories, hot tags, item titles, and static lists
@@ -85,22 +117,22 @@ export function SearchResultsModal({
       ...HOT_TAGS.map((t) => t.name),
       ...ITEM_CATEGORIES.map((c) => c.name),
       ...mockItems.map((item) => item.title),
-      ...staticKeywords
-    ])
+      ...staticKeywords,
+    ]),
   );
 
   // Filter keywords matching the search term
   const matchedKeywords = searchQuery.trim()
     ? allKeywords.filter((kw) =>
-      kw.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+        kw.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
     : [];
 
   const handleKeywordClick = (keyword: string) => {
     setSearchQuery(keyword);
     saveSearchToHistory(keyword);
     onClose();
-    navigate('/search');
+    navigate("/search");
   };
 
   if (!isOpen) return null;
@@ -120,7 +152,8 @@ export function SearchResultsModal({
             </>
           ) : (
             <>
-              <Sparkles size={12} className="text-accent" /> Popular Campus Searches
+              <Sparkles size={12} className="text-accent" /> Popular Campus
+              Searches
             </>
           )}
         </span>
@@ -142,25 +175,67 @@ export function SearchResultsModal({
       {/* Suggestion list body */}
       <div className="flex-1 overflow-y-auto scrollbar-minimal p-3 bg-white divide-y divide-neutral-50">
         {searchQuery.trim() ? (
-          /* 1. Keyword search matching results */
-          matchedKeywords.length > 0 ? (
-            <div className="flex flex-col">
-              {matchedKeywords.map((keyword, index) => (
-                <button
-                  key={`kw-${keyword}-${index}`}
-                  onClick={() => handleKeywordClick(keyword)}
-                  className="w-full text-left px-5 py-3.5 rounded-xl hover:text-primary transition-all duration-200 flex items-center gap-3 text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-200"
-                >
-                  <Search size={14} className="text-neutral-400 group-hover:text-primary transition-colors shrink-0" />
-                  <span className="truncate group-hover:translate-x-0.5 transition-transform duration-200">
-                    {keyword}
-                  </span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <EmptyState icon={Search} title="No matching keywords" description="Try searching with broader academic terms like 'calculator' or 'board'." className="bg-transparent border-none shadow-none" />
-          )
+          /* Display user results + keyword results when searching */
+          <div className="flex flex-col gap-3">
+            {/* User Results */}
+            {userResults.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest px-2">
+                  <Users size={12} className="inline mr-1.5" /> People (
+                  {userResults.length})
+                </p>
+                <div className="flex flex-col gap-2">
+                  {userResults.map((user) => (
+                    <UserSearchResult
+                      key={user.id}
+                      id={user.id}
+                      name={user.name}
+                      email={user.email}
+                      avatarUrl={user.avatarUrl}
+                      studentId={user.studentId}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Keyword Results */}
+            {matchedKeywords.length > 0 && (
+              <div className="flex flex-col">
+                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest px-2 mb-2">
+                  <Search size={12} className="inline mr-1.5" /> Keywords (
+                  {matchedKeywords.length})
+                </p>
+                {matchedKeywords.map((keyword, index) => (
+                  <button
+                    key={`kw-${keyword}-${index}`}
+                    onClick={() => handleKeywordClick(keyword)}
+                    className="w-full text-left px-5 py-3.5 rounded-xl hover:text-primary transition-all duration-200 flex items-center gap-3 text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-200"
+                  >
+                    <Search
+                      size={14}
+                      className="text-neutral-400 group-hover:text-primary transition-colors shrink-0"
+                    />
+                    <span className="truncate group-hover:translate-x-0.5 transition-transform duration-200">
+                      {keyword}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* No results state */}
+            {userResults.length === 0 &&
+              matchedKeywords.length === 0 &&
+              !isLoadingUsers && (
+                <EmptyState
+                  icon={Search}
+                  title="No matching results"
+                  description="Try searching with different terms like a name, item, or category."
+                  className="bg-transparent border-none shadow-none"
+                />
+              )}
+          </div>
         ) : historyList.length > 0 ? (
           /* 2. Recent Searches History list */
           <div className="flex flex-col">
@@ -171,8 +246,13 @@ export function SearchResultsModal({
                 className="w-full px-5 py-3 rounded-xl hover:text-primary transition-all duration-200 flex items-center justify-between text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-150"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <History size={14} className="text-neutral-400 group-hover:text-primary transition-colors shrink-0" />
-                  <span className="truncate group-hover:translate-x-0.5 transition-transform duration-200">{item}</span>
+                  <History
+                    size={14}
+                    className="text-neutral-400 group-hover:text-primary transition-colors shrink-0"
+                  />
+                  <span className="truncate group-hover:translate-x-0.5 transition-transform duration-200">
+                    {item}
+                  </span>
                 </div>
                 <button
                   onClick={(e) => handleDeleteHistoryItem(e, item)}
@@ -193,7 +273,10 @@ export function SearchResultsModal({
                 onClick={() => handleKeywordClick(tag.name)}
                 className="w-full text-left px-5 py-3.5 rounded-xl hover:text-primary transition-all duration-200 flex items-center gap-3 text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-150"
               >
-                <Sparkles size={14} className="text-neutral-400 group-hover:text-primary transition-colors shrink-0" />
+                <Sparkles
+                  size={14}
+                  className="text-neutral-400 group-hover:text-primary transition-colors shrink-0"
+                />
                 <span className="truncate group-hover:translate-x-0.5 transition-transform duration-200">
                   {tag.name}
                 </span>

@@ -1,7 +1,7 @@
-import { Router, Response } from 'express';
+import { Response, Router } from 'express';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
-import { authService } from '../services/AuthService';
 import { userRepository } from '../repositories/UserRepository';
+import { authService } from '../services/AuthService';
 
 const router = Router();
 
@@ -45,6 +45,27 @@ router.patch('/me', authenticateToken, async (req: AuthRequest, res: Response) =
   }
 
   res.status(400).json({ error: 'No valid fields to update. Provide studentId or avatarUrl.' });
+});
+
+// GET /search — Search users by name, email, or studentId
+router.get('/search', async (req: AuthRequest, res: Response) => {
+  const { q } = req.query;
+
+  if (!q || typeof q !== 'string') {
+    res.status(400).json({ error: 'Search query (q) is required' });
+    return;
+  }
+
+  try {
+    const results = await userRepository.search(q);
+
+    // Remove sensitive fields
+    const safeResults = results.map(({ passwordHash, ...safe }) => safe);
+    res.json({ results: safeResults });
+  } catch (error) {
+    console.error('Search error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 // GET /:id — Get user by ID

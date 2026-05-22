@@ -1,5 +1,5 @@
-import { prisma } from '../prisma';
 import { inMemoryUsers, type InMemoryUser } from '../data/store';
+import { prisma } from '../prisma';
 import type { IUserRepository, UserRecord } from './IUserRepository';
 
 function toRecord(u: InMemoryUser): UserRecord {
@@ -67,6 +67,35 @@ export class UserRepository implements IUserRepository {
       if (idx === -1) return null;
       Object.assign(inMemoryUsers[idx], data);
       return toRecord(inMemoryUsers[idx]);
+    }
+  }
+
+  async search(query: string): Promise<UserRecord[]> {
+    const lowerQuery = query.toLowerCase().trim();
+    if (!lowerQuery) return [];
+
+    try {
+      // Try Prisma database first
+      const users = await prisma.user.findMany({
+        where: {
+          OR: [
+            { name: { contains: lowerQuery, mode: 'insensitive' } },
+            { email: { contains: lowerQuery, mode: 'insensitive' } },
+            { studentId: { contains: lowerQuery, mode: 'insensitive' } },
+          ],
+        },
+        take: 10, // Limit to 10 results
+      });
+      return users;
+    } catch {
+      // Fallback to in-memory search
+      return inMemoryUsers
+        .filter((u) =>
+          u.name.toLowerCase().includes(lowerQuery) ||
+          u.email.toLowerCase().includes(lowerQuery) ||
+          (u.studentId?.toLowerCase().includes(lowerQuery) ?? false)
+        )
+        .slice(0, 10);
     }
   }
 }

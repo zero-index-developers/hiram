@@ -11,6 +11,7 @@ export interface UserRecord {
 export interface IUserRepository {
   findById(id: string): Promise<UserRecord | null>;
   findByEmail(email: string): Promise<UserRecord | null>;
+  search(query: string): Promise<UserRecord[]>;
   create(data: Omit<UserRecord, 'createdAt'> & { createdAt?: Date }): Promise<UserRecord>;
   update(id: string, data: Partial<UserRecord>): Promise<UserRecord | null>;
 }
