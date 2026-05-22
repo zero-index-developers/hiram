@@ -37,6 +37,7 @@ export function ImageCropModal({
 
     setIsProcessing(true);
     const image = new Image();
+    image.crossOrigin = "anonymous";
     image.src = imageSrc;
     await new Promise((resolve) => {
       image.onload = resolve;
