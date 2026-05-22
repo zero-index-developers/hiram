@@ -26,3 +26,5 @@ export * from './services/psgc';
 
 // Export Utilities
 export * from './utils/formatDate';
+export * from './utils/itemUtils';
+export * from './utils/typeGuards';
