@@ -1,4 +1,4 @@
-import { LogOut, User as UserIcon, Settings } from 'lucide-react';
+import { LogOut, Settings, ChevronRight } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import { VerifiedBadge } from '../ui/VerifiedBadge';
@@ -59,28 +59,15 @@ export function ProfileDropdown({
             onClick={onClose}
           />
           <div className="absolute right-0 mt-2.5 w-60 bg-white border border-primary/10 rounded-2xl shadow-xl py-3 z-40 animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto text-left">
-            <div className="px-4 py-2 border-b border-neutral-100 mb-2">
-              <div className="font-extrabold text-neutral-800 text-sm flex items-center gap-1.5 truncate">
-                {user.name}
-                {user.studentId && <VerifiedBadge iconSize={14} />}
-              </div>
-              <div className="text-neutral-400 text-xs truncate mt-0.5">{user.email}</div>
-              {user.course && (
-                <div className="inline-flex items-center gap-1 text-[10px] font-bold text-primary bg-primary/5 px-2 py-0.5 rounded-full mt-1.5 uppercase">
-                  <UserIcon size={10} /> {user.course}
-                </div>
-              )}
-            </div>
-
             <button
-              onClick={() => {
-                navigate('/profile');
-                onClose();
-              }}
-              className="w-full px-4 py-2 text-left text-sm text-neutral-600 hover:text-primary hover:bg-primary/5 transition-colors duration-200 flex items-center gap-2 font-bold"
+              onClick={() => { navigate('/profile'); onClose(); }}
+              className="w-full px-4 py-3 border-b border-neutral-100 mb-2 hover:bg-primary/5 transition-colors duration-200 text-left cursor-pointer"
             >
-              <UserIcon size={16} />
-              Profile
+              <div className="font-black text-neutral-800 text-base flex items-center gap-1.5 truncate">
+                {user.name}
+                {user.studentId && <VerifiedBadge iconSize={14} variant="icon-only" />}
+                <ChevronRight size={14} className="ml-auto text-neutral-300 shrink-0" />
+              </div>
             </button>
 
             <button

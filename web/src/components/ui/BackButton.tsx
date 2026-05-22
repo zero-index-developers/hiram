@@ -1,5 +1,7 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+
+let lastPage: string | null = null;
 
 interface BackButtonProps {
   fallbackPath?: string;
@@ -8,12 +10,14 @@ interface BackButtonProps {
 
 export function BackButton({ fallbackPath = '/', className = '' }: BackButtonProps) {
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname + location.search;
+
+  const pathBefore = lastPage;
+  lastPage = currentPath;
 
   const handleBack = () => {
-    // In React Router, window.history.state?.idx specifies if we have page history in our app.
-    // If idx > 0, it means there are previous pages in the router session history we can safely go back to.
-    const state = window.history.state as { idx?: number } | null;
-    if (state && typeof state.idx === 'number' && state.idx > 0) {
+    if (pathBefore && pathBefore !== currentPath) {
       navigate(-1);
     } else {
       navigate(fallbackPath);

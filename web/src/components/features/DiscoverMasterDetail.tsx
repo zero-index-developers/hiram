@@ -1,6 +1,7 @@
 import type { Item } from '@hiram/shared';
-import { formatDate } from '@hiram/shared';
+import { formatDate, mockUserProfiles } from '@hiram/shared';
 import { ArrowRight, Clock, User, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { CompactItemImage, DetailItemImage } from './ItemImage';
@@ -20,6 +21,12 @@ export function DiscoverMasterDetail({
   onSelectItem
 }: DiscoverMasterDetailProps) {
   const { isAuthenticated, setAuthModalOpen } = useAuthStore();
+  const navigate = useNavigate();
+
+  const getOwnerId = (item: Item): string | undefined =>
+    item.ownerId ||
+    (typeof item.owner === 'object' ? item.owner?.id : undefined) ||
+    mockUserProfiles.find(u => u.name.toLowerCase() === (typeof item.owner === 'string' ? item.owner : item.owner?.name || '').toLowerCase())?.id;
 
   const handleRequestClick = () => {
     if (!selectedItem) return;
@@ -71,9 +78,12 @@ export function DiscoverMasterDetail({
                 <h5 className={`font-black text-sm truncate ${isSelected ? 'text-primary' : 'text-neutral-800'}`}>
                   {item.title}
                 </h5>
-                <span className="text-[10px] text-neutral-400 font-bold truncate">
+                <button
+                  onClick={(e) => { e.stopPropagation(); const id = getOwnerId(item); if (id) navigate(`/profile/${id}`); }}
+                  className="text-[10px] text-neutral-400 font-bold truncate hover:text-primary transition-colors cursor-pointer text-left"
+                >
                   By {ownerName}
-                </span>
+                </button>
               </div>
             </div>
           );
@@ -133,7 +143,10 @@ export function DiscoverMasterDetail({
             </div>
 
             {/* Lender Profile Card */}
-            <div className="border border-primary/10 rounded-xl p-4 bg-neutral-50/30 flex items-center justify-between">
+            <button
+              onClick={() => { const id = getOwnerId(selectedItem); if (id) navigate(`/profile/${id}`); }}
+              className="w-full border border-primary/10 rounded-xl p-4 bg-neutral-50/30 flex items-center justify-between hover:bg-primary/5 transition-colors cursor-pointer text-left"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-primary/5 text-primary flex items-center justify-center font-bold text-sm uppercase border border-primary/10 shrink-0">
                   {(() => {
@@ -157,7 +170,7 @@ export function DiscoverMasterDetail({
               <div className="flex items-center gap-1 text-[10px] font-black uppercase text-primary tracking-wider">
                 <User className="w-3 h-3" /> Campus Verified
               </div>
-            </div>
+            </button>
 
             {/* CTA Request Button */}
             <div className="pt-2 flex justify-end">

@@ -1,4 +1,4 @@
-export type TagType = 'LOCATION' | 'REGION' | 'CITY' | 'BARANGAY' | 'CONDITION' | 'CATEGORY' | 'SUBCATEGORY' | 'GENERAL' | 'HOT' | 'TRANSACTION';
+export type TagType = 'LOCATION' | 'REGION' | 'CITY' | 'BARANGAY' | 'CONDITION' | 'CATEGORY' | 'SUBCATEGORY' | 'GENERAL' | 'HOT' | 'TRANSACTION' | 'PROGRAM';
 
 export type Tag = {
   name: string;

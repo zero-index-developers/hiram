@@ -20,7 +20,6 @@ interface AuthState {
     email: string;
     name: string;
     password?: string;
-    course?: string;
   }) => Promise<boolean>;
   googleAuth: (payload: {
     email: string;
@@ -33,6 +32,7 @@ interface AuthState {
   clearError: () => void;
   checkEmail: (email: string) => Promise<boolean | null>;
   updateAvatar: (avatarUrl: string) => void;
+  removeAvatar: () => void;
   verifyAccount: (studentId: string) => Promise<boolean>;
 }
 
@@ -60,6 +60,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const updatedUser = { ...currentUser, avatarUrl };
       set({ user: updatedUser });
       localStorage.setItem(`hiram_avatar_${currentUser.id}`, avatarUrl);
+    }
+  },
+
+  removeAvatar: () => {
+    const currentUser = get().user;
+    if (currentUser) {
+      const updatedUser = { ...currentUser, avatarUrl: undefined };
+      set({ user: updatedUser });
+      localStorage.removeItem(`hiram_avatar_${currentUser.id}`);
     }
   },
 

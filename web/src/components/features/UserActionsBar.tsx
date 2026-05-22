@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { User } from 'lucide-react';
+import { User, Plus } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { ProfileDropdown } from './ProfileDropdown';
 import { InboxPopover } from './InboxPopover';
 import { NotificationPopover } from './NotificationPopover';
+import { AddItemModal } from './AddItemModal';
 
 interface UserActionsBarProps {
   variant?: 'header' | 'searchbar';
@@ -12,6 +13,7 @@ interface UserActionsBarProps {
 export function UserActionsBar({ variant = 'header' }: UserActionsBarProps) {
   const { isAuthenticated, setAuthModalOpen } = useAuthStore();
   const [activePopover, setActivePopover] = useState<'profile' | 'notifications' | 'inbox' | null>(null);
+  const [showAddItem, setShowAddItem] = useState(false);
   
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -81,35 +83,48 @@ export function UserActionsBar({ variant = 'header' }: UserActionsBarProps) {
   const iconSize = variant === 'searchbar' ? 16 : 18;
 
   return (
-    <div className={`flex items-center ${containerGap} pointer-events-auto`} ref={containerRef}>
-      
-      {/* Inbox Icon Button */}
-      {variant === 'searchbar' && (
-        <InboxPopover
-          isOpen={activePopover === 'inbox'}
+    <>
+      <div className={`flex items-center ${containerGap} pointer-events-auto`} ref={containerRef}>
+        
+        {/* Add Item Button */}
+        <button
+          onClick={() => setShowAddItem(true)}
+          className={`${btnSizeClass} rounded-full border border-primary/10 bg-primary/5 text-neutral-600 hover:text-primary hover:bg-primary/10 flex items-center justify-center transition-all shadow-sm shrink-0 cursor-pointer`}
+          aria-label="List a new item"
+        >
+          <Plus size={iconSize} />
+        </button>
+
+        {/* Inbox Icon Button */}
+        {variant === 'searchbar' && (
+          <InboxPopover
+            isOpen={activePopover === 'inbox'}
+            onClose={() => setActivePopover(null)}
+            btnSizeClass={btnSizeClass}
+            onToggle={() => handleToggle('inbox')}
+          />
+        )}
+
+        {/* Bell Notification Button */}
+        <NotificationPopover
+          isOpen={activePopover === 'notifications'}
           onClose={() => setActivePopover(null)}
           btnSizeClass={btnSizeClass}
-          onToggle={() => handleToggle('inbox')}
+          iconSize={iconSize}
+          onToggle={() => handleToggle('notifications')}
         />
-      )}
 
-      {/* Bell Notification Button */}
-      <NotificationPopover
-        isOpen={activePopover === 'notifications'}
-        onClose={() => setActivePopover(null)}
-        btnSizeClass={btnSizeClass}
-        iconSize={iconSize}
-        onToggle={() => handleToggle('notifications')}
-      />
+        {/* Profile Dropdown Component */}
+        <ProfileDropdown
+          variant={variant}
+          isOpen={activePopover === 'profile'}
+          onToggle={() => handleToggle('profile')}
+          onClose={() => setActivePopover(null)}
+        />
+        
+      </div>
 
-      {/* Profile Dropdown Component */}
-      <ProfileDropdown
-        variant={variant}
-        isOpen={activePopover === 'profile'}
-        onToggle={() => handleToggle('profile')}
-        onClose={() => setActivePopover(null)}
-      />
-      
-    </div>
+      <AddItemModal isOpen={showAddItem} onClose={() => setShowAddItem(false)} />
+    </>
   );
 }

@@ -19,6 +19,7 @@ export * from './constants/locations';
 export * from './constants/conditions';
 export * from './constants/filters';
 export * from './constants/transactionTypes';
+export * from './constants/programs';
 export * from './constants/mockUsers';
 export * from './constants/mockProposals';
 export * from './services/psgc';

@@ -14,7 +14,6 @@ interface InMemoryUser {
   email: string;
   passwordHash: string;
   name: string;
-  course?: string | null;
   avatarUrl?: string | null;
   createdAt: Date;
 }
@@ -26,7 +25,6 @@ const inMemoryUsers: InMemoryUser[] = [
     email: 'test@iskolar.pup.edu.ph',
     passwordHash: '$2b$12$K3/qP/lGexf6V7L/kPjSvuFqS32mD9kM0DfeI6L4V6B3aJz0P2U2q', // bcrypt hash of 'password123'
     name: 'Juan Dela Cruz',
-    course: 'BSIT',
     avatarUrl: null,
     createdAt: new Date(),
   }
@@ -63,7 +61,7 @@ router.post('/register', async (req, res) => {
     });
   }
 
-  const { email, password, name, course } = result.data;
+  const { email, password, name } = result.data;
 
   try {
     // Attempt database query
@@ -87,7 +85,6 @@ router.post('/register', async (req, res) => {
         email,
         passwordHash,
         name,
-        course: course || null,
         avatarUrl: null,
       }
     });
@@ -100,7 +97,6 @@ router.post('/register', async (req, res) => {
         studentId: user.studentId,
         email: user.email,
         name: user.name,
-        course: user.course,
         avatarUrl: user.avatarUrl,
         createdAt: user.createdAt,
       }
@@ -127,7 +123,6 @@ router.post('/register', async (req, res) => {
       email,
       passwordHash,
       name,
-      course: course || null,
       avatarUrl: null,
       createdAt: new Date(),
     };
@@ -141,7 +136,6 @@ router.post('/register', async (req, res) => {
         studentId: newUser.studentId,
         email: newUser.email,
         name: newUser.name,
-        course: newUser.course,
         avatarUrl: newUser.avatarUrl,
         createdAt: newUser.createdAt,
       }
@@ -180,7 +174,6 @@ router.post('/login', async (req, res) => {
         studentId: user.studentId,
         email: user.email,
         name: user.name,
-        course: user.course,
         avatarUrl: user.avatarUrl,
         createdAt: user.createdAt,
       }
@@ -207,7 +200,6 @@ router.post('/login', async (req, res) => {
         studentId: user.studentId,
         email: user.email,
         name: user.name,
-        course: user.course,
         avatarUrl: user.avatarUrl,
         createdAt: user.createdAt,
       }
@@ -223,20 +215,18 @@ router.post('/google', async (req, res) => {
     return res.status(400).json({ error: 'Email and Name are required for Google Login' });
   }
 
-  // Derive course if not provided, and default student ID if not provided
+  // Derive default student ID if not provided
   const derivedStudentId = studentId || `2021-${Math.floor(10000 + Math.random() * 90000)}-MN-0`;
 
   try {
     let user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      // Create user if not exists
       user = await prisma.user.create({
         data: {
           studentId: derivedStudentId,
           email,
           passwordHash: 'google-oauth-placeholder',
           name,
-          course: 'BSIT',
           avatarUrl: avatarUrl || null,
         }
       });
@@ -250,7 +240,6 @@ router.post('/google', async (req, res) => {
         studentId: user.studentId,
         email: user.email,
         name: user.name,
-        course: user.course,
         avatarUrl: user.avatarUrl,
         createdAt: user.createdAt,
       }
@@ -267,7 +256,6 @@ router.post('/google', async (req, res) => {
         email,
         passwordHash: 'google-oauth-placeholder',
         name,
-        course: 'BSIT',
         avatarUrl: avatarUrl || null,
         createdAt: new Date(),
       };
@@ -282,7 +270,6 @@ router.post('/google', async (req, res) => {
         studentId: user.studentId,
         email: user.email,
         name: user.name,
-        course: user.course,
         avatarUrl: user.avatarUrl,
         createdAt: user.createdAt,
       }
@@ -310,14 +297,11 @@ router.get('/me', async (req, res) => {
             studentId: user.studentId,
             email: user.email,
             name: user.name,
-            course: user.course,
             avatarUrl: user.avatarUrl,
             createdAt: user.createdAt,
           }
         });
       }
-    } catch {
-      // ignore db error, let fallback search in-memory
     }
 
     // Fallback search in-memory
@@ -329,7 +313,6 @@ router.get('/me', async (req, res) => {
           studentId: inMemoryUser.studentId,
           email: inMemoryUser.email,
           name: inMemoryUser.name,
-          course: inMemoryUser.course,
           avatarUrl: inMemoryUser.avatarUrl,
           createdAt: inMemoryUser.createdAt,
         }
@@ -370,7 +353,6 @@ router.put('/verify', async (req, res) => {
           studentId: user.studentId,
           email: user.email,
           name: user.name,
-          course: user.course,
           avatarUrl: user.avatarUrl,
           createdAt: user.createdAt,
         }
@@ -389,7 +371,6 @@ router.put('/verify', async (req, res) => {
           studentId: inMemoryUser.studentId,
           email: inMemoryUser.email,
           name: inMemoryUser.name,
-          course: inMemoryUser.course,
           avatarUrl: inMemoryUser.avatarUrl,
           createdAt: inMemoryUser.createdAt,
         }

@@ -1,6 +1,7 @@
-import { formatDate } from '@hiram/shared';
+import { formatDate, mockUserProfiles } from '@hiram/shared';
 import { ArrowRight, Clock, MapPin } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { LogoSymbol } from '../ui/Logo';
@@ -11,15 +12,29 @@ import type { Item } from '@hiram/shared';
 
 interface ItemCardProps {
   item: Item;
+  hideMeta?: boolean;
+  simple?: boolean;
 }
 
-export function ItemCard({ item }: ItemCardProps) {
+export function ItemCard({ item, hideMeta, simple }: ItemCardProps) {
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
   const { isAuthenticated, setAuthModalOpen } = useAuthStore();
+  const navigate = useNavigate();
 
   const ownerName = typeof item.owner === 'string' ? item.owner : item.owner?.name || 'Unknown';
   const ownerIsVerified = typeof item.owner !== 'string' && !!item.owner?.studentId;
+
+  const getOwnerId = (): string | undefined =>
+    item.ownerId ||
+    (typeof item.owner === 'object' ? item.owner?.id : undefined) ||
+    mockUserProfiles.find(u => u.name.toLowerCase() === ownerName.toLowerCase())?.id;
+
+  const handleOwnerClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const ownerId = getOwnerId();
+    if (ownerId) navigate(`/profile/${ownerId}`);
+  };
 
   const handleRequestClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -63,7 +78,7 @@ export function ItemCard({ item }: ItemCardProps) {
       </div>
 
       <div className="p-6 flex-grow flex flex-col">
-        <div className="flex items-center gap-2 mb-3">
+        <div className="flex flex-wrap items-center gap-2 mb-3">
           <Badge variant="outline">
             {item.category}
           </Badge>
@@ -77,13 +92,18 @@ export function ItemCard({ item }: ItemCardProps) {
               {item.preferredTransaction === 'HIRAM' ? 'Hiram' : item.preferredTransaction === 'TRADE' ? 'Trade' : 'Request'}
             </span>
           )}
-          <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
-            <Clock className="w-3 h-3 text-neutral-400" /> {formatDate(item.createdAt)}
-          </span>
-          <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
-            <MapPin className="w-3 h-3 text-neutral-400" /> {item.cityCode === '137607000' ? 'Taguig' : 'Manila'}
-          </span>
         </div>
+
+        {!simple && !hideMeta && (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
+              <Clock className="w-3 h-3 text-neutral-400" /> {item.createdAt ? formatDate(item.createdAt) : 'Recently'}
+            </span>
+            <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-neutral-400" /> {item.cityCode === '137607000' ? 'Taguig' : 'Manila'}
+            </span>
+          </div>
+        )}
 
         <h4 className="font-extrabold text-lg text-neutral-800 group-hover:text-primary transition-colors duration-200">
           {item.title}
@@ -93,27 +113,43 @@ export function ItemCard({ item }: ItemCardProps) {
           {item.description}
         </p>
 
-        <div className="pt-0 mt-5 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-full bg-primary/5 text-primary flex items-center justify-center font-bold text-xs uppercase border border-primary/10">
-              {ownerName.charAt(0)}
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="text-xs font-bold text-neutral-500">
-                By {ownerName}
-              </span>
-              {ownerIsVerified && <VerifiedBadge iconSize={12} />}
-            </div>
+        {simple && (
+          <div className="flex items-center gap-3 mt-3 pt-3 border-t border-primary/10">
+            <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
+              <Clock className="w-3 h-3 text-neutral-400" /> {item.createdAt ? formatDate(item.createdAt) : 'Recently'}
+            </span>
+            <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-neutral-400" /> {item.cityCode === '137607000' ? 'Taguig' : 'Manila'}
+            </span>
           </div>
+        )}
 
-          <Button 
-            onClick={handleRequestClick}
-            variant="secondary" 
-            className="px-3.5 py-1.5 text-xs flex items-center gap-1 font-bold"
-          >
-            Request <ArrowRight className="w-3 h-3" />
-          </Button>
-        </div>
+        {!simple && (
+          <div className="pt-0 mt-5 flex items-center justify-between">
+            <button
+              onClick={handleOwnerClick}
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              <div className="w-7 h-7 rounded-full bg-primary/5 text-primary flex items-center justify-center font-bold text-xs uppercase border border-primary/10">
+                {ownerName.charAt(0)}
+              </div>
+              <div className="flex items-center gap-1">
+                <span className="text-xs font-bold text-neutral-500">
+                  By {ownerName}
+                </span>
+                {ownerIsVerified && <VerifiedBadge iconSize={12} />}
+              </div>
+            </button>
+
+            <Button 
+              onClick={handleRequestClick}
+              variant="secondary" 
+              className="px-3.5 py-1.5 text-xs flex items-center gap-1 font-bold"
+            >
+              Request <ArrowRight className="w-3 h-3" />
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

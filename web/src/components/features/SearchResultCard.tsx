@@ -85,7 +85,7 @@ export function SearchResultCard({ item, onClick }: SearchResultCardProps) {
         </p>
         <div className="flex items-center justify-between text-xs text-neutral-500 mt-2">
           <div className="flex items-center gap-1">
-            <Clock className="w-3 h-3" /> {formatDate(item.createdAt)}
+            <Clock className="w-3 h-3" /> {item.createdAt ? formatDate(item.createdAt) : 'Recently'}
           </div>
           <div className="flex items-center gap-1">
             <MapPin className="w-3 h-3" />

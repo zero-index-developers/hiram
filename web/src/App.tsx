@@ -43,15 +43,12 @@ function App() {
     prevAuthRef.current = isAuthenticated;
   }, [isAuthenticated, location.pathname, navigate]);
 
-  const navigateBack = () => {
-    navigate('/');
-  };
-
   const isItemDetails = location.pathname.startsWith('/items/');
   const itemSlug = isItemDetails ? location.pathname.replace('/items/', '') : '';
   const isInbox = location.pathname === '/inbox';
   const isAlerts = location.pathname === '/alerts';
-  const isProfile = location.pathname === '/profile';
+  const isProfile = location.pathname === '/profile' || location.pathname.startsWith('/profile/');
+  const isProfileParam = location.pathname.startsWith('/profile/') ? location.pathname.replace('/profile/', '') : null;
   const isSearchPage = location.pathname === '/search';
 
   return (
@@ -72,7 +69,7 @@ function App() {
       )}
 
       {isItemDetails ? (
-        <ItemDetailsPage slug={itemSlug} onBack={navigateBack} />
+        <ItemDetailsPage slug={itemSlug} />
       ) : isInbox ? (
         <ProtectedRoute>
           <InboxPage />
@@ -82,9 +79,13 @@ function App() {
           <AlertsPage />
         </ProtectedRoute>
       ) : isProfile ? (
-        <ProtectedRoute>
-          <ProfilePage />
-        </ProtectedRoute>
+        isProfileParam ? (
+          <ProfilePage userId={isProfileParam} />
+        ) : (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        )
       ) : isSearchPage ? (
         <DiscoverSection 
           selectedTags={selectedTags}

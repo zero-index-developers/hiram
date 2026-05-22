@@ -3,7 +3,6 @@ export interface User {
   studentId?: string | null;
   email: string;
   name: string;
-  course?: string | null;
   avatarUrl?: string | null;
   createdAt: Date;
 }
@@ -13,7 +12,6 @@ export interface StudentProfile {
   studentId?: string | null;
   email: string;
   name: string;
-  course?: string | null;
   avatarUrl?: string | null;
   createdAt: Date;
   ratingAverage: number;
