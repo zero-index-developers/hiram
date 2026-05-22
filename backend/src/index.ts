@@ -46,7 +46,10 @@ app.use('/api/v1/users', usersRouter);
 app.use('/api/v1/uploads', uploadRouter);
 
 // Serve uploaded files statically (local storage)
-const uploadDir = path.resolve(process.env.UPLOAD_DIR || 'uploads');
+const uploadDirEnv = process.env.UPLOAD_DIR || 'uploads';
+const uploadDir = uploadDirEnv.startsWith('/')
+  ? uploadDirEnv
+  : path.join(__dirname, '../', uploadDirEnv);
 app.use('/uploads', express.static(uploadDir));
 
 // Sample Route

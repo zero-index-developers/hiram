@@ -1,6 +1,6 @@
-import path from 'path';
-import fs from 'fs/promises';
 import crypto from 'crypto';
+import fs from 'fs/promises';
+import path from 'path';
 import { IStorageProvider, UploadResult } from './IStorageProvider';
 
 export class LocalStorageProvider implements IStorageProvider {
@@ -8,7 +8,11 @@ export class LocalStorageProvider implements IStorageProvider {
   private baseUrl: string;
 
   constructor() {
-    this.uploadDir = path.resolve(process.env.UPLOAD_DIR || 'uploads');
+    // Resolve uploads directory relative to backend root (parent of src directory)
+    const uploadDirEnv = process.env.UPLOAD_DIR || 'uploads';
+    this.uploadDir = uploadDirEnv.startsWith('/')
+      ? uploadDirEnv
+      : path.resolve(__dirname, '../../', uploadDirEnv);
     this.baseUrl = process.env.UPLOAD_BASE_URL || '/uploads';
   }
 
