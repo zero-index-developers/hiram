@@ -1,8 +1,17 @@
 import { create } from 'zustand';
-import axios from 'axios';
 import type { User } from '@hiram/shared';
+import { useUserStore } from './useUserStore';
+import { authService } from '../services/authService';
+import { apiClient, setAuthToken } from '../lib/apiClient';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4000/api/v1';
+function dataUrlToBlob(dataUrl: string): Blob {
+  const [header, data] = dataUrl.split(',');
+  const mime = header.match(/:(.*?);/)![1];
+  const binary = atob(data);
+  const array = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) array[i] = binary.charCodeAt(i);
+  return new Blob([array], { type: mime });
+}
 
 interface AuthState {
   user: User | null;
@@ -12,8 +21,7 @@ interface AuthState {
   error: string | null;
   showAuthModal: boolean;
   authModalTab: 'login' | 'register';
-  
-  // Actions
+
   setAuthModalOpen: (isOpen: boolean, tab?: 'login' | 'register') => void;
   login: (email: string, password: string) => Promise<boolean>;
   register: (payload: {
@@ -31,9 +39,10 @@ interface AuthState {
   initAuth: () => Promise<void>;
   clearError: () => void;
   checkEmail: (email: string) => Promise<boolean | null>;
-  updateAvatar: (avatarUrl: string) => void;
-  removeAvatar: () => void;
+  updateAvatar: (dataUrl: string) => Promise<void>;
+  removeAvatar: () => Promise<void>;
   verifyAccount: (studentId: string) => Promise<boolean>;
+  unverifyAccount: () => Promise<boolean>;
 }
 
 const applyAvatarOverride = (user: any) => {
@@ -45,6 +54,13 @@ const applyAvatarOverride = (user: any) => {
   return user;
 };
 
+function onAuthSuccess(token: string, user: any) {
+  setAuthToken(token);
+  const seededUser = applyAvatarOverride(user);
+  useUserStore.getState().setUser(seededUser);
+  return seededUser;
+}
+
 export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   token: null,
@@ -54,21 +70,38 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   showAuthModal: false,
   authModalTab: 'login',
 
-  updateAvatar: (avatarUrl: string) => {
+  updateAvatar: async (dataUrl: string) => {
     const currentUser = get().user;
-    if (currentUser) {
-      const updatedUser = { ...currentUser, avatarUrl };
-      set({ user: updatedUser });
-      localStorage.setItem(`hiram_avatar_${currentUser.id}`, avatarUrl);
+    if (!currentUser) return;
+
+    try {
+      const blob = dataUrlToBlob(dataUrl);
+      const formData = new FormData();
+      formData.append('file', blob, 'avatar.jpg');
+
+      const uploadRes = await apiClient.post('/uploads', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      const { url } = uploadRes.data;
+      const { data } = await authService.updateProfile({ avatarUrl: url });
+      set({ user: data.user });
+      useUserStore.getState().updateAvatar(currentUser.id, url);
+    } catch {
+      set({ user: { ...currentUser, avatarUrl: dataUrl } });
     }
   },
 
-  removeAvatar: () => {
+  removeAvatar: async () => {
     const currentUser = get().user;
-    if (currentUser) {
-      const updatedUser = { ...currentUser, avatarUrl: undefined };
-      set({ user: updatedUser });
-      localStorage.removeItem(`hiram_avatar_${currentUser.id}`);
+    if (!currentUser) return;
+
+    try {
+      const { data } = await authService.updateProfile({ avatarUrl: null });
+      set({ user: data.user });
+      useUserStore.getState().updateAvatar(currentUser.id, null as any);
+    } catch {
+      set({ user: { ...currentUser, avatarUrl: undefined } });
     }
   },
 
@@ -81,16 +114,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
-      const { token, user } = response.data;
-      
-      localStorage.setItem('hiram_token', token);
-      set({ 
-        token, 
-        user: applyAvatarOverride(user), 
-        isAuthenticated: true, 
-        isLoading: false, 
-        showAuthModal: false 
+      const { data } = await authService.login({ email, password });
+      const seededUser = onAuthSuccess(data.token, data.user);
+      set({
+        token: data.token,
+        user: seededUser,
+        isAuthenticated: true,
+        isLoading: false,
+        showAuthModal: false,
       });
       return true;
     } catch (err: any) {
@@ -103,28 +134,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   register: async (payload) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, payload);
-      const { token, user } = response.data;
-      
-      localStorage.setItem('hiram_token', token);
-      set({ 
-        token, 
-        user: applyAvatarOverride(user), 
-        isAuthenticated: true, 
-        isLoading: false, 
-        showAuthModal: false 
+      const { data } = await authService.register(payload as any);
+      const seededUser = onAuthSuccess(data.token, data.user);
+      set({
+        token: data.token,
+        user: seededUser,
+        isAuthenticated: true,
+        isLoading: false,
+        showAuthModal: false,
       });
       return true;
     } catch (err: any) {
-      // If there are detailed field errors
       const details = err.response?.data?.details;
       let errMsg = err.response?.data?.error || 'Registration failed. Please try again.';
-      
       if (details) {
-         const fields = Object.keys(details).map(k => `${k}: ${details[k].join(', ')}`);
-         errMsg = `${errMsg} (${fields.join('; ')})`;
+        const fields = Object.keys(details).map(k => `${k}: ${details[k].join(', ')}`);
+        errMsg = `${errMsg} (${fields.join('; ')})`;
       }
-      
       set({ error: errMsg, isLoading: false });
       return false;
     }
@@ -133,12 +159,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   verifyAccount: async (studentId) => {
     set({ isLoading: true, error: null });
     try {
-      const token = get().token;
-      const response = await axios.put(`${API_URL}/auth/verify`, { studentId }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      const { user } = response.data;
-      set({ user: applyAvatarOverride(user), isLoading: false });
+      const { data } = await authService.updateProfile({ studentId });
+      const seededUser = applyAvatarOverride(data.user);
+      set({ user: seededUser, isLoading: false });
+      useUserStore.getState().setUser(seededUser);
       return true;
     } catch (err: any) {
       const errMsg = err.response?.data?.error || 'Verification failed. Please try again.';
@@ -147,19 +171,32 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
+  unverifyAccount: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const { data } = await authService.updateProfile({ studentId: null });
+      const seededUser = applyAvatarOverride(data.user);
+      set({ user: seededUser, isLoading: false });
+      useUserStore.getState().setUser(seededUser);
+      return true;
+    } catch (err: any) {
+      const errMsg = err.response?.data?.error || 'Failed to unverify account.';
+      set({ error: errMsg, isLoading: false });
+      return false;
+    }
+  },
+
   googleAuth: async (payload) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/auth/google`, payload);
-      const { token, user } = response.data;
-
-      localStorage.setItem('hiram_token', token);
+      const { data } = await authService.googleAuth(payload);
+      const seededUser = onAuthSuccess(data.token, data.user);
       set({
-        token,
-        user: applyAvatarOverride(user),
+        token: data.token,
+        user: seededUser,
         isAuthenticated: true,
         isLoading: false,
-        showAuthModal: false
+        showAuthModal: false,
       });
       return true;
     } catch (err: any) {
@@ -170,12 +207,12 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: () => {
-    localStorage.removeItem('hiram_token');
-    set({ 
-      token: null, 
-      user: null, 
+    setAuthToken(null);
+    set({
+      token: null,
+      user: null,
       isAuthenticated: false,
-      showAuthModal: false
+      showAuthModal: false,
     });
   },
 
@@ -188,20 +225,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     set({ isLoading: true });
     try {
-      const response = await axios.get(`${API_URL}/auth/me`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const { data } = await authService.getProfile();
+      const seededUser = applyAvatarOverride(data.user);
+      set({
+        token,
+        user: seededUser,
+        isAuthenticated: true,
+        isLoading: false,
       });
-      set({ 
-        token, 
-        user: applyAvatarOverride(response.data.user), 
-        isAuthenticated: true, 
-        isLoading: false 
-      });
-    } catch (err) {
-      // Token is invalid/expired
-      localStorage.removeItem('hiram_token');
+      useUserStore.getState().setUser(seededUser);
+    } catch {
+      setAuthToken(null);
       set({ token: null, user: null, isAuthenticated: false, isLoading: false });
     }
   },
@@ -209,13 +243,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   checkEmail: async (email) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axios.post(`${API_URL}/auth/check-email`, { email });
+      const exists = await authService.checkEmail(email);
       set({ isLoading: false });
-      return response.data.exists;
+      return exists;
     } catch (err: any) {
       const errMsg = err.response?.data?.error || 'Failed to verify email.';
       set({ error: errMsg, isLoading: false });
       return null;
     }
-  }
+  },
 }));

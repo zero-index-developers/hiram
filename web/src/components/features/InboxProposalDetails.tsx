@@ -1,6 +1,7 @@
 import { BookOpen, AlertCircle, Clock, MapPin, Calendar } from 'lucide-react';
 import type { MockProposal } from '@hiram/shared';
 import { InboxStatusBadge } from './InboxStatusBadge';
+import { Avatar } from '../ui/Avatar';
 
 interface InboxProposalDetailsProps {
   proposal: MockProposal;
@@ -16,9 +17,7 @@ export function InboxProposalDetails({
       {/* Top Bar of Active Conversation */}
       <div className="p-4 border-b border-neutral-100 flex flex-col sm:flex-row justify-between sm:items-center gap-3 text-left shrink-0 bg-white">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/5 text-primary border border-primary/10 flex items-center justify-center font-bold text-sm">
-            {proposal.lenderName.trim().charAt(0).toUpperCase()}
-          </div>
+          <Avatar name={proposal.lenderName} size="lg" />
           <div>
             <h2 className="text-sm font-black text-neutral-800">{proposal.lenderName}</h2>
             <p className="text-xs text-neutral-400 font-medium">Campus Peer</p>

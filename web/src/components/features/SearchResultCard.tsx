@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { formatDate } from '@hiram/shared';
-import { Clock, MapPin } from 'lucide-react';
 import { LogoSymbol } from '../ui/Logo';
 import { Badge } from '../ui/Badge';
+import { TransactionBadge } from "../ui/TransactionBadge";
+import { DateLabel, LocationLabel } from "../ui/MetadataRow";
 import type { Item } from '@hiram/shared';
 
 interface SearchResultCardProps {
@@ -60,22 +60,7 @@ export function SearchResultCard({ item, onClick }: SearchResultCardProps) {
       <div className="flex flex-col flex-1 justify-between gap-2">
         <div className="flex items-center gap-2">
           <Badge variant="outline">{item.category}</Badge>
-          {item.preferredTransaction && (
-            <span
-              className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border shadow-sm ${item.preferredTransaction === 'HIRAM'
-                ? 'bg-blue-50 text-blue-600 border-blue-100'
-                : item.preferredTransaction === 'TRADE'
-                  ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                  : 'bg-amber-50 text-amber-600 border-amber-100'
-                }`}
-            >
-              {item.preferredTransaction === 'HIRAM'
-                ? 'Hiram'
-                : item.preferredTransaction === 'TRADE'
-                  ? 'Trade'
-                  : 'Request'}
-            </span>
-          )}
+          <TransactionBadge transaction={item.preferredTransaction} />
         </div>
         <h4 className="font-extrabold text-lg text-neutral-800 hover:text-primary transition-colors">
           {item.title}
@@ -85,12 +70,9 @@ export function SearchResultCard({ item, onClick }: SearchResultCardProps) {
         </p>
         <div className="flex items-center justify-between text-xs text-neutral-500 mt-2">
           <div className="flex items-center gap-1">
-            <Clock className="w-3 h-3" /> {item.createdAt ? formatDate(item.createdAt) : 'Recently'}
+            <DateLabel date={item.createdAt} />
           </div>
-          <div className="flex items-center gap-1">
-            <MapPin className="w-3 h-3" />
-            {item.cityCode === '137607000' ? 'Taguig' : 'Manila'}
-          </div>
+          <LocationLabel cityCode={item.cityCode} />
         </div>
       </div>
     </div>

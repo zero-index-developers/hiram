@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertCircle, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import type { LoginInput, RegisterInput } from '@hiram/shared';
 import { useAuthStore } from '../../store/useAuthStore';
 import { LogoSymbol } from '../ui/Logo';
@@ -8,6 +8,7 @@ import { EmailStepForm } from './auth/EmailStepForm';
 import { LoginForm } from './auth/LoginForm';
 import { RegisterForm } from './auth/RegisterForm';
 import { GoogleSignInPanel } from './auth/GoogleSignInPanel';
+import { AlertBanner } from '../ui/AlertBanner';
 
 export function AuthModal() {
   const {
@@ -112,13 +113,7 @@ export function AuthModal() {
 
           {/* Errors display */}
           {storeError && (
-            <div className="mx-8 mt-2 p-3.5 bg-red-50 border border-red-100 rounded-xl flex items-start gap-2.5 text-xs text-red-700 animate-in fade-in duration-200">
-              <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
-              <div>
-                <span className="font-bold">Authentication Error</span>
-                <p className="mt-0.5">{storeError}</p>
-              </div>
-            </div>
+            <AlertBanner title="Authentication Error"><p className="mt-0.5">{storeError}</p></AlertBanner>
           )}
 
           {/* Form Content */}

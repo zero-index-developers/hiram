@@ -1,4 +1,5 @@
 import type { MockProposal } from '@hiram/shared';
+import { Avatar } from '../ui/Avatar';
 
 interface InboxProposalsListProps {
   proposals: MockProposal[];
@@ -20,7 +21,6 @@ export function InboxProposalsList({
       <div className="flex-1 overflow-y-auto scrollbar-minimal divide-y divide-neutral-100/50">
         {proposals.map((prop) => {
           const isActive = prop.id === selectedProposalId;
-          const initials = prop.lenderName.trim().charAt(0).toUpperCase();
 
           return (
             <div
@@ -32,9 +32,7 @@ export function InboxProposalsList({
                 }`}
             >
               <div className="relative shrink-0">
-                <div className="w-10 h-10 rounded-full bg-primary/5 text-primary border border-primary/10 flex items-center justify-center font-bold text-sm">
-                  {initials}
-                </div>
+                <Avatar name={prop.lenderName} size="lg" />
                 {prop.unread && !isActive && (
                   <span className="absolute -top-0.5 -left-0.5 w-2.5 h-2.5 bg-red-500 rounded-full ring-2 ring-white" />
                 )}

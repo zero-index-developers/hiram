@@ -1,5 +1,6 @@
 import express from 'express';
 import http from 'http';
+import path from 'path';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -7,6 +8,8 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import { formatDate } from '@hiram/shared';
 import authRouter from './routes/auth';
+import usersRouter from './routes/users';
+import uploadRouter from './routes/upload';
 
 // Load environment variables
 dotenv.config();
@@ -36,9 +39,15 @@ const authLimiter = rateLimit({
   message: 'Too many authentication attempts, please try again after 15 minutes',
 });
 
-app.use('/api/v1/auth/login', authLimiter);
-app.use('/api/v1/auth/register', authLimiter);
+app.use('/api/v1/auth/sessions', authLimiter);
+app.use('/api/v1/auth/users', authLimiter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/uploads', uploadRouter);
+
+// Serve uploaded files statically (local storage)
+const uploadDir = path.resolve(process.env.UPLOAD_DIR || 'uploads');
+app.use('/uploads', express.static(uploadDir));
 
 // Sample Route
 app.get('/api/v1/status', (req, res) => {

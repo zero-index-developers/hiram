@@ -1,11 +1,15 @@
 import type { Item } from '@hiram/shared';
-import { formatDate, mockUserProfiles } from '@hiram/shared';
-import { ArrowRight, Clock, User, MapPin } from 'lucide-react';
+import { mockUserProfiles } from '@hiram/shared';
+import { TransactionBadge } from '../ui/TransactionBadge';
+import { Avatar } from '../ui/Avatar';
+import { DateLabel, LocationLabel } from '../ui/MetadataRow';
+import { ArrowRight, BadgeCheck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { CompactItemImage, DetailItemImage } from './ItemImage';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useUserStore } from '../../store/useUserStore';
 
 interface DiscoverMasterDetailProps {
   filteredItems: Item[];
@@ -61,16 +65,7 @@ export function DiscoverMasterDetail({
               {/* Metadata Summary */}
               <div className="min-w-0 flex-1 flex flex-col gap-1">
                 <div className="flex items-center gap-1.5">
-                  <span
-                    className={`px-1.5 py-0.5 rounded text-[8px] font-extrabold uppercase tracking-wider border ${item.preferredTransaction === 'HIRAM'
-                        ? 'bg-blue-50 text-blue-600 border-blue-100'
-                        : item.preferredTransaction === 'TRADE'
-                          ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                          : 'bg-amber-50 text-amber-600 border-amber-100'
-                      }`}
-                  >
-                    {item.preferredTransaction === 'HIRAM' ? 'Hiram' : item.preferredTransaction === 'TRADE' ? 'Trade' : 'Request'}
-                  </span>
+                  <TransactionBadge transaction={item.preferredTransaction} compact />
                   <span className="text-[9px] text-neutral-400 font-bold">
                     {item.condition}
                   </span>
@@ -78,12 +73,9 @@ export function DiscoverMasterDetail({
                 <h5 className={`font-black text-sm truncate ${isSelected ? 'text-primary' : 'text-neutral-800'}`}>
                   {item.title}
                 </h5>
-                <button
-                  onClick={(e) => { e.stopPropagation(); const id = getOwnerId(item); if (id) navigate(`/profile/${id}`); }}
-                  className="text-[10px] text-neutral-400 font-bold truncate hover:text-primary transition-colors cursor-pointer text-left"
-                >
+                <span className="text-[10px] text-neutral-400 font-bold truncate">
                   By {ownerName}
-                </button>
+                </span>
               </div>
             </div>
           );
@@ -91,7 +83,10 @@ export function DiscoverMasterDetail({
       </div>
 
       {/* Right Detail Pane */}
-      {selectedItem && (
+      {selectedItem && (() => {
+        const detailOwnerId = getOwnerId(selectedItem);
+        const ownerProfile = detailOwnerId ? useUserStore.getState().users[detailOwnerId] : undefined;
+        return (
         <div className="flex-1 lg:w-3/5 w-full bg-white border border-primary/20 rounded-2xl overflow-hidden shadow-sm sticky top-24 flex flex-col animate-in fade-in zoom-in-95 duration-200">
           {/* Visual Image Banner */}
           <div className="relative h-64 bg-neutral-50 flex items-center justify-center border-b border-primary/5">
@@ -112,24 +107,9 @@ export function DiscoverMasterDetail({
               <Badge variant="outline">
                 {selectedItem.category}
               </Badge>
-              {selectedItem.preferredTransaction && (
-                <span
-                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border shadow-sm ${selectedItem.preferredTransaction === 'HIRAM'
-                      ? 'bg-blue-50 text-blue-600 border-blue-100'
-                      : selectedItem.preferredTransaction === 'TRADE'
-                        ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                        : 'bg-amber-50 text-amber-600 border-amber-100'
-                    }`}
-                >
-                  {selectedItem.preferredTransaction === 'HIRAM' ? 'Hiram' : selectedItem.preferredTransaction === 'TRADE' ? 'Trade' : 'Request'}
-                </span>
-              )}
-              <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
-                <Clock className="w-3 h-3 text-neutral-400" /> Listed {formatDate(selectedItem.createdAt)}
-              </span>
-              <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
-                <MapPin className="w-3 h-3 text-neutral-400" /> {selectedItem.cityCode === '137607000' ? 'Taguig' : 'Manila'}
-              </span>
+              {selectedItem.preferredTransaction && <TransactionBadge transaction={selectedItem.preferredTransaction} />}
+              <DateLabel date={selectedItem.createdAt} />
+              <LocationLabel cityCode={selectedItem.cityCode} />
             </div>
 
             {/* Title & Description */}
@@ -142,49 +122,38 @@ export function DiscoverMasterDetail({
               </p>
             </div>
 
-            {/* Lender Profile Card */}
-            <button
-              onClick={() => { const id = getOwnerId(selectedItem); if (id) navigate(`/profile/${id}`); }}
-              className="w-full border border-primary/10 rounded-xl p-4 bg-neutral-50/30 flex items-center justify-between hover:bg-primary/5 transition-colors cursor-pointer text-left"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-primary/5 text-primary flex items-center justify-center font-bold text-sm uppercase border border-primary/10 shrink-0">
-                  {(() => {
-                    const ownerName =
-                      typeof selectedItem.owner === 'string'
+            {/* Lender Profile Card + CTA */}
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => { const id = getOwnerId(selectedItem); if (id) navigate(`/profile/${id}`); }}
+                className="flex-1 flex items-center justify-between cursor-pointer text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <Avatar name={typeof selectedItem.owner === 'string' ? selectedItem.owner : selectedItem.owner?.name || 'Unknown'} size="md" src={ownerProfile?.avatarUrl ?? undefined} />
+                  <div className="flex flex-col">
+                    <span className="text-xs text-neutral-400 font-bold">Lender Profile</span>
+                    <span className="text-sm font-bold text-neutral-800 flex items-center gap-1">
+                      {typeof selectedItem.owner === 'string'
                         ? selectedItem.owner
-                        : selectedItem.owner?.name || 'Unknown';
-                    return ownerName.charAt(0);
-                  })()}
+                        : selectedItem.owner?.name || 'Unknown'}
+                      <BadgeCheck className="w-3.5 h-3.5 text-primary" />
+                    </span>
+                  </div>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xs text-neutral-400 font-bold">Lender Profile</span>
-                  <span className="text-sm font-bold text-neutral-800">
-                    {typeof selectedItem.owner === 'string'
-                      ? selectedItem.owner
-                      : selectedItem.owner?.name || 'Unknown'}
-                  </span>
-                </div>
-              </div>
+              </button>
 
-              <div className="flex items-center gap-1 text-[10px] font-black uppercase text-primary tracking-wider">
-                <User className="w-3 h-3" /> Campus Verified
-              </div>
-            </button>
-
-            {/* CTA Request Button */}
-            <div className="pt-2 flex justify-end">
               <Button
                 onClick={handleRequestClick}
                 variant="primary"
-                className="px-6 py-3 text-sm flex items-center gap-2 font-black shadow-md shadow-primary/10 hover:translate-y-[-1px] active:translate-y-[1px] transition-all"
+                className="px-6 py-3 text-sm flex items-center gap-2 font-black shadow-md shadow-primary/10 hover:translate-y-[-1px] active:translate-y-[1px] transition-all shrink-0"
               >
                 Request <ArrowRight className="w-4 h-4" />
               </Button>
             </div>
           </div>
         </div>
-      )}
+        );
+      })()}
     </div>
   );
 }

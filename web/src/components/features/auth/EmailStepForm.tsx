@@ -1,7 +1,9 @@
-import { Mail, AlertCircle } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { FormField } from '../../ui/FormField';
+import { Button } from '../../ui/Button';
 
 const emailSchema = z.object({
   email: z.string()
@@ -54,36 +56,23 @@ export function EmailStepForm({ isLoading, onContinue, onGoogleClick }: EmailSte
 
       <form onSubmit={emailForm.handleSubmit(handleSubmit)} className="space-y-4">
         {/* Email Input */}
-        <div>
-          <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-1.5">
-            Email Address
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">
-              <Mail size={16} />
-            </span>
-            <input
-              type="text"
-              {...emailForm.register('email')}
-              placeholder="e.g. name@iskolar.pup.edu.ph"
-              className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium text-neutral-900 focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
-            />
-          </div>
-          {emailForm.formState.errors.email && (
-            <p className="text-red-500 text-xs mt-1.5 flex items-center gap-1 font-semibold">
-              <AlertCircle size={12} /> {emailForm.formState.errors.email.message}
-            </p>
-          )}
-        </div>
+        <FormField
+          label="Email Address"
+          icon={Mail}
+          error={emailForm.formState.errors.email?.message}
+        >
+          <input
+            type="text"
+            {...emailForm.register('email')}
+            placeholder="e.g. name@iskolar.pup.edu.ph"
+            className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium text-neutral-900 focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
+          />
+        </FormField>
 
         {/* Continue Button */}
-        <button
-          type="submit"
-          disabled={isLoading}
-          className="w-full bg-primary text-white font-bold py-3 rounded-full shadow-sm hover:shadow-md transition-all hover:bg-primary/95 flex justify-center items-center gap-2 text-sm disabled:opacity-50 cursor-pointer"
-        >
-          {isLoading ? 'Verifying...' : 'Continue'}
-        </button>
+        <Button variant="primary" fullWidth loading={isLoading}>
+          Continue
+        </Button>
       </form>
     </div>
   );

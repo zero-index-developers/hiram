@@ -10,6 +10,7 @@ import { ItemDetailsPage } from './components/features/ItemDetailsPage';
 import { InboxPage } from './components/features/InboxPage';
 import { AlertsPage } from './components/features/AlertsPage';
 import { ProfilePage } from './components/features/ProfilePage';
+import { SettingsPage } from './components/features/SettingsPage';
 import { useAuthStore } from './store/useAuthStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ProtectedRoute } from './components/features/ProtectedRoute';
@@ -47,6 +48,7 @@ function App() {
   const itemSlug = isItemDetails ? location.pathname.replace('/items/', '') : '';
   const isInbox = location.pathname === '/inbox';
   const isAlerts = location.pathname === '/alerts';
+  const isSettings = location.pathname === '/settings';
   const isProfile = location.pathname === '/profile' || location.pathname.startsWith('/profile/');
   const isProfileParam = location.pathname.startsWith('/profile/') ? location.pathname.replace('/profile/', '') : null;
   const isSearchPage = location.pathname === '/search';
@@ -77,6 +79,10 @@ function App() {
       ) : isAlerts ? (
         <ProtectedRoute>
           <AlertsPage />
+        </ProtectedRoute>
+      ) : isSettings ? (
+        <ProtectedRoute>
+          <SettingsPage />
         </ProtectedRoute>
       ) : isProfile ? (
         isProfileParam ? (
@@ -113,7 +119,7 @@ function App() {
       )}
 
       {/* Footer */}
-      {(!isInbox && !isAlerts) && <Footer />}
+      {(!isInbox && !isAlerts && !isSettings) && <Footer />}
 
       {/* Authentication Dialog */}
       <AuthModal />

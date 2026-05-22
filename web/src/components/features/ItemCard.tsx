@@ -1,12 +1,16 @@
-import { formatDate, mockUserProfiles } from '@hiram/shared';
-import { ArrowRight, Clock, MapPin } from 'lucide-react';
+import { mockUserProfiles } from '@hiram/shared';
+import { ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { LogoSymbol } from '../ui/Logo';
 import { VerifiedBadge } from '../ui/VerifiedBadge';
+import { TransactionBadge } from '../ui/TransactionBadge';
+import { Avatar } from '../ui/Avatar';
+import { DateLabel, LocationLabel } from '../ui/MetadataRow';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useUserStore } from '../../store/useUserStore';
 
 import type { Item } from '@hiram/shared';
 
@@ -30,9 +34,11 @@ export function ItemCard({ item, hideMeta, simple }: ItemCardProps) {
     (typeof item.owner === 'object' ? item.owner?.id : undefined) ||
     mockUserProfiles.find(u => u.name.toLowerCase() === ownerName.toLowerCase())?.id;
 
+  const ownerId = getOwnerId();
+  const ownerProfile = useUserStore((s) => ownerId ? s.users[ownerId] : undefined);
+
   const handleOwnerClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const ownerId = getOwnerId();
     if (ownerId) navigate(`/profile/${ownerId}`);
   };
 
@@ -82,26 +88,13 @@ export function ItemCard({ item, hideMeta, simple }: ItemCardProps) {
           <Badge variant="outline">
             {item.category}
           </Badge>
-          {item.preferredTransaction && (
-            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider border shadow-sm ${item.preferredTransaction === 'HIRAM'
-                ? 'bg-blue-50 text-blue-600 border-blue-100'
-                : item.preferredTransaction === 'TRADE'
-                  ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                  : 'bg-amber-50 text-amber-600 border-amber-100'
-              }`}>
-              {item.preferredTransaction === 'HIRAM' ? 'Hiram' : item.preferredTransaction === 'TRADE' ? 'Trade' : 'Request'}
-            </span>
-          )}
+          {item.preferredTransaction && <TransactionBadge transaction={item.preferredTransaction} />}
         </div>
 
         {!simple && !hideMeta && (
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
-              <Clock className="w-3 h-3 text-neutral-400" /> {item.createdAt ? formatDate(item.createdAt) : 'Recently'}
-            </span>
-            <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-neutral-400" /> {item.cityCode === '137607000' ? 'Taguig' : 'Manila'}
-            </span>
+            <DateLabel date={item.createdAt} />
+            <LocationLabel cityCode={item.cityCode} />
           </div>
         )}
 
@@ -115,12 +108,8 @@ export function ItemCard({ item, hideMeta, simple }: ItemCardProps) {
 
         {simple && (
           <div className="flex items-center gap-3 mt-3 pt-3 border-t border-primary/10">
-            <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
-              <Clock className="w-3 h-3 text-neutral-400" /> {item.createdAt ? formatDate(item.createdAt) : 'Recently'}
-            </span>
-            <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-1">
-              <MapPin className="w-3 h-3 text-neutral-400" /> {item.cityCode === '137607000' ? 'Taguig' : 'Manila'}
-            </span>
+            <DateLabel date={item.createdAt} />
+            <LocationLabel cityCode={item.cityCode} />
           </div>
         )}
 
@@ -130,9 +119,7 @@ export function ItemCard({ item, hideMeta, simple }: ItemCardProps) {
               onClick={handleOwnerClick}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer"
             >
-              <div className="w-7 h-7 rounded-full bg-primary/5 text-primary flex items-center justify-center font-bold text-xs uppercase border border-primary/10">
-                {ownerName.charAt(0)}
-              </div>
+              <Avatar name={ownerName} size="sm" src={ownerProfile?.avatarUrl ?? undefined} />
               <div className="flex items-center gap-1">
                 <span className="text-xs font-bold text-neutral-500">
                   By {ownerName}

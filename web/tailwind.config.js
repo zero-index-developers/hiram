@@ -14,6 +14,9 @@ export default {
         primary: '#7e1e39',
         background: '#FCF8F8',
         accent: '#F2B50B',
+        surface: 'var(--color-surface)',
+        muted: 'var(--color-muted)',
+        border: 'var(--color-border)',
       }
     },
   },

@@ -10,12 +10,12 @@ export const mockGoogleUsers: MockGoogleUser[] = [
   {
     name: 'Juan Dela Cruz',
     email: 'juan.delacruz@iskolar.pup.edu.ph',
-    studentId: '2021-01234-MN-0',
+    studentId: '2021-00001-MN-0',
   },
   {
-    name: 'Maria Santos',
-    email: 'maria.santos@iskolar.pup.edu.ph',
-    studentId: '2021-56789-MN-0',
+    name: 'Maria Clara',
+    email: 'maria.clara@iskolar.pup.edu.ph',
+    studentId: '2021-00002-MN-0',
   }
 ];
 

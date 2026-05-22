@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { mockItems, ITEM_CATEGORIES, HOT_TAGS } from '@hiram/shared';
 import { Search, Sparkles, History, X } from 'lucide-react';
-import { LogoSymbol } from '../ui/Logo';
+import { EmptyState } from '../ui/EmptyState';
 
 interface SearchResultsModalProps {
   isOpen: boolean;
@@ -149,7 +149,7 @@ export function SearchResultsModal({
                 <button
                   key={`kw-${keyword}-${index}`}
                   onClick={() => handleKeywordClick(keyword)}
-                  className="w-full text-left px-5 py-3.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-200 flex items-center gap-3 text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-200"
+                  className="w-full text-left px-5 py-3.5 rounded-xl hover:text-primary transition-all duration-200 flex items-center gap-3 text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-200"
                 >
                   <Search size={14} className="text-neutral-400 group-hover:text-primary transition-colors shrink-0" />
                   <span className="truncate group-hover:translate-x-0.5 transition-transform duration-200">
@@ -159,13 +159,7 @@ export function SearchResultsModal({
               ))}
             </div>
           ) : (
-            <div className="py-12 px-4 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
-              <LogoSymbol size="lg" className="text-neutral-200 mb-3 animate-pulse" />
-              <h3 className="font-extrabold text-neutral-700 text-sm">No matching keywords</h3>
-              <p className="text-xs text-neutral-400 mt-1 max-w-xs font-medium">
-                Try searching with broader academic terms like "calculator" or "board".
-              </p>
-            </div>
+            <EmptyState icon={Search} title="No matching keywords" description="Try searching with broader academic terms like 'calculator' or 'board'." className="bg-transparent border-none shadow-none" />
           )
         ) : historyList.length > 0 ? (
           /* 2. Recent Searches History list */
@@ -174,7 +168,7 @@ export function SearchResultsModal({
               <div
                 key={`hist-${item}-${index}`}
                 onClick={() => handleKeywordClick(item)}
-                className="w-full px-5 py-3 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-200 flex items-center justify-between text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-150"
+                className="w-full px-5 py-3 rounded-xl hover:text-primary transition-all duration-200 flex items-center justify-between text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-150"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <History size={14} className="text-neutral-400 group-hover:text-primary transition-colors shrink-0" />
@@ -197,7 +191,7 @@ export function SearchResultsModal({
               <button
                 key={`hot-${tag.slug}-${index}`}
                 onClick={() => handleKeywordClick(tag.name)}
-                className="w-full text-left px-5 py-3.5 rounded-xl hover:bg-primary/5 hover:text-primary transition-all duration-200 flex items-center gap-3 text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-150"
+                className="w-full text-left px-5 py-3.5 rounded-xl hover:text-primary transition-all duration-200 flex items-center gap-3 text-sm font-semibold text-neutral-700 cursor-pointer group animate-in fade-in duration-150"
               >
                 <Sparkles size={14} className="text-neutral-400 group-hover:text-primary transition-colors shrink-0" />
                 <span className="truncate group-hover:translate-x-0.5 transition-transform duration-200">

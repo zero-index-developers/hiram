@@ -6,13 +6,165 @@
   font-family: "Plus Jakarta Sans", sans-serif;
   scroll-behavior: smooth;
   scroll-snap-type: y proximity;
+  --color-bg: #FCF8F8;
+  --color-text: #262626;
+  --color-surface: #ffffff;
+  --color-muted: #f5f5f5;
+  --color-border: #e5e5e5;
+}
+
+.dark {
+  --color-bg: #141414;
+  --color-text: #e5e5e5;
+  --color-surface: #1e1e1e;
+  --color-muted: #2a2a2a;
+  --color-border: #3a3a3a;
 }
 
 body {
   margin: 0;
-  background-color: #000000;
-  color: #ffffff;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   overflow-x: hidden;
+}
+
+.dark body {
+  background-color: #141414 !important;
+}
+
+.dark [class*="bg-background"] {
+  background-color: #141414 !important;
+}
+
+.dark [class*="bg-white"]:not([class*="bg-white/"]) {
+  background-color: var(--color-surface) !important;
+}
+
+.dark [class*="bg-white/"] {
+  background-color: rgba(30, 30, 30, 0.85) !important;
+}
+
+.dark [class*="bg-white/85"] {
+  backdrop-filter: blur(12px) !important;
+}
+
+.dark [class*="bg-neutral-50"] {
+  background-color: var(--color-muted) !important;
+}
+
+.dark [class*="bg-neutral-100"] {
+  background-color: var(--color-muted) !important;
+}
+
+.dark [class*="text-neutral-900"],
+.dark [class*="text-neutral-800"] {
+  color: #e5e5e5 !important;
+}
+
+.dark [class*="text-neutral-700"],
+.dark [class*="text-neutral-600"] {
+  color: #a3a3a3 !important;
+}
+
+.dark [class*="text-neutral-500"],
+.dark [class*="text-neutral-400"] {
+  color: #737373 !important;
+}
+
+.dark [class*="border-neutral-100"],
+.dark [class*="border-neutral-200"],
+.dark [class*="border-primary"] {
+  border-color: var(--color-border) !important;
+}
+
+.dark [class*="shadow-"] {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+}
+
+.dark [class*="shadow-xl"] {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+}
+
+/* Colored badge backgrounds → semi-transparent in dark mode */
+.dark [class*="bg-blue-50"] { background-color: rgba(59, 130, 246, 0.15) !important; }
+.dark [class*="bg-emerald-50"] { background-color: rgba(16, 185, 129, 0.15) !important; }
+.dark [class*="bg-orange-50"] { background-color: rgba(249, 115, 22, 0.15) !important; }
+.dark [class*="bg-amber-50"] { background-color: rgba(245, 158, 11, 0.15) !important; }
+.dark [class*="bg-rose-50"] { background-color: rgba(244, 63, 94, 0.15) !important; }
+
+/* Colored badge text → lighter in dark mode */
+.dark [class*="text-blue-600"],
+.dark [class*="text-blue-500"] { color: #93c5fd !important; }
+.dark [class*="text-orange-700"],
+.dark [class*="text-orange-600"],
+.dark [class*="text-orange-500"] { color: #fdba74 !important; }
+.dark [class*="text-amber-600"],
+.dark [class*="text-amber-500"] { color: #fcd34d !important; }
+.dark [class*="text-emerald-500"],
+.dark [class*="text-emerald-600"] { color: #6ee7b7 !important; }
+
+/* Dividers in dark mode */
+.dark .divide-neutral-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--color-border) !important;
+}
+
+/* Hover states for popover/dropdown items in dark mode */
+.dark .hover\:bg-neutral-50\/50:hover {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Colored badge borders → subtle in dark mode */
+.dark [class*="border-blue-100"],
+.dark [class*="border-blue-200"] { border-color: rgba(59, 130, 246, 0.25) !important; }
+.dark [class*="border-emerald-100"],
+.dark [class*="border-emerald-200"] { border-color: rgba(16, 185, 129, 0.25) !important; }
+.dark [class*="border-orange-100"],
+.dark [class*="border-orange-200"] { border-color: rgba(249, 115, 22, 0.25) !important; }
+.dark [class*="border-amber-100"] { border-color: rgba(245, 158, 11, 0.25) !important; }
+.dark [class*="border-rose-100"],
+.dark [class*="border-rose-200"] { border-color: rgba(244, 63, 94, 0.25) !important; }
+
+.dark [class*="bg-primary/5"] {
+  background-color: rgba(126, 30, 57, 0.15) !important;
+}
+
+.dark [class*="bg-primary/10"] {
+  background-color: rgba(126, 30, 57, 0.2) !important;
+}
+
+/* View Transition API: disable default fade, use custom clip-path animation */
+::view-transition-old(root) {
+  animation: none;
+}
+::view-transition-new(root) {
+  animation: none;
+}
+
+/* Dropdown items: hover bg that avoids !important overrides */
+.dropdown-item:hover {
+  background-color: rgba(126, 30, 57, 0.06);
+}
+
+.dark .dropdown-item:hover {
+  background-color: rgba(126, 30, 57, 0.2);
+}
+
+/* Danger icon button hover (ShieldX) */
+.settings-btn-rose:hover {
+  background-color: rgba(244, 63, 94, 0.1);
+}
+.dark .settings-btn-rose:hover {
+  background-color: rgba(244, 63, 94, 0.2);
+}
+
+/* Danger link hover (Sign Out) */
+.settings-link-rose:hover {
+  color: #e11d48;
+  background-color: rgba(244, 63, 94, 0.06);
+}
+.dark .settings-link-rose:hover {
+  color: #fb7185;
+  background-color: rgba(244, 63, 94, 0.15);
 }
 
 /* Custom Hide Scrollbar Utility */

@@ -1,4 +1,5 @@
 import { mockGoogleUsers } from '@hiram/shared';
+import { Avatar } from '../../ui/Avatar';
 
 interface GoogleSignInPanelProps {
   onSelectUser: (mockProfile: {
@@ -10,10 +11,6 @@ interface GoogleSignInPanelProps {
 }
 
 export function GoogleSignInPanel({ onSelectUser }: GoogleSignInPanelProps) {
-  const getInitials = (name: string) => {
-    return name.trim().charAt(0).toUpperCase();
-  };
-
   return (
     <div className="p-6">
       <div className="flex flex-col items-center text-center mb-6">
@@ -34,9 +31,7 @@ export function GoogleSignInPanel({ onSelectUser }: GoogleSignInPanelProps) {
             onClick={() => onSelectUser(mockUser)}
             className="w-full flex items-center gap-3 p-3 rounded-xl border border-neutral-100 hover:border-primary/20 hover:bg-primary/5 transition-all text-left group"
           >
-            <div className="w-10 h-10 rounded-full border border-neutral-200 group-hover:border-primary/20 bg-primary/5 text-primary font-bold flex items-center justify-center text-sm shrink-0">
-              {getInitials(mockUser.name)}
-            </div>
+            <Avatar name={mockUser.name} size="lg" className="border-neutral-200 group-hover:border-primary/20" />
             <div>
               <div className="font-semibold text-neutral-800 text-sm group-hover:text-primary transition-colors">
                 {mockUser.name}

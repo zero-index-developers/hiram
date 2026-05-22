@@ -1,24 +1,27 @@
-import type { User } from "@hiram/shared";
 import { mockItems, mockUserProfiles } from "@hiram/shared";
+import axios from "axios";
 import {
-  ArrowRight,
   Award,
   Bookmark,
   Camera,
-  Hash,
   Heart,
-  Loader2,
   PlusCircle,
   Trash2,
   Users,
 } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
-import { BackButton } from "../ui/BackButton";
+import { useUserStore } from "../../store/useUserStore";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api/v1";
+import { PageLayout } from "../layout/PageLayout";
+import { EmptyState } from "../ui/EmptyState";
+import { TabBar } from "../ui/TabBar";
 import { VerifiedBadge } from "../ui/VerifiedBadge";
 import { ImageCropModal } from "./ImageCropModal";
 import { ItemCard } from "./ItemCard";
+import { VerifyStudentId } from "./VerifyStudentId";
 
 interface ProfilePageProps {
   userId?: string;
@@ -40,9 +43,23 @@ export function ProfilePage({ userId }: ProfilePageProps) {
   const [showCropModal, setShowCropModal] = useState(false);
 
   const isOwnProfile = !userId || userId === currentUser?.id;
-  const profileUser: User | null | undefined = isOwnProfile
+  const storeUser = useUserStore((s) => userId ? s.users[userId] : undefined);
+  const profileUser = isOwnProfile
     ? currentUser
-    : mockUserProfiles.find((u) => u.id === userId);
+    : storeUser ?? mockUserProfiles.find((u) => u.id === userId) ?? null;
+
+  // Fetch other user's profile from API to get updated avatar
+  useEffect(() => {
+    if (!userId || isOwnProfile) return;
+    const token = useAuthStore.getState().token;
+    axios.get(`${API_URL}/users/${userId}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    }).then((res) => {
+      useUserStore.getState().setUser(res.data);
+    }).catch(() => {
+      // Ignore API error — rely on mock data
+    });
+  }, [userId, isOwnProfile]);
 
   const getItemSlug = (id: string, title: string) =>
     title
@@ -140,13 +157,8 @@ export function ProfilePage({ userId }: ProfilePageProps) {
   };
 
   return (
-    <div className="relative max-w-5xl mx-auto px-4 pt-6 pb-4 w-full flex-grow flex flex-col h-[calc(100vh-120px)] min-h-[650px] max-h-[820px] animate-in fade-in duration-300">
-      {/* Floating Back Button */}
-      <div className="mb-4 shrink-0 lg:absolute lg:-left-16 lg:top-6 lg:mb-0">
-        <BackButton fallbackPath="/" />
-      </div>
-
-      <div className="flex-1 min-h-0 bg-white rounded-3xl overflow-hidden">
+    <PageLayout backTo="/">
+      <div className="flex-1 min-h-0 bg-white rounded-3xl overflow-hidden flex flex-col">
         {/* Profile Banner Background */}
         <div className="h-32 bg-gradient-to-r from-primary/15 via-primary/5 to-primary/20 shrink-0 relative" />
 
@@ -197,34 +209,12 @@ export function ProfilePage({ userId }: ProfilePageProps) {
               </div>
               {/* Verification CTA — only for own profile when unverified */}
               {isOwnProfile && !currentUser?.studentId && (
-                <div className="mt-4 flex flex-col sm:flex-row items-center gap-2 bg-orange-50 border border-orange-100 rounded-xl p-3 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
-                  <div className="flex items-center gap-2 text-orange-700">
-                    <Hash size={16} className="shrink-0" />
-                    <span className="text-xs font-bold whitespace-nowrap">
-                      Verify Student ID:
-                    </span>
-                  </div>
-                  <div className="flex w-full sm:w-auto relative">
-                    <input
-                      type="text"
-                      value={verifyId}
-                      onChange={(e) => setVerifyId(e.target.value)}
-                      placeholder="e.g. 2021-12345-MN-0"
-                      className="w-full sm:w-44 bg-white border border-orange-200 rounded-l-lg py-1.5 px-3 text-xs font-medium focus:outline-none focus:border-orange-400 transition-colors"
-                    />
-                    <button
-                      onClick={handleVerify}
-                      disabled={isVerifying || !verifyId.trim()}
-                      className="bg-orange-500 hover:bg-orange-600 text-white px-3 rounded-r-lg flex items-center justify-center transition-colors disabled:opacity-50"
-                    >
-                      {isVerifying ? (
-                        <Loader2 size={14} className="animate-spin" />
-                      ) : (
-                        <ArrowRight size={14} />
-                      )}
-                    </button>
-                  </div>
-                </div>
+                <VerifyStudentId
+                  verifyId={verifyId}
+                  setVerifyId={setVerifyId}
+                  onVerify={handleVerify}
+                  isVerifying={isVerifying}
+                />
               )}
             </div>
           </div>
@@ -247,57 +237,53 @@ export function ProfilePage({ userId }: ProfilePageProps) {
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="flex border-b border-neutral-100 bg-white shrink-0">
-          <button
-            onClick={() => setActiveTab("listings")}
-            className={`flex items-center gap-2 px-8 py-4 text-xs font-black uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
-              activeTab === "listings"
-                ? "border-primary text-primary"
-                : "border-transparent text-neutral-400 hover:text-neutral-600"
-            }`}
-          >
-            <PlusCircle className="w-4 h-4" />
-            {isOwnProfile ? "My Listings" : "Listings"} ({userListings.length})
-          </button>
-          {isOwnProfile && (
-            <button
-              onClick={() => setActiveTab("saved")}
-              className={`flex items-center gap-2 px-8 py-4 text-xs font-black uppercase tracking-wider transition-all border-b-2 cursor-pointer ${
-                activeTab === "saved"
-                  ? "border-primary text-primary"
-                  : "border-transparent text-neutral-400 hover:text-neutral-600"
-              }`}
-            >
-              <Bookmark className="w-4 h-4" />
-              Saved Items ({savedListings.length})
-            </button>
-          )}
-        </div>
+        <TabBar
+          tabs={[
+            {
+              key: "listings",
+              label: `${isOwnProfile ? "My" : ""} Listings (${userListings.length})`,
+              icon: PlusCircle,
+            },
+            ...(isOwnProfile
+              ? [
+                  {
+                    key: "saved",
+                    label: `Saved Items (${savedListings.length})`,
+                    icon: Bookmark,
+                  },
+                ]
+              : []),
+          ]}
+          activeTab={activeTab}
+          onChange={(key) => setActiveTab(key as "listings" | "saved")}
+        />
 
         {/* Tab Contents Area */}
-        <div className="flex-1 overflow-y-auto scrollbar-minimal p-8 bg-neutral-50/20">
+        <div className="flex-1 overflow-y-auto scrollbar-minimal p-8">
           {activeTab === "listings" ? (
             userListings.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {userListings.map((item) => (
-                  <div key={item.id} onClick={() => navigate(`/items/${getItemSlug(item.id, item.title)}`)}>
+                  <div
+                    key={item.id}
+                    onClick={() =>
+                      navigate(`/items/${getItemSlug(item.id, item.title)}`)
+                    }
+                  >
                     <ItemCard item={item} simple />
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-primary/5 shadow-sm max-w-lg mx-auto">
-                <Heart className="w-12 h-12 text-neutral-300 mb-3" />
-                <h3 className="font-extrabold text-neutral-700 text-sm">
-                  No listings yet
-                </h3>
-                <p className="text-xs text-neutral-400 mt-1 max-w-xs font-medium">
-                  {isOwnProfile
+              <EmptyState
+                icon={Heart}
+                title="No listings yet"
+                description={
+                  isOwnProfile
                     ? "Create a new listing to share resources with your campus community."
-                    : "This user has no listings yet."}
-                </p>
-              </div>
+                    : "This user has no listings yet."
+                }
+              />
             )
           ) : savedListings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -315,16 +301,11 @@ export function ProfilePage({ userId }: ProfilePageProps) {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-2xl border border-primary/5 shadow-sm max-w-lg mx-auto">
-              <Bookmark className="w-12 h-12 text-neutral-300 mb-3" />
-              <h3 className="font-extrabold text-neutral-700 text-sm">
-                No saved items
-              </h3>
-              <p className="text-xs text-neutral-400 mt-1 max-w-xs font-medium">
-                Explore shared resources and bookmark listings you want to keep
-                track of.
-              </p>
-            </div>
+            <EmptyState
+              icon={Bookmark}
+              title="No saved items"
+              description="Explore shared resources and bookmark listings you want to keep track of."
+            />
           )}
         </div>
       </div>
@@ -336,6 +317,6 @@ export function ProfilePage({ userId }: ProfilePageProps) {
         onRemove={removeAvatar}
         onClose={handleCropModalClose}
       />
-    </div>
+    </PageLayout>
   );
 }

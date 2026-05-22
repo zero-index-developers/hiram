@@ -6,6 +6,7 @@ import { z } from 'zod';
 import type { Item } from '@hiram/shared';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Select } from '../ui/Select';
+import { Button } from '../ui/Button';
 
 const createProposalSchema = (preferredTransaction: string) => {
   return z.object({
@@ -187,13 +188,9 @@ export function RequestProposalForm({ item, onSubmitSuccess }: RequestProposalFo
           )}
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-primary text-white font-bold py-3.5 rounded-full shadow-md shadow-primary/10 hover:shadow-lg transition-all hover:bg-primary/95 flex justify-center items-center gap-2 text-sm disabled:opacity-50 cursor-pointer"
-        >
-          {loading ? 'Submitting proposal...' : 'Submit Request'}
-        </button>
+        <Button variant="primary" fullWidth loading={loading}>
+          Submit Request
+        </Button>
       </form>
     </div>
   );
