@@ -11,6 +11,7 @@
     "shared"
   ],
   "scripts": {
+    "prepare": "husky install",
     "dev": "turbo run dev",
     "dev:backend": "npm run dev --workspace=backend",
     "dev:web": "npm run dev --workspace=web",
@@ -19,6 +20,9 @@
     "lint": "turbo run lint"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.0.1",
+    "@commitlint/config-conventional": "^21.0.1",
+    "husky": "^9.1.7",
     "turbo": "^2.0.0"
   }
 }
