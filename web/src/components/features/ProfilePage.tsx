@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useUserStore } from "../../store/useUserStore";
 import { PageLayout } from "../layout/PageLayout";
+import { Button } from "../ui/Button";
 import { EmptyState } from "../ui/EmptyState";
 import { TabBar } from "../ui/TabBar";
 import { VerifiedBadge } from "../ui/VerifiedBadge";
@@ -41,6 +42,7 @@ export function ProfilePage({ userId }: ProfilePageProps) {
   const [isVerifying, setIsVerifying] = useState(false);
   const [pendingImageSrc, setPendingImageSrc] = useState("");
   const [showCropModal, setShowCropModal] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
 
   const isOwnProfile = !userId || userId === currentUser?.id;
   const storeUser = useUserStore((s) => (userId ? s.users[userId] : undefined));
@@ -173,7 +175,7 @@ export function ProfilePage({ userId }: ProfilePageProps) {
 
         {/* Profile Info / Stats Section */}
         <div className="px-8 pb-6 border-b border-neutral-100 bg-white shrink-0 relative flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div className="flex flex-col md:flex-row items-center md:items-end gap-5 -mt-16 relative z-10">
+          <div className="flex flex-col md:flex-row items-center gap-5 -mt-16 relative z-10">
             {/* Profile Avatar */}
             <div
               className={`relative w-28 h-28 shrink-0 ${isOwnProfile ? "cursor-pointer" : ""}`}
@@ -225,22 +227,30 @@ export function ProfilePage({ userId }: ProfilePageProps) {
                   isVerifying={isVerifying}
                 />
               )}
+              {/* Follow Button — only for other profiles */}
+              {!isOwnProfile && (
+                <div className="mt-3">
+                  <Button
+                    variant={isFollowing ? "secondary" : "primary"}
+                    onClick={() => setIsFollowing(!isFollowing)}
+                    className="px-6 py-1.5 text-sm"
+                  >
+                    {isFollowing ? "Following" : "Follow"}
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
           {/* User Stats Card */}
           <div className="flex justify-center gap-6 py-2 px-6 rounded-2xl bg-neutral-50 border border-neutral-100/80 self-center md:self-auto shadow-sm">
-            <div className="text-center flex flex-col items-center">
-              <span className="text-xs text-neutral-400 font-bold flex items-center gap-1 mb-0.5">
-                <Award className="w-3.5 h-3.5 text-primary" /> Karma
-              </span>
+            <div className="text-center flex items-center gap-1">
+              <Award className="w-3.5 h-3.5 text-primary" />
               <span className="text-base font-black text-neutral-800">342</span>
             </div>
             <div className="w-px bg-neutral-200/60 my-1" />
-            <div className="text-center flex flex-col items-center">
-              <span className="text-xs text-neutral-400 font-bold flex items-center gap-1 mb-0.5">
-                <Users className="w-3.5 h-3.5 text-primary" /> Followers
-              </span>
+            <div className="text-center flex items-center gap-1">
+              <Users className="w-3.5 h-3.5 text-primary" />
               <span className="text-base font-black text-neutral-800">148</span>
             </div>
           </div>

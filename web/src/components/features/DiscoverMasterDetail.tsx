@@ -112,7 +112,7 @@ export function DiscoverMasterDetail({
             ? useUserStore.getState().users[detailOwnerId]
             : undefined;
           return (
-            <div className="flex-1 lg:w-3/5 w-full bg-white border border-primary/20 rounded-2xl overflow-hidden shadow-sm sticky top-24 flex flex-col animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex-1 lg:w-3/5 w-full bg-white border border-primary/20 rounded-2xl overflow-hidden shadow-sm sticky top-32 flex flex-col animate-in fade-in zoom-in-95 duration-200">
               {/* Visual Image Banner */}
               <div className="relative h-64 bg-neutral-50 flex items-center justify-center border-b border-primary/5">
                 <DetailItemImage
