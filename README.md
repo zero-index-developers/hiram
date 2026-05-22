@@ -86,7 +86,7 @@ graph TD
 
 ## 🚀 Core Features (MVP)
 
-* **🔐 Academic Auth:** Single sign-on verification using official PUP student email domains.
+* **🔐 Academic Auth:** Single sign-on verification using official Studentemail domains.
 * **📦 Item Listings:** Complete CRUD capabilities for sharing tools with description, category, and condition tracking.
 * **🤝 Request Flow:** Send, accept, or decline borrow and trade requests with integrated return calendar schedules.
 * **💬 Real-Time Chat:** Immediate peer-to-peer message exchanges directly tied to active item transactions.

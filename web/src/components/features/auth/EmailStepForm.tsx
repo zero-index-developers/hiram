@@ -8,7 +8,7 @@ const emailSchema = z.object({
     .email({ message: 'Invalid email address' })
     .refine(
       (email) => email.endsWith('@iskolar.pup.edu.ph') || email.endsWith('@pup.edu.ph'),
-      { message: 'Must be a valid PUP student or faculty email (@iskolar.pup.edu.ph or @pup.edu.ph)' }
+      { message: 'Must be a valid Studentor faculty email (@iskolar.pup.edu.ph or @pup.edu.ph)' }
     ),
 });
 

@@ -30,7 +30,7 @@ export function InboxPage() {
     e.preventDefault();
     if (!newMessageText.trim()) return;
 
-    setProposals(prevProposals => 
+    setProposals(prevProposals =>
       prevProposals.map(p => {
         if (p.id === activeProposal.id) {
           const updatedMessages: MockProposalMessage[] = [
@@ -76,7 +76,7 @@ export function InboxPage() {
         <BackButton fallbackPath="/" />
       </div>
 
-      <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-12 bg-white rounded-3xl border border-primary/10 overflow-hidden shadow-xl">
+      <div className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-12 bg-white rounded-xl border border-primary/10 overflow-hidden shadow-xl">
         {/* Left Side: Proposals List */}
         <InboxProposalsList
           proposals={proposals}

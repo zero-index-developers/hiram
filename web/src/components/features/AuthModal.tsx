@@ -108,7 +108,7 @@ export function AuthModal() {
               {step === 'login' ? 'Welcome Back' : step === 'register' ? 'Join Hiram' : 'Welcome to Hiram'}
             </h2>
             <p className="text-neutral-500 text-sm mt-1 animate-in fade-in duration-200">
-              {step === 'login' ? 'Enter password to sign in' : step === 'register' ? 'Complete student registration details' : 'PUP Student Item Sharing & Trading Hub'}
+              {step === 'login' ? 'Enter password to sign in' : step === 'register' ? 'Complete student registration details' : 'StudentItem Sharing & Trading Hub'}
             </p>
           </div>
 

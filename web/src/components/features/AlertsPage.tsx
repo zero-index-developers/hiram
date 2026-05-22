@@ -133,7 +133,7 @@ export function AlertsPage() {
         <BackButton fallbackPath="/" />
       </div>
 
-      <div className="flex-1 min-h-0 bg-white rounded-3xl border border-primary/10 overflow-hidden shadow-xl flex flex-col">
+      <div className="flex-1 min-h-0 bg-white rounded-xl border border-primary/10 overflow-hidden shadow-xl flex flex-col">
         {/* Header */}
         <div className="px-6 py-4 border-b border-neutral-100 bg-white shrink-0 flex items-center gap-3">
           <h2 className="text-base font-black text-neutral-900">Notifications</h2>
@@ -150,9 +150,8 @@ export function AlertsPage() {
             <div
               key={alert.id}
               onClick={() => handleAlertClick(alert)}
-              className={`flex items-start gap-4 p-5 transition-all duration-200 relative ${
-                alert.actionUrl ? 'cursor-pointer hover:bg-neutral-50' : 'cursor-default'
-              } ${!alert.read ? 'bg-primary/[0.02]' : 'bg-white'}`}
+              className={`flex items-start gap-4 p-5 transition-all duration-200 relative ${alert.actionUrl ? 'cursor-pointer hover:bg-neutral-50' : 'cursor-default'
+                } ${!alert.read ? 'bg-primary/[0.02]' : 'bg-white'}`}
             >
               {/* Icon with Top-Left Unread dot */}
               <div className="relative shrink-0">
