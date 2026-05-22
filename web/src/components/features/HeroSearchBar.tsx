@@ -1,6 +1,7 @@
 import type { Tag, TagType } from '@hiram/shared';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useStickyScroll } from '../../hooks/useStickyScroll';
 import { LogoSymbol } from '../ui/Logo';
 import { FilterSelectGroup } from './FilterSelectGroup';
 import { UserActionsBar } from './UserActionsBar';
@@ -27,24 +28,43 @@ export function HeroSearchBar({
   setSearchQuery,
   forceSticky = false
 }: HeroSearchBarProps) {
-  const [isSticky, setIsSticky] = useState(forceSticky);
-  const [isFilterOpen, setIsFilterOpen] = useState(true);
+  const isSticky = useStickyScroll(215, forceSticky);
+  const [isFilterOpen, setIsFilterOpen] = useState(() => {
+    try {
+      const saved = localStorage.getItem('hiram_filter_open');
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (forceSticky) {
-      setIsSticky(true);
-      return;
+  const saveSearchToHistory = (query: string) => {
+    if (!query.trim()) return;
+    try {
+      const history = localStorage.getItem('hiram_search_history');
+      let searchHistory: string[] = history ? JSON.parse(history) : [];
+      searchHistory = searchHistory.filter(q => q.toLowerCase() !== query.trim().toLowerCase());
+      searchHistory.unshift(query.trim());
+      searchHistory = searchHistory.slice(0, 8);
+      localStorage.setItem('hiram_search_history', JSON.stringify(searchHistory));
+    } catch (e) {
+      console.error(e);
     }
-    const handleScroll = () => {
-      setIsSticky(window.scrollY > 215);
-    };
+  };
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [forceSticky]);
+  const handleToggleFilter = () => {
+    setIsFilterOpen(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('hiram_filter_open', JSON.stringify(next));
+      } catch (e) {
+        console.error(e);
+      }
+      return next;
+    });
+  };
 
   const redirectToDiscover = () => {
     if (window.location.pathname !== '/') {
@@ -54,37 +74,30 @@ export function HeroSearchBar({
   };
 
   const handleSearchAction = () => {
-    if (window.location.pathname !== '/') {
-      if (searchQuery.trim() !== '' || selectedTags.length > 0) {
-        setIsPopoverOpen(false);
-        if (window.location.pathname !== '/search') {
-          navigate('/search');
-        }
-      } else {
-        setIsPopoverOpen(false);
-        if (window.location.pathname === '/search') {
-          navigate('/');
-        }
+    if (searchQuery.trim() !== '') {
+      saveSearchToHistory(searchQuery);
+    }
+    if (searchQuery.trim() !== '' || selectedTags.length > 0) {
+      setIsPopoverOpen(false);
+      if (window.location.pathname !== '/search') {
+        navigate('/search');
+      }
+    } else {
+      setIsPopoverOpen(false);
+      if (window.location.pathname === '/search') {
+        navigate('/');
       }
     }
   };
 
   const handleInputChange = (val: string) => {
     setSearchQuery(val);
-    if (window.location.pathname !== '/') {
-      if (val.trim() !== '' || selectedTags.length > 0) {
-        setIsPopoverOpen(true);
-      } else {
-        setIsPopoverOpen(false);
-      }
-    }
+    setIsPopoverOpen(true);
   };
 
   const handleSelectTagWrapper = (tag: Tag) => {
     onSelectTag(tag);
-    if (window.location.pathname !== '/') {
-      setIsPopoverOpen(true);
-    }
+    setIsPopoverOpen(true);
   };
 
   const handleClearAllWrapper = () => {
@@ -97,9 +110,7 @@ export function HeroSearchBar({
 
   const handleApplyTagsWrapper = (tags: Tag[], typesToReplace: TagType[]) => {
     if (onApplyTags) onApplyTags(tags, typesToReplace);
-    if (window.location.pathname !== '/') {
-      setIsPopoverOpen(true);
-    }
+    setIsPopoverOpen(true);
   };
 
   return (
@@ -128,6 +139,7 @@ export function HeroSearchBar({
                     placeholder="Item name, category, or lender..."
                     value={searchQuery}
                     onChange={(e) => handleInputChange(e.target.value)}
+                    onFocus={() => setIsPopoverOpen(true)}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') {
                         handleSearchAction();
@@ -163,7 +175,7 @@ export function HeroSearchBar({
                 }`}
             >
               <button
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                onClick={handleToggleFilter}
                 className={`w-10 h-10 shrink-0 rounded-full border flex items-center justify-center transition-colors shadow-sm ${isFilterOpen
                   ? 'border-primary text-primary bg-primary/5'
                   : 'border-primary/10 bg-white text-neutral-600 hover:bg-primary/5 hover:text-primary'
@@ -190,8 +202,8 @@ export function HeroSearchBar({
           <SearchResultsModal 
             isOpen={isPopoverOpen} 
             onClose={() => setIsPopoverOpen(false)}
-            selectedTags={selectedTags}
             searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
           />
         </div>
 

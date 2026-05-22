@@ -1,175 +1,25 @@
-import { useState, useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { ChevronDown, Check, CheckSquare, Square } from 'lucide-react';
-import type { Tag } from '@hiram/shared';
-
-interface BaseProps {
-  options: Tag[];
-  placeholder: string;
-  className?: string;
-  onHover?: (slug: string) => void;
-  forceNested?: boolean;
-}
-
-interface RadioProps extends BaseProps {
-  variant: 'radio';
-  value?: string;
-  onChange?: (tag: Tag | null) => void;
-}
-
-interface CheckboxProps extends BaseProps {
-  variant: 'checkbox';
-  values?: Tag[];
-  onApply?: (tags: Tag[]) => void;
-}
-
-type FilterSelectProps = RadioProps | CheckboxProps;
-
-function findTag(options: Tag[], slug: string): Tag | undefined {
-  for (const opt of options) {
-    if (opt.slug === slug) return opt;
-    const sub = opt.subcategories?.find(s => s.slug === slug);
-    if (sub) return sub;
-  }
-}
+import { useFilterTree, type FilterSelectProps, type RadioProps, type CheckboxProps } from '../../hooks/useFilterTree';
+import { FilterItem } from './FilterItem';
 
 export function FilterSelect(props: FilterSelectProps) {
-  const { variant, options, placeholder, className = '', onHover, forceNested } = props;
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeSlug, setActiveSlug] = useState(options[0]?.slug || '');
-  const [localTags, setLocalTags] = useState<Tag[]>([]);
+  const { variant, options, placeholder, className = '' } = props;
   const ref = useRef<HTMLDivElement>(null);
 
-  const hasNested = forceNested || options.some(o => (o.subcategories?.length ?? 0) > 0);
-  
-  let activeSubs = options.find(o => o.slug === activeSlug)?.subcategories || [];
-  if (activeSubs.length === 0 && options.length > 0) {
-    activeSubs = options[0].subcategories || [];
-  }
-
-  const handleHover = (slug: string) => {
-    setActiveSlug(slug);
-    onHover?.(slug);
-  };
-
-  // Sync local tags on open (checkbox)
-  useEffect(() => {
-    if (isOpen && variant === 'checkbox') {
-      setLocalTags((props as CheckboxProps).values || []);
-    }
-  }, [isOpen]);
-
-  // Click outside
-  useEffect(() => {
-    if (!isOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setIsOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [isOpen]);
-
-  const pluralize = (word: string) => {
-    if (word.toLowerCase().endsWith('y')) {
-      return word.slice(0, -1) + 'ies';
-    }
-    return word + 's';
-  };
-
-  // Display label
-  let label = `All ${pluralize(placeholder)}`;
-  if (variant === 'radio') {
-    const v = (props as RadioProps).value;
-    if (v) { const t = findTag(options, v); if (t) label = t.name; }
-  } else {
-    const v = (props as CheckboxProps).values || [];
-    
-    // Find all fully selected parent options (all subcategories of that parent are checked)
-    const fullySelectedParents = options.filter(opt => {
-      const subs = opt.subcategories || [];
-      if (subs.length === 0) return false;
-      return subs.every(sub => v.some(val => val.slug === sub.slug));
-    });
-
-    const simplifiedTags: Tag[] = [];
-    fullySelectedParents.forEach(p => {
-      simplifiedTags.push(p);
-    });
-
-    const fullySelectedParentSlugs = new Set(fullySelectedParents.map(p => p.slug));
-    const childSlugsOfFullySelected = new Set(
-      fullySelectedParents.flatMap(p => (p.subcategories || []).map(sub => sub.slug))
-    );
-
-    v.forEach(val => {
-      if (fullySelectedParentSlugs.has(val.slug)) return;
-      if (childSlugsOfFullySelected.has(val.slug)) return;
-      simplifiedTags.push(val);
-    });
-
-    if (simplifiedTags.length === 1) {
-      label = simplifiedTags[0].name;
-    } else if (simplifiedTags.length > 1) {
-      const allRegions = simplifiedTags.every(t => t.type === 'REGION');
-      const allCities = simplifiedTags.every(t => t.type === 'CITY');
-      
-      let displayPlaceholder = placeholder;
-      if (placeholder.toLowerCase() === 'location') {
-        if (allRegions) displayPlaceholder = 'Region';
-        else if (allCities) displayPlaceholder = 'City';
-      }
-      
-      label = `${simplifiedTags.length} ${pluralize(displayPlaceholder)}`;
-    }
-  }
-
-  const selectRadio = (tag: Tag | null) => { (props as RadioProps).onChange?.(tag); setIsOpen(false); };
-  const toggleCheck = (tag: Tag) => {
-    setLocalTags(prev => {
-      // Find parent of this tag (if it is a subcategory)
-      const parent = options.find(o => 
-        o.subcategories?.some(sub => sub.slug === tag.slug)
-      );
-
-      const isSelected = prev.some(t => t.slug === tag.slug);
-
-      if (parent) {
-        // Tag is a subcategory (child)
-        if (isSelected) {
-          // Unchecking a subcategory -> Remove this subcategory and the parent region
-          return prev.filter(t => t.slug !== tag.slug && t.slug !== parent.slug);
-        } else {
-          // Checking a subcategory -> Add this subcategory
-          const next = [...prev, tag];
-          
-          // Check if ALL subcategories of this parent are now checked
-          const siblings = parent.subcategories || [];
-          const allSiblingsChecked = siblings.every(sub =>
-            sub.slug === tag.slug || prev.some(t => t.slug === sub.slug)
-          );
-          
-          if (allSiblingsChecked && !prev.some(t => t.slug === parent.slug)) {
-            // Also check the parent region!
-            return [...next, parent];
-          }
-          return next;
-        }
-      } else {
-        // Tag is a parent (region / main category)
-        const children = tag.subcategories || [];
-        const childSlugs = new Set(children.map(c => c.slug));
-
-        if (isSelected) {
-          // Unchecking parent -> Remove parent + all children
-          return prev.filter(t => t.slug !== tag.slug && !childSlugs.has(t.slug));
-        } else {
-          // Checking parent -> Add parent + all children not already checked
-          const existing = new Set(prev.map(t => t.slug));
-          const toAdd = [tag, ...children].filter(t => !existing.has(t.slug));
-          return [...prev, ...toAdd];
-        }
-      }
-    });
-  };
+  const {
+    isOpen,
+    setIsOpen,
+    activeSlug,
+    localTags,
+    setLocalTags,
+    hasNested,
+    activeSubs,
+    handleHover,
+    label,
+    selectRadio,
+    toggleCheck
+  } = useFilterTree(props, ref);
 
   return (
     <div className={`relative group ${className}`} ref={ref}>
@@ -191,7 +41,7 @@ export function FilterSelect(props: FilterSelectProps) {
               <div className="p-1.5 flex flex-col gap-0.5">
                 {/* "All" reset for radio flat lists */}
                 {variant === 'radio' && !hasNested && (
-                  <Item icon="radio" selected={!(props as RadioProps).value} label={`All ${placeholder}s`} onClick={() => selectRadio(null)} />
+                  <FilterItem icon="radio" selected={!(props as RadioProps).value} label={`All ${placeholder}s`} onClick={() => selectRadio(null)} />
                 )}
                 {options.map(opt => {
                   const isNav = activeSlug === opt.slug;
@@ -204,7 +54,7 @@ export function FilterSelect(props: FilterSelectProps) {
                         {sel && <Check className="w-4 h-4 text-primary shrink-0" />}
                       </div>
                     ) : (
-                      <Item key={opt.slug} icon="radio" selected={sel} label={opt.name} onClick={() => selectRadio(opt)} />
+                      <FilterItem key={opt.slug} icon="radio" selected={sel} label={opt.name} onClick={() => selectRadio(opt)} />
                     );
                   }
                   const chk = localTags.some(t => t.slug === opt.slug);
@@ -217,7 +67,7 @@ export function FilterSelect(props: FilterSelectProps) {
                       <span className="truncate flex-1">{opt.name}</span>
                     </div>
                   ) : (
-                    <Item key={opt.slug} icon="checkbox" selected={chk} label={opt.name} onClick={() => toggleCheck(opt)} />
+                    <FilterItem key={opt.slug} icon="checkbox" selected={chk} label={opt.name} onClick={() => toggleCheck(opt)} />
                   );
                 })}
               </div>
@@ -228,9 +78,9 @@ export function FilterSelect(props: FilterSelectProps) {
               <div className="w-1/2 bg-white overflow-y-auto scrollbar-minimal">
                 <div className="p-1.5 flex flex-col gap-0.5">
                   {activeSubs.map(sub => variant === 'radio' ? (
-                    <Item key={sub.slug} icon="radio" selected={(props as RadioProps).value === sub.slug} label={sub.name} onClick={() => selectRadio(sub)} />
+                    <FilterItem key={sub.slug} icon="radio" selected={(props as RadioProps).value === sub.slug} label={sub.name} onClick={() => selectRadio(sub)} />
                   ) : (
-                    <Item key={sub.slug} icon="checkbox" selected={localTags.some(t => t.slug === sub.slug)} label={sub.name} onClick={() => toggleCheck(sub)} />
+                    <FilterItem key={sub.slug} icon="checkbox" selected={localTags.some(t => t.slug === sub.slug)} label={sub.name} onClick={() => toggleCheck(sub)} />
                   ))}
                 </div>
               </div>
@@ -249,25 +99,6 @@ export function FilterSelect(props: FilterSelectProps) {
           )}
         </div>
       )}
-    </div>
-  );
-}
-
-// Shared row item
-function Item({ icon, selected, label, onClick }: { icon: 'radio' | 'checkbox'; selected: boolean; label: string; onClick: () => void }) {
-  return (
-    <div onClick={onClick} className={`flex items-center gap-3 px-3 py-2 text-sm rounded-lg cursor-pointer transition-colors ${
-      icon === 'radio'
-        ? (selected ? 'bg-primary/5 text-primary font-bold' : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 font-medium')
-        : 'text-neutral-600 hover:bg-neutral-50 font-medium'
-    }`}>
-      {icon === 'checkbox' && (
-        <span className="text-neutral-400 hover:text-primary transition-colors">
-          {selected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4" />}
-        </span>
-      )}
-      <span className="truncate flex-1">{label}</span>
-      {icon === 'radio' && selected && <Check className="w-4 h-4 ml-auto shrink-0" />}
     </div>
   );
 }
