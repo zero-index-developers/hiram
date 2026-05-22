@@ -45,7 +45,7 @@ export function ProfileDropdown({
       </button>
 
       {/* Dropdown Menu */}
-      <Popover isOpen={isOpen} onClose={onClose} width="w-60">
+      <Popover isOpen={isOpen} onClose={onClose} width="w-60" className="!pt-2">
         <button
           onClick={() => {
             navigate("/profile");

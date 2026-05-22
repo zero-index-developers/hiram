@@ -39,3 +39,8 @@ pnpm-debug.log*
 .env.test.local
 .env.production.local
 *.env
+
+# Docker & Database
+docker-compose.override.yml
+.postgres_data/
+postgres_data/

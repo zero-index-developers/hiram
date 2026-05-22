@@ -26,10 +26,21 @@ export function Avatar({ name, src, size = 'md', className = '' }: AvatarProps) 
   const cls = sizeClasses[size] || sizeClasses.md;
   const initCls = initialsSize[size] || initialsSize.md;
 
+  let resolvedSrc: string | undefined | null = src;
   if (src) {
+    const isAbsolute = /^https?:\/\//i.test(src);
+    if (!isAbsolute && src.startsWith('/')) {
+      // Build backend base from VITE_API_URL or fallback to localhost:4000
+      const apiUrl = (import.meta.env.VITE_API_URL as string) || 'http://localhost:4000/api/v1';
+      const backendBase = apiUrl.replace(/\/api\/v1\/?$/, '') ;
+      resolvedSrc = `${backendBase}${src}`;
+    }
+  }
+
+  if (resolvedSrc) {
     return (
       <div className={`${cls} rounded-full overflow-hidden border border-primary/10 shrink-0 ${className}`}>
-        <img src={src} alt={name} className="w-full h-full object-cover" />
+        <img src={resolvedSrc} alt={name} className="w-full h-full object-cover" />
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import multer from 'multer';
 import { createStorageProvider } from '../storage';
 
@@ -42,7 +42,14 @@ router.post('/', (req: Request, res: Response, next: NextFunction) => {
       : '';
 
     storage.upload(filePath, req.file)
-      .then((result) => res.json(result))
+      .then((result) => {
+        const returnedUrl = result.url || '';
+        const absoluteUrl = returnedUrl.startsWith('http')
+          ? returnedUrl
+          : `${req.protocol}://${req.get('host')}${returnedUrl}`;
+
+        res.json({ ...result, url: absoluteUrl });
+      })
       .catch(next);
   });
 });

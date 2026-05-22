@@ -132,6 +132,22 @@ body {
   background-color: rgba(126, 30, 57, 0.2) !important;
 }
 
+/* Avoid visible white hints from translucent neutral/bg utilities in dark mode */
+.dark [class*="bg-neutral-50/"] ,
+.dark [class*="bg-neutral-100/"] {
+  background-color: rgba(30,30,30,0.6) !important;
+}
+
+/* Ensure primary low-opacity backgrounds are darker in dark mode */
+.dark [class*="bg-primary/"] {
+  background-color: rgba(126,30,57,0.06) !important;
+}
+
+/* Make translucent divide utilities use dark border color */
+.dark [class*="divide-neutral-100/"] > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--color-border) !important;
+}
+
 /* View Transition API: disable default fade, use custom clip-path animation */
 ::view-transition-old(root) {
   animation: none;

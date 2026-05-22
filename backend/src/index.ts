@@ -1,15 +1,15 @@
+import { formatDate } from '@hiram/shared';
+import cors from 'cors';
+import dotenv from 'dotenv';
 import express from 'express';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 import http from 'http';
 import path from 'path';
 import { Server } from 'socket.io';
-import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
-import { formatDate } from '@hiram/shared';
 import authRouter from './routes/auth';
-import usersRouter from './routes/users';
 import uploadRouter from './routes/upload';
+import usersRouter from './routes/users';
 
 // Load environment variables
 dotenv.config();
@@ -23,7 +23,7 @@ const io = new Server(server, {
   },
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = Number(process.env.PORT ?? 4000);
 
 // Security Middlewares
 app.use(helmet());
@@ -78,6 +78,26 @@ io.on('connection', (socket) => {
 });
 
 // Start Server
-server.listen(PORT, () => {
-  console.log(`🚀 Hiram API is running on http://localhost:${PORT}/api/v1`);
-});
+const startServer = (port: number): void => {
+  const onListening = (): void => {
+    console.log(`🚀 Hiram API is running on http://localhost:${port}/api/v1`);
+  };
+
+  const onError = (error: NodeJS.ErrnoException): void => {
+    server.removeListener('listening', onListening);
+
+    if (error.code === 'EADDRINUSE') {
+      console.warn(`Port ${port} is in use, trying ${port + 1}...`);
+      startServer(port + 1);
+      return;
+    }
+
+    throw error;
+  };
+
+  server.once('listening', onListening);
+  server.once('error', onError);
+  server.listen(port);
+};
+
+startServer(PORT);
