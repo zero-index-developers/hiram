@@ -38,11 +38,11 @@ export function SearchResultsModal({
     try {
       const history = localStorage.getItem('hiram_search_history');
       let searchHistory: string[] = history ? JSON.parse(history) : [];
-      
+
       searchHistory = searchHistory.filter(q => q.toLowerCase() !== query.trim().toLowerCase());
       searchHistory.unshift(query.trim());
       searchHistory = searchHistory.slice(0, 8); // Keep last 8 searches
-      
+
       localStorage.setItem('hiram_search_history', JSON.stringify(searchHistory));
       setHistoryList(searchHistory);
     } catch (e) {
@@ -92,8 +92,8 @@ export function SearchResultsModal({
   // Filter keywords matching the search term
   const matchedKeywords = searchQuery.trim()
     ? allKeywords.filter((kw) =>
-        kw.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      kw.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     : [];
 
   const handleKeywordClick = (keyword: string) => {
@@ -106,7 +106,7 @@ export function SearchResultsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="absolute top-full left-0 right-0 mt-4 z-50 bg-white shadow-2xl border border-primary/10 rounded-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto max-h-[450px]">
+    <div className="absolute top-14 left-0 right-0 mt-4 z-50 bg-white shadow-2xl border border-primary/10 rounded-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200 pointer-events-auto max-h-[450px]">
       {/* Header bar */}
       <div className="px-6 py-4 border-b border-neutral-100 flex justify-between items-center bg-neutral-50/50">
         <span className="text-xs font-black text-neutral-400 uppercase tracking-widest flex items-center gap-1.5">
@@ -124,7 +124,7 @@ export function SearchResultsModal({
             </>
           )}
         </span>
-        
+
         {searchQuery.trim() ? (
           <span className="text-[10px] font-bold text-neutral-400">
             {matchedKeywords.length} suggestions
