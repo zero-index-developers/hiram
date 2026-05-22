@@ -1,4 +1,4 @@
-import type { Item, User } from '../types';
+import type { Item } from '../types/item';
 
 /**
  * Type guards to reduce scattered typeof checks throughout the codebase

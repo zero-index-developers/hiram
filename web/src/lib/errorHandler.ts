@@ -1,4 +1,3 @@
-import type { AxiosError } from 'axios';
 
 /**
  * Standard API error class
