@@ -3,6 +3,8 @@ import { mockItems, mockUserProfiles } from "@hiram/shared";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../store/useAuthStore";
+import { useUserStore } from "../../store/useUserStore";
 import { PageLayout } from "../layout/PageLayout";
 import { Avatar } from "../ui/Avatar";
 import { Badge } from "../ui/Badge";
@@ -11,7 +13,7 @@ import { LogoSymbol } from "../ui/Logo";
 import { DateLabel, LocationLabel } from "../ui/MetadataRow";
 import { TransactionBadge } from "../ui/TransactionBadge";
 import { VerifiedBadge } from "../ui/VerifiedBadge";
-import { useUserStore } from "../../store/useUserStore";
+import { ItemRequestsList } from "./ItemRequestsList";
 import { RequestProposalForm } from "./RequestProposalForm";
 
 interface ItemDetailsPageProps {
@@ -48,7 +50,10 @@ export function ItemDetailsPage({ slug }: ItemDetailsPageProps) {
   } | null>(null);
 
   const ownerId = item ? getOwnerId(item) : undefined;
-  const ownerProfile = useUserStore((s) => ownerId ? s.users[ownerId] : undefined);
+  const ownerProfile = useUserStore((s) =>
+    ownerId ? s.users[ownerId] : undefined,
+  );
+  const currentUser = useAuthStore((s) => s.user);
 
   if (!item) {
     return (
@@ -230,7 +235,11 @@ export function ItemDetailsPage({ slug }: ItemDetailsPageProps) {
                   className="w-full border border-primary/10 rounded-2xl p-5 bg-neutral-50/30 flex items-center justify-between hover:bg-primary/5 transition-colors cursor-pointer text-left"
                 >
                   <div className="flex items-center gap-4">
-                    <Avatar name={ownerName} size="lg" src={ownerProfile?.avatarUrl ?? undefined} />
+                    <Avatar
+                      name={ownerName}
+                      size="lg"
+                      src={ownerProfile?.avatarUrl ?? undefined}
+                    />
                     <div>
                       <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">
                         Lender
@@ -251,12 +260,18 @@ export function ItemDetailsPage({ slug }: ItemDetailsPageProps) {
                 </button>
               </div>
 
-              {/* Right Column: Request Proposal Form Component */}
+              {/* Right Column: Request Proposal Form or Item Requests List */}
               <div className="w-full lg:w-2/5">
-                <RequestProposalForm
-                  item={item}
-                  onSubmitSuccess={handleProposalSubmitSuccess}
-                />
+                {currentUser?.id === ownerId ? (
+                  /* Show Item Requests List if user is the owner */
+                  <ItemRequestsList itemName={item.title} />
+                ) : (
+                  /* Show Request Form if user is not the owner */
+                  <RequestProposalForm
+                    item={item}
+                    onSubmitSuccess={handleProposalSubmitSuccess}
+                  />
+                )}
               </div>
             </div>
           )}

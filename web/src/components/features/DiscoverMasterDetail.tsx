@@ -59,8 +59,8 @@ export function DiscoverMasterDetail({
   return (
     <div className="flex flex-col lg:flex-row gap-8 items-start w-full animate-in fade-in slide-in-from-bottom-2 duration-300">
       {/* Left Master List */}
-      <div className="lg:w-2/5 w-full flex flex-col gap-3 max-h-[640px] overflow-y-auto pr-2 scrollbar-minimal shrink-0">
-        {filteredItems.map((item) => {
+      <div className="lg:w-2/5 w-full flex flex-col gap-3 overflow-y-auto pr-2 scrollbar-minimal shrink-0">
+        {filteredItems.slice(0, 25).map((item) => {
           const isSelected = selectedItemId === item.id;
           const ownerName =
             typeof item.owner === "string"

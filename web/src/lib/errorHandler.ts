@@ -1,18 +1,3 @@
-
-/**
- * Standard API error class
- */
-export class ApiError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-    public originalError?: any
-  ) {
-    super(message);
-    this.name = 'ApiError';
-  }
-}
-
 /**
  * Handle API errors and return user-friendly messages
  */

@@ -1,8 +1,8 @@
-import { create } from 'zustand';
 import type { User } from '@hiram/shared';
-import { useUserStore } from './useUserStore';
-import { authService } from '../services/authService';
+import { create } from 'zustand';
 import { apiClient, setAuthToken } from '../lib/apiClient';
+import { authService } from '../services/authService';
+import { useUserStore } from './useUserStore';
 
 function dataUrlToBlob(dataUrl: string): Blob {
   const [header, data] = dataUrl.split(',');
@@ -48,10 +48,14 @@ interface AuthState {
 const applyAvatarOverride = (user: any) => {
   if (!user) return null;
   const storedAvatar = localStorage.getItem(`hiram_avatar_${user.id}`);
+  const normalizedUser = {
+    ...user,
+    createdAt: user.createdAt instanceof Date ? user.createdAt : new Date(user.createdAt || Date.now()),
+  };
   if (storedAvatar) {
-    return { ...user, avatarUrl: storedAvatar };
+    return { ...normalizedUser, avatarUrl: storedAvatar };
   }
-  return user;
+  return normalizedUser;
 };
 
 function onAuthSuccess(token: string, user: any) {
