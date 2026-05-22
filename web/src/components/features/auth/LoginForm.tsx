@@ -44,7 +44,7 @@ export function LoginForm({ email, isLoading, onSubmit, onChangeEmail }: LoginFo
             type="password"
             {...loginForm.register('password')}
             placeholder="••••••••"
-            className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
+            className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium text-neutral-900 focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
             autoFocus
           />
         </div>

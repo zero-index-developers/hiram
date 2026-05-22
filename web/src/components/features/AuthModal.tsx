@@ -47,11 +47,9 @@ export function AuthModal() {
 
   const handleRegisterSubmit = async (data: RegisterInput) => {
     await submitRegister({
-      studentId: data.studentId,
       email: data.email,
       name: data.name,
       password: data.password,
-      course: data.course
     });
   };
 
@@ -108,7 +106,7 @@ export function AuthModal() {
               {step === 'login' ? 'Welcome Back' : step === 'register' ? 'Join Hiram' : 'Welcome to Hiram'}
             </h2>
             <p className="text-neutral-500 text-sm mt-1 animate-in fade-in duration-200">
-              {step === 'login' ? 'Enter password to sign in' : step === 'register' ? 'Complete student registration details' : 'StudentItem Sharing & Trading Hub'}
+              {step === 'login' ? 'Enter password to sign in' : step === 'register' ? 'Complete student registration details' : 'Student Item Sharing & Trading Hub'}
             </p>
           </div>
 

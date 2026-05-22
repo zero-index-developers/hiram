@@ -34,6 +34,7 @@ export interface Item {
   date?: Date;
   owner?: string | {
     id?: string;
+    studentId?: string | null;
     name: string;
     avatarUrl?: string;
   };

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { LogoSymbol } from '../ui/Logo';
+import { VerifiedBadge } from '../ui/VerifiedBadge';
 import { useAuthStore } from '../../store/useAuthStore';
 
 import type { Item } from '@hiram/shared';
@@ -18,6 +19,7 @@ export function ItemCard({ item }: ItemCardProps) {
   const { isAuthenticated, setAuthModalOpen } = useAuthStore();
 
   const ownerName = typeof item.owner === 'string' ? item.owner : item.owner?.name || 'Unknown';
+  const ownerIsVerified = typeof item.owner !== 'string' && !!item.owner?.studentId;
 
   const handleRequestClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -96,9 +98,12 @@ export function ItemCard({ item }: ItemCardProps) {
             <div className="w-7 h-7 rounded-full bg-primary/5 text-primary flex items-center justify-center font-bold text-xs uppercase border border-primary/10">
               {ownerName.charAt(0)}
             </div>
-            <span className="text-xs font-bold text-neutral-500">
-              By {ownerName}
-            </span>
+            <div className="flex items-center gap-1">
+              <span className="text-xs font-bold text-neutral-500">
+                By {ownerName}
+              </span>
+              {ownerIsVerified && <VerifiedBadge iconSize={12} />}
+            </div>
           </div>
 
           <Button 

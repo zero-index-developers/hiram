@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-hiram-key';
 // In-memory fallback database for development if PostgreSQL is not running
 interface InMemoryUser {
   id: string;
-  studentId: string;
+  studentId?: string | null;
   email: string;
   passwordHash: string;
   name: string;
@@ -63,14 +63,12 @@ router.post('/register', async (req, res) => {
     });
   }
 
-  const { studentId, email, password, name, course } = result.data;
+  const { email, password, name, course } = result.data;
 
   try {
     // Attempt database query
     const existingUser = await prisma.user.findFirst({
-      where: {
-        OR: [{ email }, { studentId }]
-      }
+      where: { email }
     });
 
     if (existingUser) {
@@ -78,7 +76,6 @@ router.post('/register', async (req, res) => {
         error: 'Registration failed', 
         details: { 
           email: existingUser.email === email ? ['Email already registered'] : undefined,
-          studentId: existingUser.studentId === studentId ? ['Student ID already registered'] : undefined,
         } 
       });
     }
@@ -86,7 +83,7 @@ router.post('/register', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
-        studentId,
+        studentId: null as any,
         email,
         passwordHash,
         name,
@@ -112,16 +109,13 @@ router.post('/register', async (req, res) => {
     console.warn('⚠️ Database connection issue or query failure. Falling back to in-memory store.', error.message);
     
     // Fallback implementation
-    const existingInMemory = inMemoryUsers.find(
-      (u) => u.email === email || u.studentId === studentId
-    );
+    const existingInMemory = inMemoryUsers.find((u) => u.email === email);
 
     if (existingInMemory) {
       return res.status(400).json({
         error: 'Registration failed (Mock)',
         details: {
           email: existingInMemory.email === email ? ['Email already registered'] : undefined,
-          studentId: existingInMemory.studentId === studentId ? ['Student ID already registered'] : undefined,
         }
       });
     }
@@ -129,7 +123,7 @@ router.post('/register', async (req, res) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const newUser: InMemoryUser = {
       id: `mock-${Date.now()}`,
-      studentId,
+      studentId: null,
       email,
       passwordHash,
       name,
@@ -329,6 +323,66 @@ router.get('/me', async (req, res) => {
     // Fallback search in-memory
     const inMemoryUser = inMemoryUsers.find((u) => u.id === decoded.userId);
     if (inMemoryUser) {
+      return res.json({
+        user: {
+          id: inMemoryUser.id,
+          studentId: inMemoryUser.studentId,
+          email: inMemoryUser.email,
+          name: inMemoryUser.name,
+          course: inMemoryUser.course,
+          avatarUrl: inMemoryUser.avatarUrl,
+          createdAt: inMemoryUser.createdAt,
+        }
+      });
+    }
+
+    return res.status(404).json({ error: 'User not found' });
+  } catch (error) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+});
+
+// VERIFY ACCOUNT ENDPOINT
+router.put('/verify', async (req, res) => {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  const { studentId } = req.body;
+
+  if (!studentId) {
+    return res.status(400).json({ error: 'Student ID is required' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    
+    try {
+      const user = await prisma.user.update({
+        where: { id: decoded.userId },
+        data: { studentId }
+      });
+      return res.json({
+        user: {
+          id: user.id,
+          studentId: user.studentId,
+          email: user.email,
+          name: user.name,
+          course: user.course,
+          avatarUrl: user.avatarUrl,
+          createdAt: user.createdAt,
+        }
+      });
+    } catch {
+      // ignore db error, let fallback search in-memory
+    }
+
+    // Fallback search in-memory
+    const inMemoryUser = inMemoryUsers.find((u) => u.id === decoded.userId);
+    if (inMemoryUser) {
+      inMemoryUser.studentId = studentId;
       return res.json({
         user: {
           id: inMemoryUser.id,

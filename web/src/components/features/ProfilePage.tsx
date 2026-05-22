@@ -1,14 +1,17 @@
 import { useState, useRef, useEffect } from 'react';
-import { Camera, Heart, Bookmark, Award, Users, PlusCircle, Trash2 } from 'lucide-react';
+import { Camera, Heart, Bookmark, Award, Users, PlusCircle, Trash2, Hash, ArrowRight, Loader2 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { mockItems } from '@hiram/shared';
 import { BackButton } from '../ui/BackButton';
 import { ItemCard } from './ItemCard';
+import { VerifiedBadge } from '../ui/VerifiedBadge';
 
 export function ProfilePage() {
-  const { user, updateAvatar } = useAuthStore();
+  const { user, updateAvatar, verifyAccount } = useAuthStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [activeTab, setActiveTab] = useState<'listings' | 'saved'>('listings');
+  const [verifyId, setVerifyId] = useState('');
+  const [isVerifying, setIsVerifying] = useState(false);
 
   // Manage saved items in localStorage, fallback to items '1' and '3' if empty initially
   const [savedIds, setSavedIds] = useState<string[]>([]);
@@ -69,6 +72,13 @@ export function ProfilePage() {
     localStorage.setItem('hiram_saved_items', JSON.stringify(updated));
   };
 
+  const handleVerify = async () => {
+    if (!verifyId.trim()) return;
+    setIsVerifying(true);
+    await verifyAccount(verifyId);
+    setIsVerifying(false);
+  };
+
   return (
     <div className="relative max-w-5xl mx-auto px-4 pt-6 pb-4 w-full flex-grow flex flex-col h-[calc(100vh-120px)] min-h-[650px] max-h-[820px] animate-in fade-in duration-300">
       {/* Floating Back Button */}
@@ -113,14 +123,43 @@ export function ProfilePage() {
 
             {/* Profile Details */}
             <div className="text-center md:text-left pb-1">
-              <h2 className="text-2xl font-black text-neutral-900 leading-tight">
-                {user.name}
-              </h2>
+              <div className="flex items-center justify-center md:justify-start gap-2">
+                <h2 className="text-2xl font-black text-neutral-900 leading-tight">
+                  {user.name}
+                </h2>
+                {user.studentId && <VerifiedBadge iconSize={22} />}
+              </div>
               <p className="text-sm font-bold text-neutral-400 mt-1">{user.email}</p>
               {user.course && (
                 <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase text-primary bg-primary/5 px-2.5 py-0.5 rounded-full mt-2 tracking-wider border border-primary/5">
                   {user.course}
                 </span>
+              )}
+
+              {/* Verification CTA if unverified */}
+              {!user.studentId && (
+                <div className="mt-4 flex flex-col sm:flex-row items-center gap-2 bg-orange-50 border border-orange-100 rounded-xl p-3 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <div className="flex items-center gap-2 text-orange-700">
+                    <Hash size={16} className="shrink-0" />
+                    <span className="text-xs font-bold whitespace-nowrap">Verify Student ID:</span>
+                  </div>
+                  <div className="flex w-full sm:w-auto relative">
+                    <input 
+                      type="text" 
+                      value={verifyId}
+                      onChange={(e) => setVerifyId(e.target.value)}
+                      placeholder="e.g. 2021-12345-MN-0"
+                      className="w-full sm:w-44 bg-white border border-orange-200 rounded-l-lg py-1.5 px-3 text-xs font-medium focus:outline-none focus:border-orange-400 transition-colors"
+                    />
+                    <button 
+                      onClick={handleVerify}
+                      disabled={isVerifying || !verifyId.trim()}
+                      className="bg-orange-500 hover:bg-orange-600 text-white px-3 rounded-r-lg flex items-center justify-center transition-colors disabled:opacity-50"
+                    >
+                      {isVerifying ? <Loader2 size={14} className="animate-spin" /> : <ArrowRight size={14} />}
+                    </button>
+                  </div>
+                </div>
               )}
             </div>
           </div>

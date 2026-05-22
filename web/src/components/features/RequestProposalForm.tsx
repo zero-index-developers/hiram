@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { MapPin, Calendar, AlertCircle } from 'lucide-react';
-import { useForm } from 'react-hook-form';
+import { useForm, useController } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import type { Item } from '@hiram/shared';
 import { useAuthStore } from '../../store/useAuthStore';
+import { Select } from '../ui/Select';
 
 const createProposalSchema = (preferredTransaction: string) => {
   return z.object({
@@ -43,6 +44,7 @@ export function RequestProposalForm({ item, onSubmitSuccess }: RequestProposalFo
   const schema = createProposalSchema(item.preferredTransaction || '');
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors }
   } = useForm<ProposalInput>({
@@ -54,6 +56,11 @@ export function RequestProposalForm({ item, onSubmitSuccess }: RequestProposalFo
       meetupLoc: 'PUP Main Campus (CEA Building)',
       meetupTime: ''
     }
+  });
+
+  const { field: durationField } = useController({
+    name: 'duration',
+    control
   });
 
   const onSubmit = (data: ProposalInput) => {
@@ -87,15 +94,16 @@ export function RequestProposalForm({ item, onSubmitSuccess }: RequestProposalFo
             <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-2">
               Lending Duration
             </label>
-            <select
-              {...register('duration')}
-              className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 px-3.5 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all appearance-none cursor-pointer"
-            >
-              <option value="3">3 Days (Short-term)</option>
-              <option value="7">7 Days (1 Week)</option>
-              <option value="14">14 Days (2 Weeks)</option>
-              <option value="30">30 Days (Long-term)</option>
-            </select>
+            <Select
+              {...durationField}
+              placeholder="Select Duration"
+              options={[
+                { value: '3', label: '3 Days (Short-term)' },
+                { value: '7', label: '7 Days (1 Week)' },
+                { value: '14', label: '14 Days (2 Weeks)' },
+                { value: '30', label: '30 Days (Long-term)' },
+              ]}
+            />
           </div>
         )}
 

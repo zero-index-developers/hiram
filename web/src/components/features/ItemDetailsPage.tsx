@@ -4,6 +4,7 @@ import { mockItems, formatDate } from '@hiram/shared';
 import type { Item } from '@hiram/shared';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
+import { VerifiedBadge } from '../ui/VerifiedBadge';
 import { RequestProposalForm } from './RequestProposalForm';
 import { LogoSymbol } from '../ui/Logo';
 
@@ -52,6 +53,7 @@ export function ItemDetailsPage({ slug, onBack }: ItemDetailsPageProps) {
   }
 
   const ownerName = typeof item.owner === 'string' ? item.owner : item.owner?.name || 'Unknown';
+  const ownerIsVerified = typeof item.owner !== 'string' && !!item.owner?.studentId;
 
   const handleProposalSubmitSuccess = (details: {
     duration: string;
@@ -194,12 +196,17 @@ export function ItemDetailsPage({ slug, onBack }: ItemDetailsPageProps) {
                 </div>
                 <div>
                   <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-wider block">Lender</span>
-                  <span className="text-base font-bold text-neutral-800">{ownerName}</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-base font-bold text-neutral-800">{ownerName}</span>
+                    {ownerIsVerified && <VerifiedBadge iconSize={16} />}
+                  </div>
                 </div>
               </div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/5 px-3 py-1 rounded-full uppercase tracking-wider">
-                <ShieldCheck size={14} /> Campus Verified
-              </div>
+              {ownerIsVerified && (
+                <div className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/5 px-3 py-1 rounded-full uppercase tracking-wider">
+                  <ShieldCheck size={14} /> Campus Verified
+                </div>
+              )}
             </div>
           </div>
 

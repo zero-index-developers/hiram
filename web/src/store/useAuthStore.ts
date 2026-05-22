@@ -17,7 +17,6 @@ interface AuthState {
   setAuthModalOpen: (isOpen: boolean, tab?: 'login' | 'register') => void;
   login: (email: string, password: string) => Promise<boolean>;
   register: (payload: {
-    studentId: string;
     email: string;
     name: string;
     password?: string;
@@ -34,6 +33,7 @@ interface AuthState {
   clearError: () => void;
   checkEmail: (email: string) => Promise<boolean | null>;
   updateAvatar: (avatarUrl: string) => void;
+  verifyAccount: (studentId: string) => Promise<boolean>;
 }
 
 const applyAvatarOverride = (user: any) => {
@@ -116,6 +116,23 @@ export const useAuthStore = create<AuthState>((set, get) => ({
          errMsg = `${errMsg} (${fields.join('; ')})`;
       }
       
+      set({ error: errMsg, isLoading: false });
+      return false;
+    }
+  },
+
+  verifyAccount: async (studentId) => {
+    set({ isLoading: true, error: null });
+    try {
+      const token = get().token;
+      const response = await axios.put(`${API_URL}/auth/verify`, { studentId }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const { user } = response.data;
+      set({ user: applyAvatarOverride(user), isLoading: false });
+      return true;
+    } catch (err: any) {
+      const errMsg = err.response?.data?.error || 'Verification failed. Please try again.';
       set({ error: errMsg, isLoading: false });
       return false;
     }

@@ -1,6 +1,6 @@
 export interface User {
   id: string;
-  studentId: string;
+  studentId?: string | null;
   email: string;
   name: string;
   course?: string | null;
@@ -10,7 +10,7 @@ export interface User {
 
 export interface StudentProfile {
   id: string;
-  studentId: string;
+  studentId?: string | null;
   email: string;
   name: string;
   course?: string | null;

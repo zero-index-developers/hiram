@@ -5,11 +5,7 @@ import { z } from 'zod';
 
 const emailSchema = z.object({
   email: z.string()
-    .email({ message: 'Invalid email address' })
-    .refine(
-      (email) => email.endsWith('@iskolar.pup.edu.ph') || email.endsWith('@pup.edu.ph'),
-      { message: 'Must be a valid Studentor faculty email (@iskolar.pup.edu.ph or @pup.edu.ph)' }
-    ),
+    .email({ message: 'Invalid email address' }),
 });
 
 type EmailInput = z.infer<typeof emailSchema>;
@@ -70,7 +66,7 @@ export function EmailStepForm({ isLoading, onContinue, onGoogleClick }: EmailSte
               type="text"
               {...emailForm.register('email')}
               placeholder="e.g. name@iskolar.pup.edu.ph"
-              className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
+              className="w-full bg-neutral-50/50 border border-neutral-200 rounded-xl py-2.5 pl-10 pr-4 text-sm font-medium text-neutral-900 focus:outline-none focus:border-primary focus:bg-white transition-all placeholder-neutral-400"
             />
           </div>
           {emailForm.formState.errors.email && (
