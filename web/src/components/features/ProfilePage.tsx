@@ -285,6 +285,7 @@ export function ProfilePage({ userId }: ProfilePageProps) {
                 {userListings.map((item) => (
                   <div
                     key={item.id}
+                    className="cursor-pointer"
                     onClick={() =>
                       navigate(`/items/${getItemSlug(item.id, item.title)}`)
                     }
@@ -307,7 +308,13 @@ export function ProfilePage({ userId }: ProfilePageProps) {
           ) : savedListings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {savedListings.map((item) => (
-                <div key={item.id} className="relative group">
+                <div 
+                  key={item.id} 
+                  className="relative group cursor-pointer"
+                  onClick={() =>
+                    navigate(`/items/${getItemSlug(item.id, item.title)}`)
+                  }
+                >
                   <ItemCard item={item} hideMeta />
                   <button
                     onClick={(e) => handleUnsave(e, item.id)}

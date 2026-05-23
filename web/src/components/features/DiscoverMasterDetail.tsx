@@ -70,11 +70,10 @@ export function DiscoverMasterDetail({
             <div
               key={item.id}
               onClick={() => onSelectItem(item.id)}
-              className={`flex items-center gap-4 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${
-                isSelected
+              className={`flex items-center gap-4 p-3 rounded-xl border transition-all duration-200 cursor-pointer select-none ${isSelected
                   ? "border-primary bg-primary/5 shadow-sm"
                   : "border-primary/10 hover:border-primary/30 hover:bg-neutral-50/50 bg-white"
-              }`}
+                }`}
             >
               {/* Compact Image */}
               <CompactItemImage src={item.image} title={item.title} />

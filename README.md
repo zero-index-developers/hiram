@@ -17,7 +17,6 @@
 
 ### 🎯 Key Objectives
 
-- **Verification:** Restricted strictly to verified PUP students via their official university email (`@iskolar.pup.edu.ph`).
 - **Micro-Economy:** Reduce student expenses by encouraging a local sharing culture.
 - **Accessibility:** Available on both modern Web browsers and Android mobile devices.
 
@@ -126,8 +125,8 @@ Configure your environment keys before starting the server.
   PORT=4000
   NODE_ENV=development
   # PostgreSQL database URL (adjust credentials based on your setup)
-  DATABASE_URL="postgresql://laravel:secret@localhost:5432/hiram?schema=public"
-  JWT_SECRET=9b714c732651338ba25adfa4127a81b10a629d11b00d762ed5ecaff52a3e7a90
+  DATABASE_URL="postgresql://postgresql:secret@localhost:5432/hiram?schema=public"
+  JWT_SECRET=your_super_secret_key_here
   JWT_EXPIRES_IN=7d
   CLIENT_URL=http://localhost:5173
   STORAGE_PROVIDER=local
