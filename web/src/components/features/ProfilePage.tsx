@@ -5,6 +5,7 @@ import {
   Bookmark,
   Camera,
   Heart,
+  MessageSquare,
   PlusCircle,
   Trash2,
   Users,
@@ -227,15 +228,23 @@ export function ProfilePage({ userId }: ProfilePageProps) {
                   isVerifying={isVerifying}
                 />
               )}
-              {/* Follow Button — only for other profiles */}
+              {/* Follow & Message Buttons — only for other profiles */}
               {!isOwnProfile && (
-                <div className="mt-3">
+                <div className="mt-3 flex items-center justify-center md:justify-start gap-2.5">
                   <Button
                     variant={isFollowing ? "secondary" : "primary"}
                     onClick={() => setIsFollowing(!isFollowing)}
                     className="px-6 py-1.5 text-sm"
                   >
                     {isFollowing ? "Following" : "Follow"}
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    onClick={() => navigate("/inbox")}
+                    className="px-5 py-1.5 text-sm flex items-center gap-2"
+                  >
+                    <MessageSquare size={15} />
+                    Message
                   </Button>
                 </div>
               )}
@@ -338,7 +347,7 @@ export function ProfilePage({ userId }: ProfilePageProps) {
       <ImageCropModal
         imageSrc={pendingImageSrc}
         isOpen={showCropModal}
-        hasExistingAvatar={!!currentUser?.avatarUrl}
+        hasExistingImage={!!currentUser?.avatarUrl}
         onCrop={handleCropComplete}
         onRemove={removeAvatar}
         onUploadNew={() => fileInputRef.current?.click()}

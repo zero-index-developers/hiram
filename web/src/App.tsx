@@ -44,6 +44,11 @@ function App() {
     prevAuthRef.current = isAuthenticated;
   }, [isAuthenticated, location.pathname, navigate]);
 
+  // Reset scroll position to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const isItemDetails = location.pathname.startsWith('/items/');
   const itemSlug = isItemDetails ? location.pathname.replace('/items/', '') : '';
   const isInbox = location.pathname === '/inbox';

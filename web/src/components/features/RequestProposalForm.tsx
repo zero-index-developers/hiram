@@ -168,7 +168,7 @@ export function RequestProposalForm({ item, onSubmitSuccess }: RequestProposalFo
 
         <div>
           <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wider mb-2">
-            Proposed Date & Time (Optional)
+            Proposed Date & Time
           </label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-neutral-400">

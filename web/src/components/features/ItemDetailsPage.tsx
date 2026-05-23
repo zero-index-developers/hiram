@@ -1,6 +1,6 @@
 import type { Item } from "@hiram/shared";
 import { mockItems, mockUserProfiles } from "@hiram/shared";
-import { CheckCircle2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, ShieldCheck, MoreHorizontal, Edit2, Flag } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
@@ -13,8 +13,10 @@ import { LogoSymbol } from "../ui/Logo";
 import { DateLabel, LocationLabel } from "../ui/MetadataRow";
 import { TransactionBadge } from "../ui/TransactionBadge";
 import { VerifiedBadge } from "../ui/VerifiedBadge";
+import { Popover } from "../ui/Popover";
 import { ItemRequestsList } from "./ItemRequestsList";
 import { RequestProposalForm } from "./RequestProposalForm";
+import { AddItemModal } from "./AddItemModal";
 
 interface ItemDetailsPageProps {
   slug: string;
@@ -42,6 +44,8 @@ export function ItemDetailsPage({ slug }: ItemDetailsPageProps) {
     )?.id;
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [showItemMenu, setShowItemMenu] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [proposalDetails, setProposalDetails] = useState<{
     duration: string;
     tradeOffer: string;
@@ -77,6 +81,7 @@ export function ItemDetailsPage({ slug }: ItemDetailsPageProps) {
     typeof item.owner === "string" ? item.owner : item.owner?.name || "Unknown";
   const ownerIsVerified =
     typeof item.owner !== "string" && !!item.owner?.studentId;
+  const isOwner = currentUser?.id === ownerId;
 
   const handleProposalSubmitSuccess = (details: {
     duration: string;
@@ -91,7 +96,7 @@ export function ItemDetailsPage({ slug }: ItemDetailsPageProps) {
   return (
     <PageLayout backTo="/">
       <div className="flex-1 min-h-0">
-        <div className="h-full overflow-y-auto scrollbar-minimal p-6 lg:p-10 text-left">
+        <div className="h-full p-6 lg:p-10 text-left">
           {requestSubmitted ? (
             /* Success Screen */
             <div className="max-w-2xl mx-auto animate-in zoom-in-95 duration-300">
@@ -209,15 +214,48 @@ export function ItemDetailsPage({ slug }: ItemDetailsPageProps) {
                 </div>{" "}
                 {/* Title & Metadata */}
                 <div className="space-y-4">
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <Badge variant="outline">{item.category}</Badge>
-                    {item.preferredTransaction && (
-                      <TransactionBadge
-                        transaction={item.preferredTransaction}
-                      />
-                    )}
-                    <DateLabel date={item.createdAt} />
-                    <LocationLabel cityCode={item.cityCode} />
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <Badge variant="outline">{item.category}</Badge>
+                      {item.preferredTransaction && (
+                        <TransactionBadge transaction={item.preferredTransaction} />
+                      )}
+                      <DateLabel date={item.createdAt} />
+                      <LocationLabel cityCode={item.cityCode} />
+                    </div>
+
+                    {/* Item Actions */}
+                    <div className="relative">
+                      <button 
+                        onClick={() => setShowItemMenu(true)}
+                        className="w-8 h-8 rounded-full hover:bg-neutral-100 flex items-center justify-center text-neutral-500 transition-colors cursor-pointer"
+                      >
+                        <MoreHorizontal size={20} />
+                      </button>
+                      <Popover 
+                        isOpen={showItemMenu} 
+                        onClose={() => setShowItemMenu(false)}
+                        width="w-48"
+                      >
+                        <div className="px-1.5 flex flex-col gap-0.5">
+                          {isOwner ? (
+                            <button 
+                              className="flex items-center gap-3 px-3 py-2 text-sm font-bold text-neutral-700 hover:bg-neutral-50 rounded-xl transition-colors text-left dropdown-item cursor-pointer w-full"
+                              onClick={() => { setShowItemMenu(false); setShowEditModal(true); }}
+                            >
+                              <Edit2 size={16} /> Edit Item
+                            </button>
+                          ) : (
+                            <button 
+                              className="flex items-center gap-3 px-3 py-2 text-sm font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors text-left settings-link-rose cursor-pointer w-full"
+                              onClick={() => { setShowItemMenu(false); alert('Report feature coming soon!'); }}
+                            >
+                              <Flag size={16} /> Report Item
+                            </button>
+                          )}
+                        </div>
+                      </Popover>
+                    </div>
                   </div>
                   <h1 className="text-3xl font-black text-neutral-900 tracking-tight leading-tight">
                     {item.title}
@@ -277,6 +315,7 @@ export function ItemDetailsPage({ slug }: ItemDetailsPageProps) {
           )}
         </div>
       </div>
+      <AddItemModal isOpen={showEditModal} onClose={() => setShowEditModal(false)} />
     </PageLayout>
   );
 }

@@ -10,6 +10,7 @@ export interface MockProposal {
   lenderName: string;
   lenderAvatar?: string;
   itemName: string;
+  itemId?: string;
   itemImage?: string;
   offerType: 'trade' | 'rent' | 'borrow';
   status: 'pending' | 'accepted' | 'declined' | 'completed';
@@ -28,6 +29,7 @@ export const mockProposalsData: MockProposal[] = [
     id: 'prop-1',
     lenderName: 'Julius Cesar',
     itemName: 'Chemistry: Structure and Properties',
+    itemId: '4',
     offerType: 'borrow',
     status: 'pending',
     duration: '2 Weeks (Lending)',
@@ -45,6 +47,7 @@ export const mockProposalsData: MockProposal[] = [
     id: 'prop-2',
     lenderName: 'Marcus Aurelius',
     itemName: 'Drawing Board & T-Square 36"',
+    itemId: '3',
     offerType: 'trade',
     status: 'accepted',
     offerItems: 'Calculus Guide + Mechanics Notebook',
@@ -64,6 +67,7 @@ export const mockProposalsData: MockProposal[] = [
     id: 'prop-3',
     lenderName: 'Cleopatra Philopator',
     itemName: 'Scientific Calculator Casio fx-991ES Plus',
+    itemId: '6',
     offerType: 'rent',
     status: 'completed',
     duration: '1 Month - PHP 150',
@@ -82,6 +86,7 @@ export const mockProposalsData: MockProposal[] = [
     id: 'prop-4',
     lenderName: 'Leonardo DaVinci',
     itemName: 'Laptop Stand & External Keyboard',
+    itemId: '7',
     offerType: 'borrow',
     status: 'pending',
     duration: '3 Weeks (Lending)',
@@ -99,6 +104,7 @@ export const mockProposalsData: MockProposal[] = [
     id: 'prop-5',
     lenderName: 'Michelangelo Buonarroti',
     itemName: 'Design Thinking Toolkit & Resources',
+    itemId: '8',
     offerType: 'trade',
     status: 'pending',
     offerItems: 'Adobe Creative Suite Guide + Digital Design Portfolio',
@@ -116,6 +122,7 @@ export const mockProposalsData: MockProposal[] = [
     id: 'prop-6',
     lenderName: 'Ada Lovelace',
     itemName: 'Biology Textbook & Lab Manual Set',
+    itemId: '9',
     offerType: 'borrow',
     status: 'accepted',
     duration: '2 Weeks (Lending)',
@@ -134,6 +141,7 @@ export const mockProposalsData: MockProposal[] = [
     id: 'prop-7',
     lenderName: 'Vincent Van Gogh',
     itemName: 'Photography Lighting Kit',
+    itemId: '10',
     offerType: 'trade',
     status: 'declined',
     offerItems: 'Tripod + Camera Backpack',
@@ -151,6 +159,7 @@ export const mockProposalsData: MockProposal[] = [
     id: 'prop-8',
     lenderName: 'Raphael Sanzio',
     itemName: 'Engineering Drawing Set & Compass Collection',
+    itemId: '11',
     offerType: 'borrow',
     status: 'accepted',
     duration: '1 Month (Lending)',
@@ -169,6 +178,7 @@ export const mockProposalsData: MockProposal[] = [
     id: 'prop-9',
     lenderName: 'Galileo Galilei',
     itemName: 'Portable Projector & Screen',
+    itemId: '12',
     offerType: 'borrow',
     status: 'pending',
     duration: '2 Weeks (Lending)',

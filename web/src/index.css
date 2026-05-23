@@ -138,10 +138,7 @@ body {
   background-color: rgba(30,30,30,0.6) !important;
 }
 
-/* Ensure primary low-opacity backgrounds are darker in dark mode */
-.dark [class*="bg-primary/"] {
-  background-color: rgba(126,30,57,0.06) !important;
-}
+
 
 /* Make translucent divide utilities use dark border color */
 .dark [class*="divide-neutral-100/"] > :not([hidden]) ~ :not([hidden]) {

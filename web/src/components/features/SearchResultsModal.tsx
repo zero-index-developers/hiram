@@ -124,8 +124,8 @@ export function SearchResultsModal({
   // Filter keywords matching the search term
   const matchedKeywords = searchQuery.trim()
     ? allKeywords.filter((kw) =>
-        kw.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
+      kw.toLowerCase().includes(searchQuery.toLowerCase()),
+    )
     : [];
 
   const handleKeywordClick = (keyword: string) => {
@@ -230,7 +230,7 @@ export function SearchResultsModal({
                   icon={Search}
                   title="No matching results"
                   description="Try searching with different terms like a name, item, or category."
-                  className="bg-transparent border-none shadow-none"
+                  className="bg-transparent border-none"
                 />
               )}
           </div>

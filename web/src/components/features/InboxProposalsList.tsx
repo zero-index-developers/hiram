@@ -13,7 +13,7 @@ export function InboxProposalsList({
   onSelectProposal,
 }: InboxProposalsListProps) {
   return (
-    <div className="md:col-span-4 border-r border-neutral-100 flex flex-col h-full bg-neutral-50/30">
+    <div className="md:col-span-4 border-r border-neutral-100 flex flex-col h-full min-h-0 bg-neutral-50/30">
       <div className="p-4 border-b border-neutral-100 bg-white">
         <span className="text-xs font-black text-neutral-400 uppercase tracking-widest">Inbox</span>
       </div>

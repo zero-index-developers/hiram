@@ -1,13 +1,16 @@
 import { RotateCw, Trash2, Upload, X, ZoomIn, ZoomOut } from "lucide-react";
 import { useCallback, useState } from "react";
+import { createPortal } from "react-dom";
 import Cropper, { type Area } from "react-easy-crop";
 import "react-easy-crop/react-easy-crop.css";
 
 interface ImageCropModalProps {
   imageSrc: string;
   isOpen: boolean;
-  hasExistingAvatar: boolean;
+  hasExistingImage: boolean;
   isUploading?: boolean;
+  aspect?: number;
+  cropShape?: "rect" | "round";
   onCrop: (croppedDataUrl: string) => void | Promise<void>;
   onRemove: () => void;
   onUploadNew: () => void;
@@ -17,8 +20,10 @@ interface ImageCropModalProps {
 export function ImageCropModal({
   imageSrc,
   isOpen,
-  hasExistingAvatar,
+  hasExistingImage,
   isUploading = false,
+  aspect = 1,
+  cropShape = "round",
   onCrop,
   onRemove,
   onUploadNew,
@@ -71,8 +76,8 @@ export function ImageCropModal({
 
   if (!isOpen) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+  return createPortal(
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-100">
@@ -92,8 +97,8 @@ export function ImageCropModal({
             crop={crop}
             zoom={zoom}
             rotation={rotation}
-            aspect={1}
-            cropShape="round"
+            aspect={aspect}
+            cropShape={cropShape}
             showGrid={false}
             onCropChange={setCrop}
             onZoomChange={setZoom}
@@ -139,12 +144,12 @@ export function ImageCropModal({
                 onRemove();
                 onClose();
               }}
-              title={hasExistingAvatar ? "Remove current" : "Cancel"}
+              title={hasExistingImage ? "Remove current" : "Cancel"}
               className="w-9 h-9 rounded-full flex items-center justify-center text-red-500 hover:text-red-600 transition-colors cursor-pointer"
             >
               <Trash2 size={16} />
             </button>
-            {hasExistingAvatar && (
+            {hasExistingImage && (
               <button
                 onClick={() => {
                   onClose();
@@ -178,6 +183,7 @@ export function ImageCropModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

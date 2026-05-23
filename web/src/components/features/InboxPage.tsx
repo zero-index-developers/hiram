@@ -81,7 +81,7 @@ export function InboxPage() {
         />
 
         {/* Right Side: Active Chat & Proposal Details */}
-        <div className="md:col-span-8 flex flex-col h-full bg-white">
+        <div className="md:col-span-8 flex flex-col h-full min-h-0 bg-white">
           {activeProposal ? (
             <>
               <InboxProposalDetails
