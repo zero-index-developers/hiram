@@ -274,12 +274,12 @@ export function ProfilePage({ userId }: ProfilePageProps) {
             },
             ...(isOwnProfile
               ? [
-                  {
-                    key: "saved",
-                    label: `Saved Items (${savedListings.length})`,
-                    icon: Bookmark,
-                  },
-                ]
+                {
+                  key: "saved",
+                  label: `Saved Items (${savedListings.length})`,
+                  icon: Bookmark,
+                },
+              ]
               : []),
           ]}
           activeTab={activeTab}
@@ -287,7 +287,7 @@ export function ProfilePage({ userId }: ProfilePageProps) {
         />
 
         {/* Tab Contents Area */}
-        <div className="flex-1 overflow-y-auto scrollbar-minimal p-8">
+        <div className="flex-1 p-8">
           {activeTab === "listings" ? (
             userListings.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -317,8 +317,8 @@ export function ProfilePage({ userId }: ProfilePageProps) {
           ) : savedListings.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {savedListings.map((item) => (
-                <div 
-                  key={item.id} 
+                <div
+                  key={item.id}
                   className="relative group cursor-pointer"
                   onClick={() =>
                     navigate(`/items/${getItemSlug(item.id, item.title)}`)
